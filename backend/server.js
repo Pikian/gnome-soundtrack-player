@@ -226,7 +226,8 @@ app.post('/upload', upload.array('files'), (req, res) => {
     // Handle metadata.json separately
     const metadataFile = req.files.find(f => f.originalname === 'metadata.json');
     if (metadataFile) {
-      const metadataPath = path.join(__dirname, 'metadata.json');
+      // Save metadata.json in the media directory instead of __dirname
+      const metadataPath = path.join(mediaDirectory, 'metadata.json');
       fs.copyFileSync(metadataFile.path, metadataPath);
       console.log('Metadata file saved to:', metadataPath);
     }

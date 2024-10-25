@@ -36,7 +36,7 @@ async function uploadFiles() {
       }
     );
 
-    console.log('Upload successful:', response.data);
+    console.log('Upload response:', response.data);
   } catch (error) {
     console.error('Upload failed:', error.response?.data || error.message);
   }
