@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
 const util = require('util');
+const multer = require('multer');
 
 // Load environment variables
 dotenv.config();
@@ -185,4 +186,44 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
+});
+
+// Configure multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Ensure the directory exists
+    if (!fs.existsSync(mediaDirectory)) {
+      fs.mkdirSync(mediaDirectory, { recursive: true });
+    }
+    cb(null, mediaDirectory);
+  },
+  filename: (req, file, cb) => {
+    // Keep original filename
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Add upload endpoint
+app.post('/upload', upload.array('files'), (req, res) => {
+  try {
+    console.log('Files received:', req.files);
+    
+    // Handle metadata.json separately
+    const metadataFile = req.files.find(f => f.originalname === 'metadata.json');
+    if (metadataFile) {
+      const metadataPath = path.join(__dirname, 'metadata.json');
+      fs.copyFileSync(metadataFile.path, metadataPath);
+      console.log('Metadata file saved to:', metadataPath);
+    }
+
+    res.json({ 
+      message: 'Files uploaded successfully',
+      files: req.files.map(f => f.originalname)
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'Upload failed: ' + error.message });
+  }
 });

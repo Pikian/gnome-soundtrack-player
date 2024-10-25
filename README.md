@@ -1,14 +1,8 @@
 # Gnome Soundtrack Player
 
-
-
 A web application for playing the Gnome soundtrack.
 
-
-
 ## Development Setup
-
-
 
 1. Clone the repository:
 
@@ -59,5 +53,6 @@ Both services use Railway config files for build and deploy settings:
 
 
 ## File Structure
+
 
 

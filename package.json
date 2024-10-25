@@ -1,0 +1,12 @@
+{
+  "name": "gnome-soundtrack-uploader",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "upload": "node upload.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "form-data": "^4.0.0"
+  }
+}
