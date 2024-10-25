@@ -63,17 +63,7 @@ const formatDuration = (seconds) => {
 app.get('/tracks', async (req, res) => {
   try {
     console.log('\n=== Tracks Request ===');
-    console.log('Media directory:', mediaDirectory);
     
-    // Check if directory exists
-    const dirExists = fs.existsSync(mediaDirectory);
-    console.log('Directory exists:', dirExists);
-    
-    if (!dirExists) {
-      console.error('Media directory not found:', mediaDirectory);
-      return res.status(500).json({ error: 'Media directory not found' });
-    }
-
     // List all files
     const allFiles = fs.readdirSync(mediaDirectory);
     console.log('All files in directory:', allFiles);
@@ -82,52 +72,42 @@ app.get('/tracks', async (req, res) => {
     const mp3Files = allFiles.filter(file => file.toLowerCase().endsWith('.mp3'));
     console.log('MP3 files found:', mp3Files);
 
-    if (mp3Files.length === 0) {
-      console.log('No MP3 files found');
-      return res.json([]);
-    }
-
-    // Try to read metadata
+    // Read metadata
     let metadata = {};
-    const metadataPath = path.join(mediaDirectory, 'metadata.json');
-    console.log('Looking for metadata at:', metadataPath);
-    
-    if (fs.existsSync(metadataPath)) {
-      const metadataContent = fs.readFileSync(metadataPath, 'utf-8');
-      console.log('Raw metadata content:', metadataContent);
-      metadata = JSON.parse(metadataContent);
-      console.log('Parsed metadata:', metadata);
-    } else {
-      console.log('No metadata.json found');
+    try {
+      metadata = JSON.parse(fs.readFileSync(path.join(mediaDirectory, 'metadata.json'), 'utf-8'));
+      console.log('Metadata loaded:', metadata);
+    } catch (err) {
+      console.warn('Could not read metadata:', err);
     }
 
-    // Process each track
-    const tracks = await Promise.all(mp3Files.map(async filename => {
-      try {
-        const filepath = path.join(mediaDirectory, filename);
-        console.log('Processing track:', filepath);
-        
-        const duration = await getAudioDurationInSeconds(filepath);
-        console.log('Duration for', filename, ':', duration);
-        
-        const track = {
-          id: filename,
-          filename,
-          name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
-          duration: formatDuration(duration)
-        };
-        console.log('Track object created:', track);
-        return track;
-      } catch (err) {
-        console.error('Error processing track:', filename, err);
-        return null;
-      }
+    // Process tracks without duration first
+    const tracks = mp3Files.map(filename => ({
+      id: filename,
+      filename,
+      name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
+      duration: '0:00'  // Default duration
     }));
 
-    const validTracks = tracks.filter(Boolean);
-    console.log('Final tracks array:', validTracks);
-    
-    res.json(validTracks);
+    console.log('Initial tracks array:', tracks);
+
+    // Try to get durations
+    for (let track of tracks) {
+      try {
+        const filepath = path.join(mediaDirectory, track.filename);
+        console.log('Getting duration for:', filepath);
+        const duration = await getAudioDurationInSeconds(filepath);
+        track.duration = formatDuration(duration);
+        console.log('Duration set for', track.filename, ':', track.duration);
+      } catch (err) {
+        console.error('Error getting duration for', track.filename, ':', err);
+        // Keep the default duration
+      }
+    }
+
+    console.log('Final tracks array:', tracks);
+    res.json(tracks);
+
   } catch (error) {
     console.error('Tracks endpoint error:', error);
     res.status(500).json({ 
