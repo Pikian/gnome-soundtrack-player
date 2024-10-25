@@ -1,0 +1,12 @@
+{
+  "track1.mp3": {
+    "name": "Track One",
+    "description": "An amazing song",
+    "image": "track1.jpg"
+  },
+  "track2.mp3": {
+    "name": "Track Two",
+    "description": "Another great song",
+    "image": "track2.jpg"
+  }
+}
