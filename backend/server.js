@@ -110,7 +110,12 @@ const app = express();
 
 
 
-app.use(cors());
+// Update CORS configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend-railway-url.up.railway.app']  // You'll get this URL after frontend deploys
+    : 'http://localhost:3000'
+}));
 
 
 
