@@ -63,3 +63,4 @@ Both services use Railway config files for build and deploy settings:
 - `frontend/railway.toml`
 
 ## File Structure
+ 
