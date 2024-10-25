@@ -3,12 +3,14 @@ node_modules/
 /.pnp
 .pnp.js
 
-# Testing
-/coverage
-
 # Production
 /frontend/build
 /frontend/dist
+
+# Railway specific
+**/railway.json
+**/nixpacks.toml
+**/Procfile
 
 # Environment files
 .env
@@ -44,6 +46,4 @@ Thumbs.db
 !/backend/images/.gitkeep
 
 # Additional files to ignore
-Procfile
-**/nixpacks.toml
 frontend/railway.json
