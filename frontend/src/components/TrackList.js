@@ -579,22 +579,25 @@ function TrackList({ onPlayTrack, currentTrack }) {
         console.log('Debug media response:', response.data);
       })
       .catch(error => {
-        console.error('Debug media error:', error);
+        console.error('Debug media error:', error.response?.data || error);
       });
 
-    // Fetch tracks
-    axios.get(`${process.env.REACT_APP_API_URL}/tracks`, { 
-      withCredentials: true 
-    })
+    // Fetch tracks with better error logging
+    axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
       .then(response => {
         console.log('Tracks response:', response.data);
-        setTracks(response.data);
+        if (Array.isArray(response.data)) {
+          setTracks(response.data);
+        } else {
+          console.error('Unexpected tracks response:', response.data);
+        }
       })
       .catch(error => {
         console.error('Error fetching tracks:', {
           message: error.message,
           response: error.response?.data,
-          status: error.response?.status
+          status: error.response?.status,
+          error
         });
       });
 

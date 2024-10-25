@@ -62,34 +62,35 @@ const formatDuration = (seconds) => {
 // Endpoint to get the list of tracks
 app.get('/tracks', async (req, res) => {
   try {
-    console.log('Received request for /tracks');
-    // Check if directory exists
+    console.log('Tracks request received');
+    console.log('Media directory:', mediaDirectory);
+    
     if (!fs.existsSync(mediaDirectory)) {
       console.error('Media directory does not exist:', mediaDirectory);
       return res.status(500).json({ error: 'Media directory not found' });
     }
+
     const files = fs.readdirSync(mediaDirectory)
       .filter(file => file.endsWith('.mp3'));
+    console.log('MP3 files found:', files);
     
     const tracks = await Promise.all(files.map(async (filename) => {
       try {
         const filepath = path.join(mediaDirectory, filename);
-        let metadata = {};
+        console.log('Processing file:', filepath);
         
-        // Try to read metadata file
+        let metadata = {};
         try {
           metadata = JSON.parse(fs.readFileSync(path.join(__dirname, 'metadata.json'), 'utf-8'));
+          console.log('Metadata loaded for:', filename);
         } catch (err) {
           console.warn('Could not read metadata.json:', err.message);
-          metadata = {};
         }
         
         const trackInfo = metadata[filename] || {};
-        
-        // Get audio duration
         const duration = await getAudioDurationInSeconds(filepath);
         
-        return {
+        const track = {
           id: filename,
           filename,
           name: trackInfo.name || filename.replace('.mp3', ''),
@@ -97,19 +98,21 @@ app.get('/tracks', async (req, res) => {
           image: trackInfo.image || 'default.jpg',
           duration: formatDuration(duration)
         };
+        console.log('Track info created:', track);
+        return track;
       } catch (err) {
         console.error('Error processing track:', filename, err);
         return null;
       }
     }));
 
-    // Filter out any null entries from errors
     const validTracks = tracks.filter(track => track !== null);
+    console.log('Valid tracks:', validTracks);
     
     res.json(validTracks);
   } catch (error) {
-    console.error('Detailed error in /tracks:', util.inspect(error, { depth: null }));
-    res.status(500).json({ error: 'Failed to read tracks: ' + error.message, stack: error.stack });
+    console.error('Error in /tracks:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
