@@ -5,6 +5,7 @@ node_modules/
 .env
 .env.local
 .env.*.local
+!.env.example
 
 # production
 build/
@@ -19,3 +20,6 @@ yarn-error.log*
 # Keep media files for now
 # backend/media/*
 # !backend/media/.gitkeep
+
+# temp files
+*.tmp
