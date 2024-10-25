@@ -1,0 +1,15 @@
+.App {
+  min-height: 100vh;
+  background-color: #121212;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding-top: 64px; /* Added top padding */
+  padding-bottom: 100px;
+}
+
+/* Rest of your App.css styles... */
