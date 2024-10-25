@@ -1,49 +1,21 @@
-# Dependencies
+# dependencies
 node_modules/
-/.pnp
-.pnp.js
 
-# Production
-/frontend/build
-/frontend/dist
-
-# Railway specific
-**/railway.json
-**/nixpacks.toml
-**/Procfile
-
-# Environment files
+# environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
-# Logs
+# production
+build/
+dist/
+
+# misc
+.DS_Store
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Editor directories and files
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Backend specific
-/backend/music/*
-!/backend/music/.gitkeep
-/backend/images/*
-!/backend/images/.gitkeep
-
-# Additional files to ignore
-frontend/railway.json
+# Keep media files for now
+# backend/media/*
+# !backend/media/.gitkeep

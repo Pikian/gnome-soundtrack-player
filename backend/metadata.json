@@ -1,12 +1,35 @@
 {
-  "track1.mp3": {
-    "name": "Your Track Title",
-    "description": "Track description (optional)",
-    "image": "track1.jpg"
+
+  "Main Theme V4 (w subbass).mp3": {
+
+    "name": "Main Theme",
+
+    "description": "Main theme with subbass",
+
+    "image": "default.jpg"
+
   },
-  "track2.mp3": {
-    "name": "Another Track Title",
-    "description": "Another description",
-    "image": "track2.jpg"
+
+  "Kohorn Sample Florins Theme (1).mp3": {
+
+    "name": "Florin's Theme",
+
+    "description": "Kohorn Sample",
+
+    "image": "default.jpg"
+
+  },
+
+  "Tomtarnas Tema V1.mp3": {
+
+    "name": "Tomtarnas Tema",
+
+    "description": "Version 1",
+
+    "image": "default.jpg"
+
   }
+
 }
+
+

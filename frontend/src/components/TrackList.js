@@ -574,18 +574,38 @@ function TrackList({ onPlayTrack, currentTrack }) {
 
   useEffect(() => {
     // Fetch tracks
-    axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
-      .then(response => setTracks(response.data))
-      .catch(error => console.error('Error fetching tracks:', error));
+    axios.get(`${process.env.REACT_APP_API_URL}/tracks`, { 
+      withCredentials: true 
+    })
+      .then(response => {
+        console.log('Tracks response:', response.data);
+        setTracks(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching tracks:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+      });
 
     // Fetch album info
-    axios.get(`${process.env.REACT_APP_API_URL}/album-info`)
+    axios.get(`${process.env.REACT_APP_API_URL}/album-info`, { 
+      withCredentials: true 
+    })
       .then(response => {
+        console.log('Album info response:', response.data);
         if (response.data.coverImage) {
           setAlbumCover(`${process.env.REACT_APP_API_URL}${response.data.coverImage}`);
         }
       })
-      .catch(error => console.error('Error fetching album info:', error));
+      .catch(error => {
+        console.error('Error fetching album info:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+      });
   }, []);
 
 
