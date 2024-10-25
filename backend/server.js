@@ -1373,7 +1373,7 @@ app.get('/tracks/:filename', (req, res) => {
 
 
 // Use PORT from environment variables
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
 });
