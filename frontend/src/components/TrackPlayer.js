@@ -12,7 +12,7 @@ function TrackPlayer() {
       <Link to="/" className="back-button">← Back to Library</Link>
       <h2>{decodeURIComponent(filename).replace('.mp3', '')}</h2>
       <AudioPlayer
-        src={`http://localhost:3001/tracks/${encodeURIComponent(filename)}`}
+        src={`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`}
         autoPlay
         showSkipControls={false}
         showJumpControls={true}

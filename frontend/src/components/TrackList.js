@@ -573,181 +573,19 @@ function TrackList({ onPlayTrack, currentTrack }) {
 
 
   useEffect(() => {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Fetch tracks
-
-    axios.get('http://localhost:3001/tracks')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
       .then(response => setTracks(response.data))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       .catch(error => console.error('Error fetching tracks:', error));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Fetch album info
-
-    axios.get('http://localhost:3001/album-info')
-
+    axios.get(`${process.env.REACT_APP_API_URL}/album-info`)
       .then(response => {
-
         if (response.data.coverImage) {
-
-          setAlbumCover(`http://localhost:3001${response.data.coverImage}`);
-
+          setAlbumCover(`${process.env.REACT_APP_API_URL}${response.data.coverImage}`);
         }
-
       })
-
       .catch(error => console.error('Error fetching album info:', error));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }, []);
 
 
