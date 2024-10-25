@@ -17,27 +17,23 @@ console.log('Port:', process.env.PORT);
 
 const app = express();
 
-// Update CORS configuration with more permissive settings for development
+// Update CORS configuration
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
     const allowedOrigins = [
       'http://localhost:3000',
       'http://192.168.1.37:3000',
-      'https://frontend-production-8b85.up.railway.app'  // Production URL preserved
+      'https://frontend-production-8b85.up.railway.app',
+      'https://frontend-production-b5db.up.railway.app'  // Add your new frontend URL
     ];
     
     console.log('Request origin:', origin);
     console.log('Allowed origins:', allowedOrigins);
     
-    if (allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error(`Not allowed by CORS: ${origin}`));
     }
   },
   credentials: true,
