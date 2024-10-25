@@ -110,7 +110,7 @@ function App() {
 
 
 
-              src={`http://localhost:3001/tracks/${encodeURIComponent(currentTrack.filename)}`}
+              src={`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(currentTrack.filename)}`}
 
 
 

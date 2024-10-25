@@ -114,7 +114,8 @@ const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://frontend-production-8b85.up.railway.app']
-    : 'http://localhost:3000'
+    : 'http://localhost:3000',
+  credentials: true
 }));
 
 

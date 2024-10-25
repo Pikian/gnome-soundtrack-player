@@ -1,12 +1,12 @@
 {
   "track1.mp3": {
-    "name": "Track One",
-    "description": "An amazing song",
+    "name": "Your Track Title",
+    "description": "Track description (optional)",
     "image": "track1.jpg"
   },
   "track2.mp3": {
-    "name": "Track Two",
-    "description": "Another great song",
+    "name": "Another Track Title",
+    "description": "Another description",
     "image": "track2.jpg"
   }
 }
