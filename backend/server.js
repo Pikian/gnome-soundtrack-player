@@ -113,7 +113,7 @@ const app = express();
 // Update CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-railway-url.up.railway.app']  // You'll get this URL after frontend deploys
+    ? ['https://frontend-production-8b85.up.railway.app']
     : 'http://localhost:3000'
 }));
 
@@ -1371,54 +1371,10 @@ app.get('/tracks/:filename', (req, res) => {
 
 
 
+// Use PORT from environment variables
 const PORT = process.env.PORT || 3001;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.listen(PORT, () => {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   console.log(`Backend server is running on port ${PORT}`);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
 
 
