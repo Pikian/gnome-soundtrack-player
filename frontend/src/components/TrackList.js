@@ -573,6 +573,15 @@ function TrackList({ onPlayTrack, currentTrack }) {
 
 
   useEffect(() => {
+    // Add debug request
+    axios.get(`${process.env.REACT_APP_API_URL}/debug-media`)
+      .then(response => {
+        console.log('Debug media response:', response.data);
+      })
+      .catch(error => {
+        console.error('Debug media error:', error);
+      });
+
     // Fetch tracks
     axios.get(`${process.env.REACT_APP_API_URL}/tracks`, { 
       withCredentials: true 

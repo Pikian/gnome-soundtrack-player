@@ -227,3 +227,30 @@ app.post('/upload', upload.array('files'), (req, res) => {
     res.status(500).json({ error: 'Upload failed: ' + error.message });
   }
 });
+
+// Add this debug endpoint near your other endpoints
+app.get('/debug-media', (req, res) => {
+  try {
+    const files = fs.readdirSync(mediaDirectory);
+    const stats = {
+      directory: mediaDirectory,
+      exists: fs.existsSync(mediaDirectory),
+      files: files,
+      fileDetails: files.map(file => {
+        const filepath = path.join(mediaDirectory, file);
+        return {
+          name: file,
+          size: fs.statSync(filepath).size,
+          type: path.extname(file)
+        };
+      })
+    };
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack,
+      mediaDirectory
+    });
+  }
+});
