@@ -42,3 +42,8 @@ Thumbs.db
 !/backend/music/.gitkeep
 /backend/images/*
 !/backend/images/.gitkeep
+
+# Additional files to ignore
+Procfile
+**/nixpacks.toml
+frontend/railway.json
