@@ -65,27 +65,36 @@ app.get('/tracks', async (req, res) => {
     console.log('Tracks request received');
     console.log('Media directory:', mediaDirectory);
     
+    // Check if directory exists and log its contents
     if (!fs.existsSync(mediaDirectory)) {
       console.error('Media directory does not exist:', mediaDirectory);
       return res.status(500).json({ error: 'Media directory not found' });
     }
 
-    const files = fs.readdirSync(mediaDirectory)
-      .filter(file => file.endsWith('.mp3'));
+    // Log all files in the directory
+    const allFiles = fs.readdirSync(mediaDirectory);
+    console.log('All files in directory:', allFiles);
+
+    // Filter MP3 files
+    const files = allFiles.filter(file => file.endsWith('.mp3'));
     console.log('MP3 files found:', files);
     
+    // Try to read metadata.json from the media directory
+    let metadata = {};
+    try {
+      const metadataPath = path.join(mediaDirectory, 'metadata.json');  // Changed this line
+      console.log('Looking for metadata at:', metadataPath);
+      metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+      console.log('Metadata loaded:', metadata);
+    } catch (err) {
+      console.error('Error reading metadata:', err);
+    }
+    
+    // Process each track
     const tracks = await Promise.all(files.map(async (filename) => {
       try {
         const filepath = path.join(mediaDirectory, filename);
         console.log('Processing file:', filepath);
-        
-        let metadata = {};
-        try {
-          metadata = JSON.parse(fs.readFileSync(path.join(__dirname, 'metadata.json'), 'utf-8'));
-          console.log('Metadata loaded for:', filename);
-        } catch (err) {
-          console.warn('Could not read metadata.json:', err.message);
-        }
         
         const trackInfo = metadata[filename] || {};
         const duration = await getAudioDurationInSeconds(filepath);
@@ -107,12 +116,17 @@ app.get('/tracks', async (req, res) => {
     }));
 
     const validTracks = tracks.filter(track => track !== null);
-    console.log('Valid tracks:', validTracks);
+    console.log('Sending tracks:', validTracks);
     
     res.json(validTracks);
   } catch (error) {
     console.error('Error in /tracks:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: error.message,
+      stack: error.stack,
+      mediaDirectory,
+      exists: fs.existsSync(mediaDirectory)
+    });
   }
 });
 
