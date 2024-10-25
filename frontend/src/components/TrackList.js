@@ -596,7 +596,8 @@ function TrackList({ onPlayTrack, currentTrack }) {
       .then(response => {
         console.log('Album info response:', response.data);
         if (response.data.coverImage) {
-          setAlbumCover(`${process.env.REACT_APP_API_URL}${response.data.coverImage}`);
+          // Update path to use /media
+          setAlbumCover(`${process.env.REACT_APP_API_URL}/media/${response.data.coverImage.replace('/media/', '')}`);
         }
       })
       .catch(error => {
