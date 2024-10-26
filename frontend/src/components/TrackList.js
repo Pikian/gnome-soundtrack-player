@@ -170,18 +170,19 @@ function TrackList({ onPlayTrack, currentTrack }) {
 
   const calculateTotalDuration = (tracks) => {
     const totalSeconds = tracks.reduce((total, track) => {
-      const [minutes, seconds] = track.duration.split(':');
-      return total + (parseInt(minutes) * 60) + parseInt(seconds);
+      const [minutes, seconds] = track.duration.split(':').map(Number);
+      if (isNaN(minutes) || isNaN(seconds)) return total;
+      return total + (minutes * 60) + seconds;
     }, 0);
     
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    const seconds = Math.floor(totalSeconds % 60);
     
     if (hours > 0) {
       return `${hours} hr ${minutes} min`;
     }
-    return `${minutes} min ${seconds} sec`;
+    return `${minutes} min ${seconds.toString().padStart(2, '0')} sec`;
   };
 
   useEffect(() => {
@@ -192,6 +193,10 @@ function TrackList({ onPlayTrack, currentTrack }) {
       .then(response => {
         console.log('Full tracks response:', response);
         if (Array.isArray(response.data)) {
+          // Log each track's duration
+          response.data.forEach(track => {
+            console.log(`Track ${track.name} duration:`, track.duration);
+          });
           setTracks(response.data);
         } else {
           console.error('Unexpected tracks response:', response.data);
@@ -219,7 +224,9 @@ function TrackList({ onPlayTrack, currentTrack }) {
       });
   }, []);
 
+  // Calculate total duration and log it
   const totalDuration = calculateTotalDuration(tracks);
+  console.log('Total duration:', totalDuration);
 
   return (
     <div className="album-view">
