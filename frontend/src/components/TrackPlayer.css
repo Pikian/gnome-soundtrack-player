@@ -1,20 +1,162 @@
-.track-player {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.back-button {
-  display: inline-block;
-  padding: 10px 20px;
-  color: #333;
-  text-decoration: none;
-  margin-bottom: 20px;
-}
-
-.back-button:hover {
-  color: #1db954;
-}
+.track-player {
+
+  max-width: 800px;
+
+  margin: 40px auto;
+
+  padding: 20px;
+
+  color: white;
+
+}
+
+
+
+.back-button {
+
+  display: inline-block;
+
+  padding: 10px 20px;
+
+  color: #b3b3b3;
+
+  text-decoration: none;
+
+  margin-bottom: 20px;
+
+}
+
+
+
+.back-button:hover {
+
+  color: #1db954;
+
+}
+
+
+
+/* Audio Player Styling */
+
+.rhap_container {
+
+  background-color: #282828 !important;
+
+  box-shadow: none !important;
+
+  padding: 15px !important;
+
+  border-radius: 8px;
+
+}
+
+
+
+.rhap_main-controls-button {
+
+  color: #fff !important;
+
+  margin: 0 8px !important;
+
+}
+
+
+
+.rhap_play-pause-button {
+
+  font-size: 24px !important;
+
+  width: 40px !important;
+
+  height: 40px !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+}
+
+
+
+.rhap_play-pause-button svg {
+
+  width: 16px;
+
+  height: 16px;
+
+}
+
+
+
+.rhap_progress-filled {
+
+  background-color: #1db954 !important;
+
+}
+
+
+
+.rhap_progress-indicator {
+
+  background: #1db954 !important;
+
+}
+
+
+
+.rhap_progress-bar {
+
+  background-color: #4f4f4f !important;
+
+}
+
+
+
+.rhap_time {
+
+  color: #b3b3b3 !important;
+
+}
+
+
+
+.rhap_volume-button {
+
+  color: #fff !important;
+
+}
+
+
+
+.rhap_volume-bar {
+
+  background-color: #4f4f4f !important;
+
+}
+
+
+
+.rhap_volume-indicator {
+
+  background: #1db954 !important;
+
+}
+
+
+
+/* Track title styling */
+
+.track-player h2 {
+
+  color: white;
+
+  margin-bottom: 20px;
+
+  font-size: 1.5rem;
+
+}
+
+
+
