@@ -1,173 +1,338 @@
-import React, { useState } from 'react';
-
-
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-
-
-import TrackList from './components/TrackList';
-
-
-
-import AudioPlayer from 'react-h5-audio-player';
-
-
-
-import 'react-h5-audio-player/lib/styles.css';
-
-
-
-import './App.css';
-
-
-
-
-
-
-
-function App() {
-
-
-
-  const [currentTrack, setCurrentTrack] = useState(null);
-
-
-
-
-
-
-
-  const handlePlay = (track) => {
-
-
-
-    setCurrentTrack(track);
-
-
-
-  };
-
-
-
-
-
-
-
-  return (
-
-
-
-    <Router>
-
-
-
-      <div className="App">
-
-
-
-        <div className="content">
-
-
-
-          <Routes>
-
-
-
-            <Route path="/" element={<TrackList onPlayTrack={handlePlay} currentTrack={currentTrack} />} />
-
-
-
-          </Routes>
-
-
-
-        </div>
-
-
-
-        {currentTrack && (
-
-
-
-          <div className="player-container">
-
-
-
-            <div className="now-playing">
-
-
-
-              <h3>{currentTrack.name}</h3>
-
-
-
-            </div>
-
-
-
-            <AudioPlayer
-
-
-
-              src={`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(currentTrack.filename)}`}
-
-
-
-              autoPlay
-
-
-
-              showSkipControls={false}
-
-
-
-              showJumpControls={true}
-
-
-
-              layout="stacked-reverse"
-
-
-
-            />
-
-
-
-          </div>
-
-
-
-        )}
-
-
-
-      </div>
-
-
-
-    </Router>
-
-
-
-  );
-
-
-
-}
-
-
-
-
-
-
-
-export default App;
-
-
-
-
-
-
-
-
+import React, { useState, useEffect } from 'react';
+
+
+
+
+
+
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+
+
+
+
+
+
+import TrackList from './components/TrackList';
+
+
+
+
+
+
+
+import TrackPlayer from './components/TrackPlayer';
+
+
+
+
+
+
+
+import Login from './components/Login';
+
+
+
+
+
+
+
+import './App.css';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function App() {
+
+
+
+
+
+
+
+  const [currentTrack, setCurrentTrack] = useState(null);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+
+    const auth = localStorage.getItem('isAuthenticated');
+
+    if (auth === 'true') {
+
+      setIsAuthenticated(true);
+
+    }
+
+  }, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if (!isAuthenticated) {
+
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  return (
+
+
+
+
+
+
+
+    <Router>
+
+
+
+
+
+
+
+      <div className="App">
+
+
+
+
+
+
+
+        <div className="content">
+
+
+
+
+
+
+
+          <Routes>
+
+
+
+
+
+
+
+            <Route path="/" element={<TrackList onPlayTrack={setCurrentTrack} currentTrack={currentTrack} />} />
+
+
+
+
+
+
+
+            <Route path="/play/:filename" element={<TrackPlayer />} />
+
+
+
+
+
+
+
+          </Routes>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        {currentTrack && (
+
+
+
+
+
+
+
+          <div className="player-container">
+
+
+
+
+
+
+
+            <div className="now-playing">
+
+
+
+
+
+
+
+              <h3>{currentTrack.name}</h3>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+            <TrackPlayer filename={currentTrack.filename} />
+
+
+
+
+
+
+
+          </div>
+
+
+
+
+
+
+
+        )}
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </Router>
+
+
+
+
+
+
+
+  );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
