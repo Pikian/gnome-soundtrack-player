@@ -6,6 +6,7 @@ const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
 const util = require('util');
 const multer = require('multer');
+const mm = require('music-metadata');
 
 // Load environment variables
 dotenv.config();
@@ -55,7 +56,8 @@ app.use('/media', express.static(mediaDirectory));
 // Add this helper function at the top with other helpers
 const getDuration = async (filepath) => {
   try {
-    const duration = await getAudioDurationInSeconds(filepath);
+    const metadata = await mm.parseFile(filepath);
+    const duration = metadata.format.duration;
     console.log(`Duration for ${filepath}:`, duration);
     return duration;
   } catch (error) {
@@ -77,63 +79,46 @@ const formatDuration = (seconds) => {
 app.get('/tracks', async (req, res) => {
   try {
     console.log('\n=== Tracks Request ===');
+    console.log('Media directory:', mediaDirectory);
     
-    // List all files
     const allFiles = fs.readdirSync(mediaDirectory);
-    console.log('All files in directory:', allFiles);
+    console.log('All files:', allFiles);
 
-    // Filter MP3 files
     const mp3Files = allFiles.filter(file => file.toLowerCase().endsWith('.mp3'));
     console.log('MP3 files found:', mp3Files);
 
-    // Read metadata
-    let metadata = {};
-    try {
-      metadata = JSON.parse(fs.readFileSync(path.join(mediaDirectory, 'metadata.json'), 'utf-8'));
-      console.log('Metadata loaded:', metadata);
-    } catch (err) {
-      console.warn('Could not read metadata:', err);
-    }
-
-    // Process tracks with duration
     const tracks = await Promise.all(mp3Files.map(async filename => {
       try {
         const filepath = path.join(mediaDirectory, filename);
-        console.log('Processing file:', filepath);
+        console.log('Processing:', filepath);
         
-        // Get duration with better error handling
-        let duration = 0;
-        try {
-          duration = await getDuration(filepath);
-          console.log(`Duration for ${filename}:`, duration);
-        } catch (err) {
-          console.error(`Failed to get duration for ${filename}:`, err);
-        }
+        // Get metadata including duration
+        const metadata = await mm.parseFile(filepath);
+        const duration = metadata.format.duration || 0;
+        console.log(`Duration for ${filename}:`, duration);
 
         return {
           id: filename,
           filename,
           name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
-          duration: formatDuration(duration || 0)
+          duration: formatDuration(duration)
         };
       } catch (err) {
         console.error('Error processing track:', filename, err);
-        return null;
+        return {
+          id: filename,
+          filename,
+          name: filename.replace('.mp3', ''),
+          duration: '0:00'
+        };
       }
     }));
 
-    const validTracks = tracks.filter(Boolean);
-    console.log('Final tracks array:', validTracks);
-
-    res.json(validTracks);
+    console.log('Final tracks:', tracks);
+    res.json(tracks);
   } catch (error) {
-    console.error('Tracks endpoint error:', error);
-    res.status(500).json({ 
-      error: error.message, 
-      stack: error.stack,
-      mediaDirectory,
-      exists: fs.existsSync(mediaDirectory)
-    });
+    console.error('Error in /tracks:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
