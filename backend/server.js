@@ -52,10 +52,24 @@ console.log('Media directory:', mediaDirectory);
 // Serve static files from media directory
 app.use('/media', express.static(mediaDirectory));
 
+// Add this helper function at the top with other helpers
+const getDuration = async (filepath) => {
+  try {
+    const duration = await getAudioDurationInSeconds(filepath);
+    console.log(`Duration for ${filepath}:`, duration);
+    return duration;
+  } catch (error) {
+    console.error(`Error getting duration for ${filepath}:`, error);
+    throw error;
+  }
+};
+
 // Helper function to format duration
 const formatDuration = (seconds) => {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  
   const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
+  const remainingSeconds = Math.round(seconds % 60);
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
@@ -81,33 +95,37 @@ app.get('/tracks', async (req, res) => {
       console.warn('Could not read metadata:', err);
     }
 
-    // Process tracks without duration first
-    const tracks = mp3Files.map(filename => ({
-      id: filename,
-      filename,
-      name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
-      duration: '0:00'  // Default duration
+    // Process tracks with duration
+    const tracks = await Promise.all(mp3Files.map(async filename => {
+      try {
+        const filepath = path.join(mediaDirectory, filename);
+        console.log('Processing file:', filepath);
+        
+        // Get duration with better error handling
+        let duration = 0;
+        try {
+          duration = await getDuration(filepath);
+          console.log(`Duration for ${filename}:`, duration);
+        } catch (err) {
+          console.error(`Failed to get duration for ${filename}:`, err);
+        }
+
+        return {
+          id: filename,
+          filename,
+          name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
+          duration: formatDuration(duration || 0)
+        };
+      } catch (err) {
+        console.error('Error processing track:', filename, err);
+        return null;
+      }
     }));
 
-    console.log('Initial tracks array:', tracks);
+    const validTracks = tracks.filter(Boolean);
+    console.log('Final tracks array:', validTracks);
 
-    // Try to get durations
-    for (let track of tracks) {
-      try {
-        const filepath = path.join(mediaDirectory, track.filename);
-        console.log('Getting duration for:', filepath);
-        const duration = await getAudioDurationInSeconds(filepath);
-        track.duration = formatDuration(duration);
-        console.log('Duration set for', track.filename, ':', track.duration);
-      } catch (err) {
-        console.error('Error getting duration for', track.filename, ':', err);
-        // Keep the default duration
-      }
-    }
-
-    console.log('Final tracks array:', tracks);
-    res.json(tracks);
-
+    res.json(validTracks);
   } catch (error) {
     console.error('Tracks endpoint error:', error);
     res.status(500).json({ 
