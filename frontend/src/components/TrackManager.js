@@ -368,25 +368,18 @@ function TrackManager() {
 
 
 
-            {renderTrackSection('Completed', trackList.completed)}
+            {/* Score section */}
+            {renderTrackSection('Score', trackList.score)}
 
+            {/* Gnome Music section with separator */}
+            <div className="track-section separator">
+              {renderTrackSection('Gnome Music', trackList.gnomeMusic)}
+            </div>
 
-
-            {renderTrackSection('In Progress', trackList.inProgress)}
-
-
-
-            {renderTrackSection('Narrative', trackList.narrative)}
-
-
-
-            {renderTrackSection('Themes', trackList.themes)}
-
-
-
-            {renderTrackSection('Next Production', trackList.nextProduction)}
-
-
+            {/* Outside Scope section with separator */}
+            <div className="track-section separator">
+              {renderTrackSection('Outside Current Scope', trackList.outsideScope)}
+            </div>
 
           </>
 

@@ -1,162 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import axios from 'axios';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'; // Install with: npm install react-icons
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import './TrackList.css';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function TrackList({ onPlayTrack, currentTrack }) {
   const [tracks, setTracks] = useState([]);
@@ -213,21 +58,19 @@ function TrackList({ onPlayTrack, currentTrack }) {
     });
   }, []);
 
-  // Combine all tracks from trackList
+  // Update the getAllTracks function
   const getAllTracks = () => {
     if (!trackList) return [];
     
     const allTracks = [
-      ...trackList.completed,
-      ...trackList.inProgress,
-      ...trackList.narrative,
-      ...trackList.themes,
-      ...trackList.nextProduction
+      ...trackList.score,
+      ...trackList.gnomeMusic,
+      ...trackList.outsideScope
     ];
 
-    // Sort tracks: completed first, then in_progress, then planned
+    // Sort tracks: ready first, then planned
     return allTracks.sort((a, b) => {
-      const statusOrder = { completed: 0, in_progress: 1, planned: 2 };
+      const statusOrder = { ready: 0, planned: 1 };
       return statusOrder[a.status] - statusOrder[b.status];
     });
   };
@@ -347,7 +190,89 @@ function TrackList({ onPlayTrack, currentTrack }) {
             Status {getSortIcon('status')}
           </div>
         </div>
-        {sortTracks(allTracks, sortConfig).map((track, index) => {
+        
+        {/* Score section */}
+        {sortTracks(trackList?.score || [], sortConfig).map((track, index) => {
+          // Find matching track from tracks array to get duration
+          const trackFile = tracks.find(t => t.filename === track.filename);
+          const duration = trackFile?.duration || '--:--';
+          
+          return (
+            <div 
+              key={track.id}
+              className={`track-row ${track.status} ${currentTrack?.id === track.id ? 'playing' : ''} ${!track.filename ? 'unavailable' : ''}`}
+              onClick={() => handleTrackClick(track)}
+            >
+              <div className="track-number">
+                {track.filename ? (
+                  currentTrack?.id === track.id ? 
+                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    <FaPlay className="play-icon" />
+                ) : (
+                  <span className="track-status-icon">
+                    {track.status === 'in_progress' ? '⏳' : '📝'}
+                  </span>
+                )}
+                <span className="number">{index + 1}</span>
+              </div>
+              <div className="track-title">{track.title}</div>
+              <div className="track-duration">
+                {duration}
+              </div>
+              <div className="track-status">
+                {track.filename ? 'Ready' : 'Planned'}
+              </div>
+            </div>
+          );
+        })}
+        
+        {/* Divider for Gnome Music */}
+        <div className="section-divider">
+          <h3>Gnome Music</h3>
+        </div>
+        
+        {/* Gnome Music section */}
+        {sortTracks(trackList?.gnomeMusic || [], sortConfig).map((track, index) => {
+          // Find matching track from tracks array to get duration
+          const trackFile = tracks.find(t => t.filename === track.filename);
+          const duration = trackFile?.duration || '--:--';
+          
+          return (
+            <div 
+              key={track.id}
+              className={`track-row ${track.status} ${currentTrack?.id === track.id ? 'playing' : ''} ${!track.filename ? 'unavailable' : ''}`}
+              onClick={() => handleTrackClick(track)}
+            >
+              <div className="track-number">
+                {track.filename ? (
+                  currentTrack?.id === track.id ? 
+                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    <FaPlay className="play-icon" />
+                ) : (
+                  <span className="track-status-icon">
+                    {track.status === 'in_progress' ? '⏳' : '📝'}
+                  </span>
+                )}
+                <span className="number">{index + 1}</span>
+              </div>
+              <div className="track-title">{track.title}</div>
+              <div className="track-duration">
+                {duration}
+              </div>
+              <div className="track-status">
+                {track.filename ? 'Ready' : 'Planned'}
+              </div>
+            </div>
+          );
+        })}
+        
+        {/* Divider for Outside Scope */}
+        <div className="section-divider">
+          <h3>Outside Current Scope</h3>
+        </div>
+        
+        {/* Outside Scope section */}
+        {sortTracks(trackList?.outsideScope || [], sortConfig).map((track, index) => {
           // Find matching track from tracks array to get duration
           const trackFile = tracks.find(t => t.filename === track.filename);
           const duration = trackFile?.duration || '--:--';

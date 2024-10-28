@@ -1,9 +1,9 @@
 {
   "completed": [
     {
-      "id": "dark-forest",
-      "title": "The Dark Forest",
-      "filename": "DFT 20241017.mp3",
+      "id": "unique-id",
+      "title": "Track Title",
+      "filename": "file.mp3",
       "status": "ready"
     }
   ],
@@ -86,6 +86,120 @@
     }
   ],
   "nextProduction": [
+    {
+      "id": "game-trailer",
+      "title": "The Game Trailer",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "main-menu",
+      "title": "Main Menu",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "score": [
+    {
+      "id": "dark-forest",
+      "title": "The Dark Forest",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-lake",
+      "title": "The Dark Forest - Lakes",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-hallmark",
+      "title": "The Dark Forest - Hällmark",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-mire",
+      "title": "The Dark Forest - Mire",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-burnt",
+      "title": "The Dark Forest - Burnt Forest",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "home-theme",
+      "title": "Home Theme",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-1",
+      "title": "Narrative I",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-2",
+      "title": "Narrative II",
+      "filename": "Tomtarnas Tema V1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "narrative-3",
+      "title": "Narrative III",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-4",
+      "title": "Narrative IV",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "florins-theme",
+      "title": "Florin's Theme",
+      "filename": "Kohorn Sample Florins Theme (1).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "crescent-moon",
+      "title": "Crescent Moon",
+      "filename": "Main Theme V4 (w subbass).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "magic-hour",
+      "title": "Magic Hour",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "combat",
+      "title": "Combat",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "gnomeMusic": [
+    {
+      "id": "gnome-diegetic-1",
+      "title": "Gnome Diegetic I",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "gnome-diegetic-2",
+      "title": "Gnome Diegetic II",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "outsideScope": [
     {
       "id": "game-trailer",
       "title": "The Game Trailer",
