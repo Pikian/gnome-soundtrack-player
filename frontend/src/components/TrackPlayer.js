@@ -1,10 +1,10 @@
 import React from 'react';
 import AudioPlayer from 'react-h5-audio-player';
-import { FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import 'react-h5-audio-player/lib/styles.css';
 import './TrackPlayer.css';
 
-function TrackPlayer({ filename, onPlayStateChange, onEnded }) {
+function TrackPlayer({ filename, onPlayStateChange, onEnded, onNext, onPrevious }) {
   // Construct audio source URL
   const audioSrc = filename 
     ? `${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`
@@ -15,7 +15,7 @@ function TrackPlayer({ filename, onPlayStateChange, onEnded }) {
       <AudioPlayer
         src={audioSrc}
         autoPlay
-        showSkipControls={false}
+        showSkipControls={true}
         showJumpControls={false}
         showFilledVolume={true}
         layout="stacked-reverse"
@@ -23,7 +23,9 @@ function TrackPlayer({ filename, onPlayStateChange, onEnded }) {
         customIcons={{
           play: <FaPlay />,
           pause: <FaPause />,
-          volume: <FaVolumeUp />
+          volume: <FaVolumeUp />,
+          forward: <FaStepForward />,
+          rewind: <FaStepBackward />,
         }}
         onPlay={() => onPlayStateChange(true)}
         onPause={() => onPlayStateChange(false)}
@@ -31,6 +33,8 @@ function TrackPlayer({ filename, onPlayStateChange, onEnded }) {
           onPlayStateChange(false);
           if (onEnded) onEnded();
         }}
+        onClickNext={onNext}
+        onClickPrevious={onPrevious}
       />
     </div>
   );

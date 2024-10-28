@@ -2042,6 +2042,26 @@ function App() {
     }
   };
 
+  const handleNextTrack = () => {
+    if (playlist.length > 0) {
+      const currentIndex = playlist.findIndex(t => t.id === currentTrack.id);
+      if (currentIndex < playlist.length - 1) {
+        setCurrentTrack(playlist[currentIndex + 1]);
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const handlePreviousTrack = () => {
+    if (playlist.length > 0) {
+      const currentIndex = playlist.findIndex(t => t.id === currentTrack.id);
+      if (currentIndex > 0) {
+        setCurrentTrack(playlist[currentIndex - 1]);
+        setIsPlaying(true);
+      }
+    }
+  };
+
   useEffect(() => {
     const auth = localStorage.getItem('isAuthenticated');
     if (auth === 'true') {
@@ -2084,6 +2104,8 @@ function App() {
               filename={currentTrack.filename}
               onPlayStateChange={setIsPlaying}
               onEnded={handleTrackEnd}
+              onNext={handleNextTrack}
+              onPrevious={handlePreviousTrack}
               key={currentTrack.filename}
             />
           </div>
