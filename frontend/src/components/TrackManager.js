@@ -155,51 +155,28 @@ function TrackManager() {
 
 
   const handleAssignFile = async (trackId, filename) => {
-
     try {
-
       setError(null);
-
       console.log('Assigning file:', { trackId, filename });
-
       
-
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/assign-track`, {
-
         trackId,
-
-        filename
-
+        filename: filename === 'none' ? null : filename  // Convert 'none' selection to null
       });
-
       
-
       console.log('Assignment response:', response.data);
-
       
-
       // Refresh the data
-
       await fetchData();
-
       
-
       // If the file was removed, deselect the track
-
-      if (!filename) {
-
+      if (filename === 'none') {
         setSelectedTrack(null);
-
       }
-
     } catch (error) {
-
       console.error('Error assigning file:', error);
-
       setError(error.response?.data?.error || 'Failed to assign file');
-
     }
-
   };
 
 
@@ -465,42 +442,15 @@ function TrackManager() {
 
 
 
-            value={selectedTrack.filename || ''}
-
-
-
+            value={selectedTrack.filename || 'none'}
             onChange={(e) => handleAssignFile(selectedTrack.id, e.target.value)}
-
-
-
           >
-
-
-
-            <option value="">-- Select a file --</option>
-
-
-
+            <option value="none">-- No file assigned --</option>
             {availableFiles.map(file => (
-
-
-
               <option key={file.filename} value={file.filename}>
-
-
-
                 {file.filename}
-
-
-
               </option>
-
-
-
             ))}
-
-
-
           </select>
 
 
