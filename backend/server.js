@@ -83,11 +83,8 @@ app.get('/tracks', async (req, res) => {
     console.log('Media directory:', mediaDirectory);
     
     const allFiles = fs.readdirSync(mediaDirectory);
-    console.log('All files:', allFiles);
-
     const mp3Files = allFiles.filter(file => file.toLowerCase().endsWith('.mp3'));
-    console.log('MP3 files found:', mp3Files);
-
+    
     const tracks = await Promise.all(mp3Files.map(async filename => {
       try {
         const filepath = path.join(mediaDirectory, filename);
@@ -95,14 +92,21 @@ app.get('/tracks', async (req, res) => {
         
         // Get metadata including duration
         const metadata = await mm.parseFile(filepath);
-        const duration = metadata.format.duration || 0;
-        console.log(`Duration for ${filename}:`, duration);
+        const duration = Math.round(metadata.format.duration || 0);
+        
+        // Format duration properly
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.round(duration % 60);
+        const formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        console.log(`Duration for ${filename}:`, formattedDuration);
 
         return {
           id: filename,
           filename,
-          name: (metadata[filename] || {}).name || filename.replace('.mp3', ''),
-          duration: formatDuration(duration)
+          name: filename.replace('.mp3', ''),
+          rawDuration: duration,
+          duration: formattedDuration
         };
       } catch (err) {
         console.error('Error processing track:', filename, err);
@@ -110,7 +114,8 @@ app.get('/tracks', async (req, res) => {
           id: filename,
           filename,
           name: filename.replace('.mp3', ''),
-          duration: '0:00'
+          rawDuration: 0,
+          duration: '--:--'
         };
       }
     }));
@@ -273,6 +278,81 @@ app.get('/debug', (req, res) => {
       corsOrigin: process.env.CORS_ORIGIN,
       currentWorkingDir: process.cwd(),
       dirname: __dirname
+    };
+    res.json(debug);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack
+    });
+  }
+});
+
+// Add these endpoints after your existing ones
+
+// Get track list
+app.get('/track-list', (req, res) => {
+  try {
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    res.json(trackList);
+  } catch (error) {
+    console.error('Error reading track list:', error);
+    res.status(500).json({ error: 'Failed to read track list' });
+  }
+});
+
+// Assign file to track
+app.post('/assign-track', express.json(), (req, res) => {
+  try {
+    console.log('Received assign track request:', req.body);
+    const { trackId, filename } = req.body;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    
+    console.log('Reading track list from:', trackListPath);
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Find and update the track
+    let updated = false;
+    Object.entries(trackList).forEach(([section, tracks]) => {
+      tracks.forEach(track => {
+        if (track.id === trackId) {
+          console.log(`Updating track ${trackId}:`, {
+            before: track,
+            after: { ...track, filename, status: filename ? 'ready' : 'planned' }
+          });
+          track.filename = filename;
+          track.status = filename ? 'ready' : 'planned';
+          updated = true;
+        }
+      });
+    });
+
+    if (!updated) {
+      console.log('Track not found:', trackId);
+      return res.status(404).json({ error: 'Track not found' });
+    }
+
+    // Save the updated track list
+    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+    console.log('Track list updated successfully');
+    res.json({ message: 'Track updated successfully', trackList });
+  } catch (error) {
+    console.error('Error assigning track:', error);
+    res.status(500).json({ error: 'Failed to assign track: ' + error.message });
+  }
+});
+
+// Add this debug endpoint
+app.get('/debug-tracklist', (req, res) => {
+  try {
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const debug = {
+      path: trackListPath,
+      exists: fs.existsSync(trackListPath),
+      contents: fs.existsSync(trackListPath) 
+        ? JSON.parse(fs.readFileSync(trackListPath, 'utf8'))
+        : null
     };
     res.json(debug);
   } catch (error) {

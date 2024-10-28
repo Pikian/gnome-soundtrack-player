@@ -62,7 +62,7 @@ import axios from 'axios';
 
 
 
-import { FaPlay, FaPause, FaMusic } from 'react-icons/fa'; // Install with: npm install react-icons
+import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'; // Install with: npm install react-icons
 
 
 
@@ -160,7 +160,14 @@ import './TrackList.css';
 
 function TrackList({ onPlayTrack, currentTrack }) {
   const [tracks, setTracks] = useState([]);
+  const [trackList, setTrackList] = useState(null);
   const [albumCover, setAlbumCover] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'asc'
+  });
+
   const [albumInfo] = useState({
     title: "Gnome - The Story of a Revel",
     subtitle: "Original Soundtrack",
@@ -170,9 +177,7 @@ function TrackList({ onPlayTrack, currentTrack }) {
 
   const calculateTotalDuration = (tracks) => {
     const totalSeconds = tracks.reduce((total, track) => {
-      const [minutes, seconds] = track.duration.split(':').map(Number);
-      if (isNaN(minutes) || isNaN(seconds)) return total;
-      return total + (minutes * 60) + seconds;
+      return total + (track.rawDuration || 0);
     }, 0);
     
     const hours = Math.floor(totalSeconds / 3600);
@@ -188,40 +193,109 @@ function TrackList({ onPlayTrack, currentTrack }) {
   useEffect(() => {
     console.log('API URL:', process.env.REACT_APP_API_URL);
     
-    // Fetch tracks
-    axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
-      .then(response => {
-        console.log('Tracks API Response:', response.data);
-        if (Array.isArray(response.data)) {
-          setTracks(response.data);
-        } else {
-          console.error('Unexpected tracks response format:', response.data);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching tracks:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status
-        });
-      });
-
-    // Fetch album info
-    axios.get(`${process.env.REACT_APP_API_URL}/album-info`)
-      .then(response => {
-        console.log('Album info response:', response.data);
-        if (response.data.coverImage) {
-          setAlbumCover(`${process.env.REACT_APP_API_URL}${response.data.coverImage}`);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching album info:', error);
-      });
+    // Fetch both tracks and track list
+    Promise.all([
+      axios.get(`${process.env.REACT_APP_API_URL}/tracks`),
+      axios.get(`${process.env.REACT_APP_API_URL}/track-list`),
+      axios.get(`${process.env.REACT_APP_API_URL}/album-info`)
+    ]).then(([tracksRes, trackListRes, albumInfoRes]) => {
+      console.log('Tracks API Response:', tracksRes.data);
+      console.log('Track List Response:', trackListRes.data);
+      
+      setTracks(tracksRes.data);
+      setTrackList(trackListRes.data);
+      
+      if (albumInfoRes.data.coverImage) {
+        setAlbumCover(`${process.env.REACT_APP_API_URL}${albumInfoRes.data.coverImage}`);
+      }
+    }).catch(error => {
+      console.error('Error fetching data:', error);
+    });
   }, []);
 
-  // Calculate total duration and log it
+  // Combine all tracks from trackList
+  const getAllTracks = () => {
+    if (!trackList) return [];
+    
+    const allTracks = [
+      ...trackList.completed,
+      ...trackList.inProgress,
+      ...trackList.narrative,
+      ...trackList.themes,
+      ...trackList.nextProduction
+    ];
+
+    // Sort tracks: completed first, then in_progress, then planned
+    return allTracks.sort((a, b) => {
+      const statusOrder = { completed: 0, in_progress: 1, planned: 2 };
+      return statusOrder[a.status] - statusOrder[b.status];
+    });
+  };
+
+  const handleTrackClick = (track) => {
+    if (!track.filename) return; // Don't handle clicks for tracks without files
+    
+    if (currentTrack?.id === track.id) {
+      const audioElement = document.querySelector('.rhap_main-controls-button');
+      if (audioElement) {
+        audioElement.click();
+        setIsPlaying(!isPlaying);
+      }
+    } else {
+      onPlayTrack({
+        ...track,
+        name: track.title // Use title from trackList instead of filename
+      });
+      setIsPlaying(true);
+    }
+  };
+
+  const sortTracks = (tracks, sortConfig) => {
+    if (!sortConfig.key) return tracks;
+
+    return [...tracks].sort((a, b) => {
+      if (sortConfig.key === 'duration') {
+        const aDuration = a.rawDuration || 0;
+        const bDuration = b.rawDuration || 0;
+        return sortConfig.direction === 'asc' ? aDuration - bDuration : bDuration - aDuration;
+      }
+
+      if (sortConfig.key === 'title') {
+        return sortConfig.direction === 'asc' 
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      }
+
+      if (sortConfig.key === 'status') {
+        const statusOrder = { ready: 1, planned: 2 };
+        const aOrder = statusOrder[a.status] || 999;
+        const bOrder = statusOrder[b.status] || 999;
+        return sortConfig.direction === 'asc' ? aOrder - bOrder : bOrder - aOrder;
+      }
+
+      return 0;
+    });
+  };
+
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (columnName) => {
+    if (sortConfig.key !== columnName) {
+      return <FaSort className="sort-icon" />;
+    }
+    return sortConfig.direction === 'asc' ? 
+      <FaSortUp className="sort-icon active" /> : 
+      <FaSortDown className="sort-icon active" />;
+  };
+
+  const allTracks = getAllTracks();
   const totalDuration = calculateTotalDuration(tracks);
-  console.log('Total duration:', totalDuration);
 
   return (
     <div className="album-view">
@@ -254,26 +328,58 @@ function TrackList({ onPlayTrack, currentTrack }) {
       <div className="tracks-table">
         <div className="tracks-header">
           <div className="track-number">#</div>
-          <div className="track-title">Title</div>
-          <div className="track-duration">Duration</div>
-        </div>
-        {tracks.map((track, index) => (
           <div 
-            key={track.id}
-            className={`track-row ${currentTrack?.id === track.id ? 'playing' : ''}`}
-            onClick={() => onPlayTrack(track)}
+            className="track-title sortable"
+            onClick={() => requestSort('title')}
           >
-            <div className="track-number">
-              {currentTrack?.id === track.id ? 
-                <FaPause className="play-icon" /> : 
-                <FaPlay className="play-icon" />
-              }
-              <span className="number">{index + 1}</span>
-            </div>
-            <div className="track-title">{track.name}</div>
-            <div className="track-duration">{track.duration}</div>
+            Title {getSortIcon('title')}
           </div>
-        ))}
+          <div 
+            className="track-duration sortable"
+            onClick={() => requestSort('duration')}
+          >
+            Duration {getSortIcon('duration')}
+          </div>
+          <div 
+            className="track-status sortable"
+            onClick={() => requestSort('status')}
+          >
+            Status {getSortIcon('status')}
+          </div>
+        </div>
+        {sortTracks(allTracks, sortConfig).map((track, index) => {
+          // Find matching track from tracks array to get duration
+          const trackFile = tracks.find(t => t.filename === track.filename);
+          const duration = trackFile?.duration || '--:--';
+          
+          return (
+            <div 
+              key={track.id}
+              className={`track-row ${track.status} ${currentTrack?.id === track.id ? 'playing' : ''} ${!track.filename ? 'unavailable' : ''}`}
+              onClick={() => handleTrackClick(track)}
+            >
+              <div className="track-number">
+                {track.filename ? (
+                  currentTrack?.id === track.id ? 
+                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    <FaPlay className="play-icon" />
+                ) : (
+                  <span className="track-status-icon">
+                    {track.status === 'in_progress' ? '⏳' : '📝'}
+                  </span>
+                )}
+                <span className="number">{index + 1}</span>
+              </div>
+              <div className="track-title">{track.title}</div>
+              <div className="track-duration">
+                {duration}
+              </div>
+              <div className="track-status">
+                {track.filename ? 'Ready' : 'Planned'}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

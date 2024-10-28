@@ -1,0 +1,102 @@
+{
+  "completed": [
+    {
+      "id": "dark-forest",
+      "title": "The Dark Forest",
+      "filename": "DFT 20241017.mp3",
+      "status": "ready"
+    }
+  ],
+  "inProgress": [
+    {
+      "id": "dark-forest-lake",
+      "title": "The Dark Forest: Lake",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-hallmark",
+      "title": "The Dark Forest: Hällmark",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-mire",
+      "title": "The Dark Forest: Mire",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "dark-forest-burnt",
+      "title": "The Dark Forest: Burnt Forest",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "home-theme",
+      "title": "Home Theme",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "narrative": [
+    {
+      "id": "narrative-1",
+      "title": "Narrative I",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-2",
+      "title": "Narrative II",
+      "filename": "Tomtarnas Tema V1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "narrative-3",
+      "title": "Narrative III",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-4",
+      "title": "Narrative IV",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "themes": [
+    {
+      "id": "florins-theme",
+      "title": "Florin's Theme",
+      "filename": "Kohorn Sample Florins Theme (1).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "crescent-moon",
+      "title": "Crescent Moon",
+      "filename": "Main Theme V4 (w subbass).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "magic-hour",
+      "title": "Magic Hour",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "nextProduction": [
+    {
+      "id": "game-trailer",
+      "title": "The Game Trailer",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "main-menu",
+      "title": "Main Menu",
+      "filename": null,
+      "status": "planned"
+    }
+  ]
+}

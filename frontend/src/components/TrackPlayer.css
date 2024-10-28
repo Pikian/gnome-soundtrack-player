@@ -1,162 +1,132 @@
-.track-player {
-
-  max-width: 800px;
-
-  margin: 40px auto;
-
-  padding: 20px;
-
-  color: white;
-
-}
-
-
-
-.back-button {
-
-  display: inline-block;
-
-  padding: 10px 20px;
-
-  color: #b3b3b3;
-
-  text-decoration: none;
-
-  margin-bottom: 20px;
-
-}
-
-
-
-.back-button:hover {
-
-  color: #1db954;
-
-}
-
-
-
-/* Audio Player Styling */
-
-.rhap_container {
-
-  background-color: #282828 !important;
-
-  box-shadow: none !important;
-
-  padding: 15px !important;
-
-  border-radius: 8px;
-
-}
-
-
-
-.rhap_main-controls-button {
-
-  color: #fff !important;
-
-  margin: 0 8px !important;
-
-}
-
-
-
-.rhap_play-pause-button {
-
-  font-size: 24px !important;
-
-  width: 40px !important;
-
-  height: 40px !important;
-
-  display: flex !important;
-
-  align-items: center !important;
-
-  justify-content: center !important;
-
-}
-
-
-
-.rhap_play-pause-button svg {
-
-  width: 16px;
-
-  height: 16px;
-
-}
-
-
-
-.rhap_progress-filled {
-
-  background-color: #1db954 !important;
-
-}
-
-
-
-.rhap_progress-indicator {
-
-  background: #1db954 !important;
-
-}
-
-
-
-.rhap_progress-bar {
-
-  background-color: #4f4f4f !important;
-
-}
-
-
-
-.rhap_time {
-
-  color: #b3b3b3 !important;
-
-}
-
-
-
-.rhap_volume-button {
-
-  color: #fff !important;
-
-}
-
-
-
-.rhap_volume-bar {
-
-  background-color: #4f4f4f !important;
-
-}
-
-
-
-.rhap_volume-indicator {
-
-  background: #1db954 !important;
-
-}
-
-
-
-/* Track title styling */
-
-.track-player h2 {
-
-  color: white;
-
-  margin-bottom: 20px;
-
-  font-size: 1.5rem;
-
-}
-
-
-
+.track-player {
+  width: 100%;
+}
+
+/* Spotify-like player styling */
+.spotify-player.rhap_container {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Progress bar section */
+.spotify-player .rhap_progress-section {
+  margin: 0 !important;
+  padding: 0 15% !important; /* Add padding to reduce progress bar width */
+}
+
+.spotify-player .rhap_progress-container {
+  margin: 0 !important;
+}
+
+.spotify-player .rhap_progress-bar {
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.spotify-player .rhap_progress-filled {
+  background: #1db954 !important;
+}
+
+.spotify-player .rhap_progress-indicator {
+  width: 12px !important;
+  height: 12px !important;
+  margin-left: -6px !important;
+  top: -4px !important;
+  background: #fff !important;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) !important;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.spotify-player:hover .rhap_progress-indicator {
+  opacity: 1;
+}
+
+/* Hide download progress bar */
+.spotify-player .rhap_download-progress {
+  display: none !important;
+}
+
+/* Controls */
+.spotify-player .rhap_controls-section {
+  margin: 0 !important;
+  padding: 0 8px !important;
+}
+
+.spotify-player .rhap_main-controls-button {
+  color: #fff !important;
+  margin: 0 4px !important;
+}
+
+.spotify-player .rhap_play-pause-button {
+  width: 32px !important;
+  height: 32px !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  color: #000 !important;
+  transition: transform 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+.spotify-player .rhap_play-pause-button svg {
+  width: 14px !important;
+  height: 14px !important;
+  margin: 0 !important;
+  margin-left: 2px !important;
+}
+
+.spotify-player .rhap_play-pause-button:hover {
+  transform: scale(1.05);
+  background: #f8f8f8 !important;
+}
+
+/* Adjust pause icon specifically */
+.spotify-player .rhap_play-pause-button[aria-label="Pause"] svg {
+  margin-left: 0 !important;
+}
+
+/* Volume controls */
+.spotify-player .rhap_volume-controls {
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.spotify-player .rhap_volume-button {
+  color: #b3b3b3 !important;
+}
+
+.spotify-player .rhap_volume-bar {
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Time display */
+.spotify-player .rhap_time {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  min-width: 40px !important; /* Add minimum width to prevent jumping */
+  text-align: center !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .spotify-player .rhap_volume-controls {
+    display: none !important;
+  }
+
+  .spotify-player .rhap_play-pause-button {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /* Adjust progress bar padding for mobile */
+  .spotify-player .rhap_progress-section {
+    padding: 0 8% !important;
+  }
+}
