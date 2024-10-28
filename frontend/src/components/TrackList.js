@@ -191,23 +191,18 @@ function TrackList({ onPlayTrack, currentTrack }) {
     // Fetch tracks
     axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
       .then(response => {
-        console.log('Full tracks response:', response);
+        console.log('Tracks API Response:', response.data);
         if (Array.isArray(response.data)) {
-          // Log each track's duration
-          response.data.forEach(track => {
-            console.log(`Track ${track.name} duration:`, track.duration);
-          });
           setTracks(response.data);
         } else {
-          console.error('Unexpected tracks response:', response.data);
+          console.error('Unexpected tracks response format:', response.data);
         }
       })
       .catch(error => {
-        console.error('Detailed tracks error:', {
+        console.error('Error fetching tracks:', {
           message: error.message,
-          response: error.response,
-          request: error.request,
-          config: error.config
+          response: error.response?.data,
+          status: error.response?.status
         });
       });
 

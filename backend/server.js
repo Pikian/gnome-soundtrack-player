@@ -23,9 +23,10 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
       'http://localhost:3000',
+      'http://localhost:3006',  // Add this line
       'http://192.168.1.37:3000',
       'https://frontend-production-8b85.up.railway.app',
-      'https://frontend-production-b5db.up.railway.app'  // Add your new frontend URL
+      'https://frontend-production-b5db.up.railway.app'
     ];
     
     console.log('Request origin:', origin);
@@ -257,6 +258,27 @@ app.get('/debug-media', (req, res) => {
       error: error.message,
       stack: error.stack,
       mediaDirectory
+    });
+  }
+});
+
+// Add this debug endpoint
+app.get('/debug', (req, res) => {
+  try {
+    const debug = {
+      environment: process.env.NODE_ENV,
+      mediaDirectory,
+      mediaExists: fs.existsSync(mediaDirectory),
+      mediaContents: fs.existsSync(mediaDirectory) ? fs.readdirSync(mediaDirectory) : [],
+      corsOrigin: process.env.CORS_ORIGIN,
+      currentWorkingDir: process.cwd(),
+      dirname: __dirname
+    };
+    res.json(debug);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack
     });
   }
 });
