@@ -261,3 +261,44 @@
     height: 48px;
   }
 }
+
+/* Update play button styles */
+.play-all-button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #1db954;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: fit-content;
+  align-self: flex-start;
+}
+
+.play-all-button:hover {
+  background-color: #1ed760;
+  transform: scale(1.02);
+}
+
+.play-all-button svg {
+  font-size: 1rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .play-all-button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    align-self: center;
+  }
+  
+  .play-all-button svg {
+    font-size: 0.9rem;
+  }
+}

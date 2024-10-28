@@ -4,7 +4,7 @@ import { FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa';
 import 'react-h5-audio-player/lib/styles.css';
 import './TrackPlayer.css';
 
-function TrackPlayer({ filename, onPlayStateChange }) {
+function TrackPlayer({ filename, onPlayStateChange, onEnded }) {
   // Construct audio source URL
   const audioSrc = filename 
     ? `${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`
@@ -27,7 +27,10 @@ function TrackPlayer({ filename, onPlayStateChange }) {
         }}
         onPlay={() => onPlayStateChange(true)}
         onPause={() => onPlayStateChange(false)}
-        onEnded={() => onPlayStateChange(false)}
+        onEnded={() => {
+          onPlayStateChange(false);
+          if (onEnded) onEnded();
+        }}
       />
     </div>
   );

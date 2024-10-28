@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'; // Install with: npm install react-icons
+import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown, FaPlayCircle } from 'react-icons/fa'; // Install with: npm install react-icons
 import './TrackList.css';
 
-function TrackList({ onPlayTrack, currentTrack }) {
+function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trackListData }) {
   const [tracks, setTracks] = useState([]);
   const [trackList, setTrackList] = useState(null);
   const [albumCover, setAlbumCover] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'asc'
@@ -58,6 +57,12 @@ function TrackList({ onPlayTrack, currentTrack }) {
     });
   }, []);
 
+  useEffect(() => {
+    if (trackListData) {
+      setTrackList(trackListData);
+    }
+  }, [trackListData]);
+
   // Update the getAllTracks function
   const getAllTracks = () => {
     if (!trackList) return [];
@@ -82,14 +87,12 @@ function TrackList({ onPlayTrack, currentTrack }) {
       const audioElement = document.querySelector('.rhap_main-controls-button');
       if (audioElement) {
         audioElement.click();
-        setIsPlaying(!isPlaying);
       }
     } else {
       onPlayTrack({
         ...track,
         name: track.title // Use title from trackList instead of filename
       });
-      setIsPlaying(true);
     }
   };
 
@@ -140,6 +143,14 @@ function TrackList({ onPlayTrack, currentTrack }) {
   const allTracks = getAllTracks();
   const totalDuration = calculateTotalDuration(tracks);
 
+  // Add this function to play all tracks
+  const handlePlayAll = () => {
+    const playableTracks = getAllTracks().filter(track => track.filename);
+    if (playableTracks.length > 0) {
+      onPlayTrack(playableTracks[0]);
+    }
+  };
+
   return (
     <div className="album-view">
       <div className="album-header">
@@ -165,6 +176,9 @@ function TrackList({ onPlayTrack, currentTrack }) {
             <span className="dot">•</span>
             <span className="total-duration">{totalDuration}</span>
           </div>
+          <button className="play-all-button" onClick={handlePlayAll}>
+            <FaPlayCircle /> Play All
+          </button>
         </div>
       </div>
 
@@ -206,7 +220,7 @@ function TrackList({ onPlayTrack, currentTrack }) {
               <div className="track-number">
                 {track.filename ? (
                   currentTrack?.id === track.id ? 
-                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    (playerIsPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
                     <FaPlay className="play-icon" />
                 ) : (
                   <span className="track-status-icon">
@@ -246,7 +260,7 @@ function TrackList({ onPlayTrack, currentTrack }) {
               <div className="track-number">
                 {track.filename ? (
                   currentTrack?.id === track.id ? 
-                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    (playerIsPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
                     <FaPlay className="play-icon" />
                 ) : (
                   <span className="track-status-icon">
@@ -286,7 +300,7 @@ function TrackList({ onPlayTrack, currentTrack }) {
               <div className="track-number">
                 {track.filename ? (
                   currentTrack?.id === track.id ? 
-                    (isPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
+                    (playerIsPlaying ? <FaPause className="play-icon" /> : <FaPlay className="play-icon" />) : 
                     <FaPlay className="play-icon" />
                 ) : (
                   <span className="track-status-icon">
