@@ -586,3 +586,59 @@
     padding-top: 20px;
   }
 }
+
+/* Add these styles for the login form */
+.track-manager-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  padding: 20px;
+}
+
+.track-manager-login .login-box {
+  background-color: #282828;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.track-manager-login h2 {
+  color: #fff;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.track-manager-login .password-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #3e3e3e;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.track-manager-login .password-input:focus {
+  outline: 2px solid #1db954;
+}
+
+.track-manager-login .login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.track-manager-login .login-button:hover {
+  background-color: #1ed760;
+}

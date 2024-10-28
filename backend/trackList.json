@@ -29,14 +29,14 @@
     {
       "id": "dark-forest-burnt",
       "title": "The Dark Forest: Burnt Forest",
-      "filename": null,
-      "status": "planned"
+      "filename": "DFT NY241015 draft mixpaket + burnt forest-stråk.mp3",
+      "status": "ready"
     },
     {
       "id": "home-theme",
       "title": "Home Theme",
-      "filename": null,
-      "status": "planned"
+      "filename": "Crafting Layer.mp3",
+      "status": "ready"
     }
   ],
   "narrative": [
@@ -81,8 +81,8 @@
     {
       "id": "magic-hour",
       "title": "Magic Hour",
-      "filename": null,
-      "status": "planned"
+      "filename": "magic hour.mp3",
+      "status": "ready"
     }
   ],
   "nextProduction": [
@@ -103,8 +103,8 @@
     {
       "id": "dark-forest",
       "title": "The Dark Forest",
-      "filename": null,
-      "status": "planned"
+      "filename": "DFT 20241017.mp3",
+      "status": "ready"
     },
     {
       "id": "dark-forest-lake",
@@ -127,14 +127,14 @@
     {
       "id": "dark-forest-burnt",
       "title": "The Dark Forest - Burnt Forest",
-      "filename": null,
-      "status": "planned"
+      "filename": "DFT NY241015 draft mixpaket + burnt forest-stråk.mp3",
+      "status": "ready"
     },
     {
       "id": "home-theme",
       "title": "Home Theme",
-      "filename": null,
-      "status": "planned"
+      "filename": "Crafting Layer.mp3",
+      "status": "ready"
     },
     {
       "id": "narrative-1",
@@ -175,14 +175,14 @@
     {
       "id": "magic-hour",
       "title": "Magic Hour",
-      "filename": null,
-      "status": "planned"
+      "filename": "magic hour.mp3",
+      "status": "ready"
     },
     {
       "id": "combat",
       "title": "Combat",
-      "filename": null,
-      "status": "planned"
+      "filename": "Combat Score 1 (Kohorn_Stravinskij).mp3",
+      "status": "ready"
     }
   ],
   "gnomeMusic": [

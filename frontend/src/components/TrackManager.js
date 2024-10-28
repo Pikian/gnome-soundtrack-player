@@ -42,6 +42,14 @@ function TrackManager() {
 
 
 
+  const [isManagerAuthenticated, setIsManagerAuthenticated] = useState(false);
+
+
+
+  const [managerPassword, setManagerPassword] = useState('');
+
+
+
 
 
 
@@ -84,9 +92,13 @@ function TrackManager() {
 
   useEffect(() => {
 
-    fetchData();
+    if (isManagerAuthenticated) {
 
-  }, []);
+      fetchData();
+
+    }
+
+  }, [isManagerAuthenticated]);
 
 
 
@@ -293,6 +305,50 @@ function TrackManager() {
 
 
   );
+
+
+
+
+
+
+
+  const handleManagerLogin = (e) => {
+    e.preventDefault();
+    if (managerPassword === 'bark') {
+      setIsManagerAuthenticated(true);
+      setManagerPassword('');
+      setError(null);
+    } else {
+      setError('Incorrect password');
+    }
+  };
+
+
+
+
+
+
+
+  if (!isManagerAuthenticated) {
+    return (
+      <div className="track-manager-login">
+        <div className="login-box">
+          <h2>Track Manager Access</h2>
+          <form onSubmit={handleManagerLogin}>
+            <input
+              type="password"
+              value={managerPassword}
+              onChange={(e) => setManagerPassword(e.target.value)}
+              placeholder="Enter password"
+              className="password-input"
+            />
+            {error && <div className="error-message">{error}</div>}
+            <button type="submit" className="login-button">Enter</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
 
 
