@@ -85,22 +85,17 @@ function TrackManager() {
   const renderTrackItem = (track, isSubtrack = false) => {
     const isExpanded = expandedTracks.has(track.id);
     const hasSubtracks = track.subtracks && track.subtracks.length > 0;
-    const isSelected = selectedTrack?.id === track.id;
 
     return (
       <React.Fragment key={track.id}>
         <div 
-          className={`track-item ${track.status} ${isSelected ? 'selected' : ''} ${isSubtrack ? 'subtrack' : ''}`}
-          onClick={() => setSelectedTrack(track)}
+          className={`track-item ${track.status} ${isSubtrack ? 'subtrack' : ''}`}
         >
           <div className="track-info">
             {hasSubtracks && (
               <span 
                 className="expand-icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleTrackExpansion(track.id);
-                }}
+                onClick={() => toggleTrackExpansion(track.id)}
               >
                 {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
               </span>
@@ -111,7 +106,22 @@ function TrackManager() {
               {track.type === 'substem' && <span className="substem-label">substem</span>}
             </span>
           </div>
-          {track.filename && (
+          {editMode && (
+            <select 
+              value={track.filename || 'none'}
+              onChange={(e) => handleAssignFile(track.id, e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              className="file-select"
+            >
+              <option value="none">-- No file --</option>
+              {availableFiles.map(file => (
+                <option key={file.filename} value={file.filename}>
+                  {file.filename}
+                </option>
+              ))}
+            </select>
+          )}
+          {!editMode && track.filename && (
             <div className="track-file">
               <FaPlay className="play-icon" />
               <span className="filename">{track.filename}</span>
@@ -310,26 +320,16 @@ function TrackManager() {
                 {trackList.outsideScope.map(track => renderTrackItem(track))}
               </div>
             </div>
+
+            <div className="track-section separator">
+              <h3>Bonus & Unassigned</h3>
+              <div className="track-list">
+                {trackList.bonusUnassigned.map(track => renderTrackItem(track))}
+              </div>
+            </div>
           </>
         )}
       </div>
-
-      {selectedTrack && editMode && (
-        <div className="file-assignment">
-          <h3>Assign File to "{selectedTrack.title}"</h3>
-          <select 
-            value={selectedTrack.filename || 'none'}
-            onChange={(e) => handleAssignFile(selectedTrack.id, e.target.value)}
-          >
-            <option value="none">-- No file assigned --</option>
-            {availableFiles.map(file => (
-              <option key={file.filename} value={file.filename}>
-                {file.filename}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
 
       {renderMediaLibrary()}
     </div>
