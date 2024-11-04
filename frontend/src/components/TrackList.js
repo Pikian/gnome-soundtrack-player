@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown, FaPlayCircle, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaPlay, FaPause, FaMusic, FaSort, FaSortUp, FaSortDown, FaPlayCircle, FaChevronDown, FaChevronRight, FaDownload } from 'react-icons/fa';
 import './TrackList.css';
 
 function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trackListData, onPlayStateChange }) {
@@ -198,6 +198,14 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
     });
   };
 
+  const handleDownload = (e, track) => {
+    e.stopPropagation(); // Prevent track click
+    if (track.filename) {
+      const downloadUrl = `${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(track.filename)}/download`;
+      window.open(downloadUrl, '_blank');
+    }
+  };
+
   const renderTrackRow = (track, index, isSubtrack = false) => {
     const isExpanded = expandedTracks.has(track.id);
     const hasSubtracks = track.subtracks && track.subtracks.length > 0;
@@ -231,26 +239,36 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
             <span className="number">{!isSubtrack && index + 1}</span>
           </div>
           <div className="track-title">
-            {track.title}
-            {track.type === 'substem' && <span className="substem-label">substem</span>}
-            {hasSubtracks && !isSubtrack && <span className="stems-label">stems</span>}
-            {hasSubtracks && (
-              <span 
-                className="expand-icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleTrackExpansion(track.id);
-                }}
-              >
-                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-              </span>
-            )}
+            <span className="title-text">{track.title}</span>
+            <div className="track-controls">
+              {track.filename && (
+                <span 
+                  className="download-icon-wrapper"
+                  onClick={(e) => handleDownload(e, track)}
+                  title="Download track"
+                >
+                  <FaDownload className="download-icon" />
+                </span>
+              )}
+              <div className="badge-container">
+                {track.type === 'substem' && <span className="substem-label">substem</span>}
+                {hasSubtracks && !isSubtrack && <span className="stems-label">stems</span>}
+              </div>
+              {hasSubtracks && (
+                <span 
+                  className="expand-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTrackExpansion(track.id);
+                  }}
+                >
+                  {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+                </span>
+              )}
+            </div>
           </div>
           <div className="track-duration">
             {duration}
-          </div>
-          <div className="track-status">
-            {track.filename ? 'Ready' : 'Planned'}
           </div>
         </div>
         {hasSubtracks && isExpanded && (
@@ -309,12 +327,6 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
             onClick={() => requestSort('duration')}
           >
             Duration {getSortIcon('duration')}
-          </div>
-          <div 
-            className="track-status sortable"
-            onClick={() => requestSort('status')}
-          >
-            Status {getSortIcon('status')}
           </div>
         </div>
         

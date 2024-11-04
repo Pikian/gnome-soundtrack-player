@@ -401,3 +401,77 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
+
+// Add this endpoint for downloads
+app.get('/tracks/:filename/download', (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(mediaDirectory, filename);
+
+  console.log('Download request:', {
+    filename,
+    filepath,
+    exists: fs.existsSync(filepath)
+  });
+
+  // Check if file exists
+  if (!fs.existsSync(filepath)) {
+    console.log('Track not found:', filepath);
+    return res.status(404).json({ error: 'Track not found' });
+  }
+
+  // Set headers for download
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.setHeader('Content-Type', 'audio/mpeg');
+  
+  // Stream the file
+  const fileStream = fs.createReadStream(filepath);
+  fileStream.pipe(res);
+});
+
+// Add delete endpoint
+app.delete('/tracks/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(mediaDirectory, filename);
+
+  console.log('Delete request:', {
+    filename,
+    filepath,
+    exists: fs.existsSync(filepath)
+  });
+
+  try {
+    // Check if file exists
+    if (!fs.existsSync(filepath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    // Check if file is in use by any track
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    
+    const isFileInUse = Object.values(trackList).some(section =>
+      section.some(track => {
+        if (track.filename === filename) return true;
+        if (track.subtracks) {
+          return track.subtracks.some(subtrack => subtrack.filename === filename);
+        }
+        return false;
+      })
+    );
+
+    if (isFileInUse) {
+      return res.status(400).json({ 
+        error: 'File is currently assigned to a track. Unassign it first.' 
+      });
+    }
+
+    // Delete the file
+    fs.unlinkSync(filepath);
+    console.log('File deleted successfully:', filename);
+    
+    res.json({ message: 'File deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).json({ error: 'Failed to delete file: ' + error.message });
+  }
+});

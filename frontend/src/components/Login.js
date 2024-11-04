@@ -3,13 +3,13 @@ import './Login.css';
 
 function Login({ onLogin }) {
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === 'sebdev') {
-      onLogin();
+    if (password === 'bark') {
       localStorage.setItem('isAuthenticated', 'true');
+      onLogin();
     } else {
       setError('Incorrect password');
     }

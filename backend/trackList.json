@@ -16,8 +16,8 @@
         {
           "id": "dark-forest-hallmark",
           "title": "Biome - Hällmark",
-          "filename": "Hisaishi 1.mp3",
-          "status": "ready",
+          "filename": null,
+          "status": "planned",
           "type": "substem"
         },
         {
@@ -30,8 +30,8 @@
         {
           "id": "dark-forest-burnt",
           "title": "Biome - Burnt Forest",
-          "filename": "magic hour.mp3",
-          "status": "ready",
+          "filename": null,
+          "status": "planned",
           "type": "substem"
         },
         {
@@ -44,8 +44,8 @@
         {
           "id": "dark-forest-fear",
           "title": "Fear",
-          "filename": "Tomtarnas Tema V1.mp3",
-          "status": "ready",
+          "filename": null,
+          "status": "planned",
           "type": "substem"
         },
         {
@@ -100,8 +100,8 @@
         {
           "id": "dark-forest-heroic",
           "title": "Heroic",
-          "filename": "Crafting Layer.mp3",
-          "status": "ready",
+          "filename": null,
+          "status": "planned",
           "type": "substem"
         },
         {
@@ -198,8 +198,8 @@
     {
       "id": "narrative-4",
       "title": "Narrative IV",
-      "filename": null,
-      "status": "planned"
+      "filename": "Hisaishi 1.mp3",
+      "status": "ready"
     },
     {
       "id": "florins-theme",
@@ -210,7 +210,7 @@
     {
       "id": "crescent-moon",
       "title": "Crescent Moon",
-      "filename": "Main Theme V4 (w subbass).mp3",
+      "filename": "Hisaishi 1.mp3",
       "status": "ready"
     },
     {
@@ -222,8 +222,8 @@
     {
       "id": "combat",
       "title": "Combat",
-      "filename": "Combat Score 1 (Kohorn_Stravinskij).mp3",
-      "status": "ready"
+      "filename": null,
+      "status": "planned"
     }
   ],
   "gnomeMusic": [

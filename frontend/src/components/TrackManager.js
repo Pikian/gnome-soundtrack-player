@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash } from 'react-icons/fa';
 import './TrackManager.css';
 
 function TrackManager() {
@@ -12,6 +12,10 @@ function TrackManager() {
   const [isManagerAuthenticated, setIsManagerAuthenticated] = useState(false);
   const [managerPassword, setManagerPassword] = useState('');
   const [expandedTracks, setExpandedTracks] = useState(new Set());
+  const [uploadStatus, setUploadStatus] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -127,13 +131,121 @@ function TrackManager() {
 
   const handleManagerLogin = (e) => {
     e.preventDefault();
-    if (managerPassword === 'bark') {
+    if (managerPassword === 'zimmer') {
       setIsManagerAuthenticated(true);
       setManagerPassword('');
       setError(null);
     } else {
       setError('Incorrect password');
     }
+  };
+
+  const handleFileUpload = async (event) => {
+    const files = event.target.files;
+    if (!files.length) return;
+
+    setIsUploading(true);
+    setUploadStatus(null);
+
+    try {
+      const formData = new FormData();
+      Array.from(files).forEach(file => {
+        formData.append('files', file);
+      });
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/upload`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadStatus(`Uploading: ${percentCompleted}%`);
+          }
+        }
+      );
+
+      setUploadStatus('Upload successful!');
+      // Refresh available files list
+      fetchData();
+      
+      // Clear file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadStatus(`Upload failed: ${error.message}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteFile = async (filename) => {
+    if (!window.confirm(`Are you sure you want to delete ${filename}?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`);
+      setUploadStatus('File deleted successfully');
+      fetchData(); // Refresh the file list
+    } catch (error) {
+      console.error('Delete error:', error);
+      setUploadStatus(error.response?.data?.error || 'Failed to delete file');
+    }
+  };
+
+  const renderMediaLibrary = () => {
+    return (
+      <div className="media-library">
+        <div className="media-library-header">
+          <h3>Media Library</h3>
+          <input
+            type="file"
+            id="file-upload"
+            multiple
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            accept=".mp3,.wav"
+          />
+          <label 
+            htmlFor="file-upload" 
+            className={`upload-button ${isUploading ? 'uploading' : ''}`}
+            title="Upload audio files"
+          >
+            <FaUpload /> Upload Files
+          </label>
+        </div>
+
+        {uploadStatus && (
+          <div className={`upload-status ${uploadStatus.includes('failed') ? 'error' : 'success'}`}>
+            {uploadStatus}
+          </div>
+        )}
+
+        <div className="media-files">
+          {availableFiles.map(file => (
+            <div key={file.filename} className="media-file">
+              <div className="file-info">
+                <span className="filename">{file.filename}</span>
+                <span className="duration">{file.duration}</span>
+              </div>
+              <button 
+                className="delete-button"
+                onClick={() => handleDeleteFile(file.filename)}
+                title="Delete file"
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   if (!isManagerAuthenticated) {
@@ -218,6 +330,8 @@ function TrackManager() {
           </select>
         </div>
       )}
+
+      {renderMediaLibrary()}
     </div>
   );
 }

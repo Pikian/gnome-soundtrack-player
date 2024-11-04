@@ -1058,3 +1058,206 @@
 
 
 }
+
+/* Add to your existing styles */
+
+.manager-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #333;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.upload-button:hover {
+  background: #444;
+}
+
+.upload-button.uploading {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.upload-status {
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.upload-status.success {
+  background: rgba(29, 185, 84, 0.1);
+  border: 1px solid rgba(29, 185, 84, 0.2);
+  color: #1db954;
+}
+
+.upload-status.error {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  color: #ff4444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .manager-controls {
+    gap: 8px;
+  }
+
+  .upload-button,
+  .edit-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+.file-selector {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.file-selector select {
+  flex: 1;
+}
+
+.delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ff4444;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-button:hover {
+  background: #ff6666;
+}
+
+.delete-button svg {
+  font-size: 14px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .delete-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .delete-button svg {
+    font-size: 12px;
+  }
+}
+
+/* Add to your existing styles */
+
+.media-library {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #282828;
+}
+
+.media-library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.media-library-header h3 {
+  color: #b3b3b3;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.media-files {
+  display: grid;
+  gap: 8px;
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+.media-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #282828;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.media-file:hover {
+  background: #333;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.filename {
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.duration {
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .media-library {
+    margin-top: 32px;
+    padding-top: 20px;
+  }
+
+  .media-file {
+    padding: 10px 12px;
+  }
+
+  .file-info {
+    gap: 12px;
+  }
+
+  .filename {
+    font-size: 0.85rem;
+  }
+
+  .duration {
+    font-size: 0.75rem;
+  }
+}
+
+/* Ensure bottom padding for iPhone notch */
+@supports (padding: max(0px)) {
+  .media-files {
+    margin-bottom: max(20px, calc(20px + env(safe-area-inset-bottom)));
+  }
+}

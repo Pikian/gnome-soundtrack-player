@@ -73,7 +73,7 @@
 
 .tracks-header {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 0 16px;
   border-bottom: 1px solid #282828;
   color: #b3b3b3;
@@ -86,7 +86,7 @@
 
 .track-row {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -127,8 +127,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-right: 8px;
   gap: 8px;
+  min-width: 0;
+}
+
+.title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.badge-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .track-duration,
@@ -194,6 +213,7 @@
 .sort-icon {
   font-size: 12px;
   opacity: 0.5;
+  margin-left: 4px;
 }
 
 .sort-icon.active {
@@ -441,6 +461,10 @@
   margin-left: 8px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  line-height: 1;
 }
 
 .track-row.subtrack .track-number {
@@ -571,13 +595,17 @@
 /* Add this with your other label styles */
 .stems-label {
   font-size: 0.7rem;
-  color: #9B59B6;  /* Purple color to differentiate from substem green */
-  background: rgba(155, 89, 182, 0.1);
+  color: #1db954;
+  background: rgba(29, 185, 84, 0.1);
   padding: 2px 6px;
   border-radius: 10px;
   margin-left: 8px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  line-height: 1;
 }
 
 /* Update existing styles to handle both labels */
@@ -600,13 +628,30 @@
   .stems-label {
     font-size: 0.65rem;
     padding: 1px 4px;
+    height: 16px;
+    margin-left: 4px;
+  }
+
+  .track-title {
+    gap: 4px;
+    align-items: center;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 380px) {
+  .substem-label,
+  .stems-label {
+    font-size: 0.6rem;
+    padding: 1px 3px;
+    height: 14px;
   }
 }
 
 /* Update grid layout */
 .tracks-header {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 0 16px;
   border-bottom: 1px solid #282828;
   color: #b3b3b3;
@@ -619,7 +664,7 @@
 
 .track-row {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -629,12 +674,15 @@
 }
 
 /* Update duration alignment */
-.track-duration {
+.track-duration,
+.tracks-header .sortable[class*="duration"] {
   text-align: right;
   padding-right: 16px;
   justify-self: end;
-  color: #b3b3b3;
-  font-size: 0.8rem;
+  width: 100px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .track-status {
@@ -649,7 +697,7 @@
 /* Update subtrack grid */
 .track-row.subtrack {
   padding-left: 48px;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -661,9 +709,10 @@
     padding: 0 8px;
   }
 
-  .track-duration {
+  .track-duration,
+  .tracks-header .sortable[class*="duration"] {
+    width: 80px;
     padding-right: 8px;
-    font-size: 0.75rem;
   }
 
   .track-row.subtrack {
@@ -686,5 +735,100 @@
 
   .track-duration {
     padding-right: 4px;
+  }
+}
+
+/* Add these styles */
+.download-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  color: #b3b3b3;
+}
+
+.track-row:hover .download-icon-wrapper {
+  opacity: 0.7;
+}
+
+.download-icon-wrapper:hover {
+  opacity: 1 !important;
+  color: #1db954;
+}
+
+.download-icon {
+  font-size: 14px;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .download-icon-wrapper {
+    width: 20px;
+    height: 20px;
+  }
+
+  .download-icon {
+    font-size: 12px;
+  }
+}
+
+/* Update track title layout */
+.track-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.badge-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Update download icon styles */
+.download-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  color: #b3b3b3;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .track-controls {
+    gap: 4px;
+  }
+
+  .download-icon-wrapper {
+    width: 20px;
+    height: 20px;
+  }
+
+  .badge-container {
+    gap: 2px;
   }
 }
