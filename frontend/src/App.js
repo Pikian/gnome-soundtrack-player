@@ -209,6 +209,9 @@ function App() {
             <Route path="/manage" element={<TrackManager />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
+          <div className="copyright">
+            © {new Date().getFullYear()} Trollheim Studios AB. All rights reserved.
+          </div>
         </div>
         {currentTrack && (
           <div className="fixed-player">

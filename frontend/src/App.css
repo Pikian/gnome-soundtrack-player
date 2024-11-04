@@ -91,3 +91,37 @@ body {
   font-weight: normal;
   margin-left: 8px;
 }
+
+/* Add copyright footer */
+.copyright {
+  text-align: center;
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  padding: 16px;
+  margin-top: auto;
+  margin-bottom: calc(90px + env(safe-area-inset-bottom));
+}
+
+.copyright a {
+  color: #1db954;
+  text-decoration: none;
+}
+
+.copyright a:hover {
+  text-decoration: underline;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .copyright {
+    font-size: 0.7rem;
+    padding: 12px;
+  }
+}
+
+/* Update iPhone notch support */
+@supports (padding: max(0px)) {
+  .copyright {
+    margin-bottom: max(90px, calc(90px + env(safe-area-inset-bottom)));
+  }
+}

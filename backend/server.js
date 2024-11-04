@@ -45,7 +45,7 @@ app.use(cors({
 
 // Directory where all media files are stored
 const mediaDirectory = process.env.NODE_ENV === 'production' 
-  ? '/app/media'  // Single mount point in production
+  ? '/app/media'  // Railway mount point
   : path.join(__dirname, 'media');
 
 // Add logging to help debug paths
