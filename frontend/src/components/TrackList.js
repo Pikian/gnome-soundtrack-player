@@ -354,6 +354,16 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         {sortTracks(trackList?.outsideScope || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
         )}
+        
+        {/* Divider for Bonus & Unassigned */}
+        <div className="section-divider">
+          <h3>Bonus & Unassigned</h3>
+        </div>
+        
+        {/* Bonus & Unassigned section */}
+        {sortTracks(trackList?.bonusUnassigned || [], sortConfig).map((track, index) => 
+          renderTrackRow(track, index)
+        )}
       </div>
     </div>
   );

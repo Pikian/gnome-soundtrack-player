@@ -198,8 +198,8 @@
     {
       "id": "narrative-4",
       "title": "Narrative IV",
-      "filename": "Hisaishi 1.mp3",
-      "status": "ready"
+      "filename": null,
+      "status": "planned"
     },
     {
       "id": "florins-theme",
@@ -250,6 +250,38 @@
     {
       "id": "main-menu",
       "title": "Main Menu",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "bonusUnassigned": [
+    {
+      "id": "bonus-1",
+      "title": "Bonus Track I",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "bonus-2",
+      "title": "Bonus Track II",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "bonus-3",
+      "title": "Bonus Track III",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "bonus-4",
+      "title": "Bonus Track IV",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "bonus-5",
+      "title": "Bonus Track V",
       "filename": null,
       "status": "planned"
     }
