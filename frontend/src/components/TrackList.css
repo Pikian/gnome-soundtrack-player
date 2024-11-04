@@ -73,7 +73,7 @@
 
 .tracks-header {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
   padding: 0 16px;
   border-bottom: 1px solid #282828;
   color: #b3b3b3;
@@ -86,7 +86,7 @@
 
 .track-row {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -606,7 +606,7 @@
 /* Update grid layout */
 .tracks-header {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
   padding: 0 16px;
   border-bottom: 1px solid #282828;
   color: #b3b3b3;
@@ -619,7 +619,7 @@
 
 .track-row {
   display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -637,10 +637,19 @@
   font-size: 0.8rem;
 }
 
+.track-status {
+  text-align: center;
+  justify-self: center;
+  color: #b3b3b3;
+  font-size: 0.8rem;
+  width: 100%;
+  padding: 0 8px;
+}
+
 /* Update subtrack grid */
 .track-row.subtrack {
   padding-left: 48px;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px 100px;
   background: rgba(255, 255, 255, 0.02);
 }
 
