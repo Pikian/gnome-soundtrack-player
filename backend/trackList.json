@@ -1,140 +1,181 @@
 {
-  "completed": [
-    {
-      "id": "unique-id",
-      "title": "Track Title",
-      "filename": "file.mp3",
-      "status": "ready"
-    }
-  ],
-  "inProgress": [
-    {
-      "id": "dark-forest-lake",
-      "title": "The Dark Forest: Lake",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-hallmark",
-      "title": "The Dark Forest: Hällmark",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-mire",
-      "title": "The Dark Forest: Mire",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-burnt",
-      "title": "The Dark Forest: Burnt Forest",
-      "filename": "DFT NY241015 draft mixpaket + burnt forest-stråk.mp3",
-      "status": "ready"
-    },
-    {
-      "id": "home-theme",
-      "title": "Home Theme",
-      "filename": "Crafting Layer.mp3",
-      "status": "ready"
-    }
-  ],
-  "narrative": [
-    {
-      "id": "narrative-1",
-      "title": "Narrative I",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "narrative-2",
-      "title": "Narrative II",
-      "filename": "Tomtarnas Tema V1.mp3",
-      "status": "ready"
-    },
-    {
-      "id": "narrative-3",
-      "title": "Narrative III",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "narrative-4",
-      "title": "Narrative IV",
-      "filename": null,
-      "status": "planned"
-    }
-  ],
-  "themes": [
-    {
-      "id": "florins-theme",
-      "title": "Florin's Theme",
-      "filename": "Kohorn Sample Florins Theme (1).mp3",
-      "status": "ready"
-    },
-    {
-      "id": "crescent-moon",
-      "title": "Crescent Moon",
-      "filename": "Main Theme V4 (w subbass).mp3",
-      "status": "ready"
-    },
-    {
-      "id": "magic-hour",
-      "title": "Magic Hour",
-      "filename": "magic hour.mp3",
-      "status": "ready"
-    }
-  ],
-  "nextProduction": [
-    {
-      "id": "game-trailer",
-      "title": "The Game Trailer",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "main-menu",
-      "title": "Main Menu",
-      "filename": null,
-      "status": "planned"
-    }
-  ],
   "score": [
     {
       "id": "dark-forest",
       "title": "The Dark Forest",
       "filename": "DFT 20241017.mp3",
-      "status": "ready"
-    },
-    {
-      "id": "dark-forest-lake",
-      "title": "The Dark Forest - Lakes",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-hallmark",
-      "title": "The Dark Forest - Hällmark",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-mire",
-      "title": "The Dark Forest - Mire",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "dark-forest-burnt",
-      "title": "The Dark Forest - Burnt Forest",
-      "filename": "DFT NY241015 draft mixpaket + burnt forest-stråk.mp3",
-      "status": "ready"
+      "status": "ready",
+      "subtracks": [
+        {
+          "id": "dark-forest-lakes",
+          "title": "Biome - Lakes",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-hallmark",
+          "title": "Biome - Hällmark",
+          "filename": "Hisaishi 1.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-mire",
+          "title": "Biome - Mire",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-burnt",
+          "title": "Biome - Burnt Forest",
+          "filename": "magic hour.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-comforting",
+          "title": "Comforting",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-fear",
+          "title": "Fear",
+          "filename": "Tomtarnas Tema V1.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-tense",
+          "title": "Tense",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-awe",
+          "title": "In awe",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-inviting",
+          "title": "Inviting",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-intrigue",
+          "title": "Intrigue",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-inquisitive",
+          "title": "Inquisitiveness",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-grief",
+          "title": "Grief",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-urgency",
+          "title": "Urgency",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-heroic",
+          "title": "Heroic",
+          "filename": "Crafting Layer.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-defeat",
+          "title": "Defeat",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-cheery",
+          "title": "Cheery",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-excitement",
+          "title": "Excitement",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-relaxing",
+          "title": "Relaxing",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "dark-forest-productive",
+          "title": "Productive/Creative",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        }
+      ]
     },
     {
       "id": "home-theme",
       "title": "Home Theme",
       "filename": "Crafting Layer.mp3",
-      "status": "ready"
+      "status": "ready",
+      "subtracks": [
+        {
+          "id": "home-stage-1",
+          "title": "Dwelling Stage 1",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "home-stage-2",
+          "title": "Dwelling Stage 2",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "home-stage-3",
+          "title": "Dwelling Stage 3",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "home-stage-4",
+          "title": "Dwelling Stage 4",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        }
+      ]
     },
     {
       "id": "narrative-1",

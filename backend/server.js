@@ -76,6 +76,60 @@ const formatDuration = (seconds) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+// Move this before any other route definitions
+app.use(express.json());
+
+// Add the assign-track endpoint near the top with other main routes
+app.post('/assign-track', async (req, res) => {
+  try {
+    console.log('Received assign track request:', req.body);
+    const { trackId, filename } = req.body;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    
+    console.log('Reading track list from:', trackListPath);
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Find and update the track (including subtracks)
+    let updated = false;
+    
+    const updateTrack = (tracks) => {
+      tracks.forEach(track => {
+        if (track.id === trackId) {
+          console.log(`Updating track ${trackId}:`, {
+            before: track,
+            after: { ...track, filename, status: filename ? 'ready' : 'planned' }
+          });
+          track.filename = filename;
+          track.status = filename ? 'ready' : 'planned';
+          updated = true;
+        }
+        // Check subtracks if they exist
+        if (track.subtracks) {
+          updateTrack(track.subtracks);
+        }
+      });
+    };
+
+    // Update tracks in all sections
+    Object.values(trackList).forEach(section => {
+      updateTrack(section);
+    });
+
+    if (!updated) {
+      console.log('Track not found:', trackId);
+      return res.status(404).json({ error: 'Track not found' });
+    }
+
+    // Save the updated track list
+    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+    console.log('Track list updated successfully');
+    res.json({ message: 'Track updated successfully', trackList });
+  } catch (error) {
+    console.error('Error assigning track:', error);
+    res.status(500).json({ error: 'Failed to assign track: ' + error.message });
+  }
+});
+
 // Endpoint to get the list of tracks
 app.get('/tracks', async (req, res) => {
   try {
@@ -133,8 +187,16 @@ app.get('/tracks/:filename', (req, res) => {
   const filename = req.params.filename;
   const filepath = path.join(mediaDirectory, filename);
 
+  console.log('Track request:', {
+    filename,
+    filepath,
+    exists: fs.existsSync(filepath),
+    mediaDirectory
+  });
+
   // Check if file exists
   if (!fs.existsSync(filepath)) {
+    console.log('Track not found:', filepath);
     return res.status(404).json({ error: 'Track not found' });
   }
   const stat = fs.statSync(filepath);
@@ -194,9 +256,13 @@ app.use((err, req, res, next) => {
 });
 
 // Use PORT from environment variables
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('CORS Origin:', process.env.CORS_ORIGIN);
+  console.log('Media Directory:', mediaDirectory);
+  console.log('Current Directory:', __dirname);
 });
 
 // Configure multer storage
@@ -294,52 +360,19 @@ app.get('/debug', (req, res) => {
 app.get('/track-list', (req, res) => {
   try {
     const trackListPath = path.join(__dirname, 'trackList.json');
+    console.log('Reading track list from:', trackListPath);
+    
+    if (!fs.existsSync(trackListPath)) {
+      console.error('Track list file not found at:', trackListPath);
+      return res.status(404).json({ error: 'Track list file not found' });
+    }
+    
     const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    console.log('Track list loaded successfully');
     res.json(trackList);
   } catch (error) {
     console.error('Error reading track list:', error);
-    res.status(500).json({ error: 'Failed to read track list' });
-  }
-});
-
-// Assign file to track
-app.post('/assign-track', express.json(), (req, res) => {
-  try {
-    console.log('Received assign track request:', req.body);
-    const { trackId, filename } = req.body;
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    
-    console.log('Reading track list from:', trackListPath);
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
-
-    // Find and update the track
-    let updated = false;
-    Object.entries(trackList).forEach(([section, tracks]) => {
-      tracks.forEach(track => {
-        if (track.id === trackId) {
-          console.log(`Updating track ${trackId}:`, {
-            before: track,
-            after: { ...track, filename, status: filename ? 'ready' : 'planned' }
-          });
-          track.filename = filename;
-          track.status = filename ? 'ready' : 'planned';
-          updated = true;
-        }
-      });
-    });
-
-    if (!updated) {
-      console.log('Track not found:', trackId);
-      return res.status(404).json({ error: 'Track not found' });
-    }
-
-    // Save the updated track list
-    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-    console.log('Track list updated successfully');
-    res.json({ message: 'Track updated successfully', trackList });
-  } catch (error) {
-    console.error('Error assigning track:', error);
-    res.status(500).json({ error: 'Failed to assign track: ' + error.message });
+    res.status(500).json({ error: 'Failed to read track list: ' + error.message });
   }
 });
 
@@ -361,4 +394,10 @@ app.get('/debug-tracklist', (req, res) => {
       stack: error.stack
     });
   }
+});
+
+// Add this near the top of the file, after the imports
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
 });

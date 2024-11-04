@@ -1,158 +1,48 @@
 import React, { useState, useEffect } from 'react';
-
-
-
 import axios from 'axios';
-
-
-
-import { FaPlay, FaCheck, FaClock, FaExclamation } from 'react-icons/fa';
-
-
-
+import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import './TrackManager.css';
 
-
-
-
-
-
-
 function TrackManager() {
-
-
-
   const [trackList, setTrackList] = useState(null);
-
-
-
   const [availableFiles, setAvailableFiles] = useState([]);
-
-
-
   const [selectedTrack, setSelectedTrack] = useState(null);
-
-
-
   const [editMode, setEditMode] = useState(false);
-
-
-
   const [error, setError] = useState(null);
-
-
-
   const [isManagerAuthenticated, setIsManagerAuthenticated] = useState(false);
-
-
-
   const [managerPassword, setManagerPassword] = useState('');
-
-
-
-
-
-
-
-
-
-
+  const [expandedTracks, setExpandedTracks] = useState(new Set());
 
   const fetchData = async () => {
-
     try {
-
       const [trackListRes, filesRes] = await Promise.all([
-
         axios.get(`${process.env.REACT_APP_API_URL}/track-list`),
-
         axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
-
       ]);
-
       setTrackList(trackListRes.data);
-
       setAvailableFiles(filesRes.data);
-
     } catch (error) {
-
       console.error('Error fetching data:', error);
-
       setError('Failed to load data');
-
     }
-
   };
-
-
-
-
-
-
 
   useEffect(() => {
-
     if (isManagerAuthenticated) {
-
       fetchData();
-
     }
-
   }, [isManagerAuthenticated]);
 
-
-
-
-
-
-
-
-
-
-
   const getStatusIcon = (status) => {
-
-
-
     switch (status) {
-
-
-
       case 'ready':
-
-
-
         return <FaCheck className="status-icon ready" />;
-
-
-
       case 'planned':
-
-
-
         return <FaExclamation className="status-icon planned" />;
-
-
-
       default:
-
-
-
         return null;
-
-
-
     }
-
-
-
   };
-
-
-
-
-
-
 
   const handleAssignFile = async (trackId, filename) => {
     try {
@@ -161,15 +51,12 @@ function TrackManager() {
       
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/assign-track`, {
         trackId,
-        filename: filename === 'none' ? null : filename  // Convert 'none' selection to null
+        filename: filename === 'none' ? null : filename
       });
       
       console.log('Assignment response:', response.data);
-      
-      // Refresh the data
       await fetchData();
       
-      // If the file was removed, deselect the track
       if (filename === 'none') {
         setSelectedTrack(null);
       }
@@ -179,115 +66,64 @@ function TrackManager() {
     }
   };
 
+  const toggleTrackExpansion = (trackId) => {
+    setExpandedTracks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(trackId)) {
+        newSet.delete(trackId);
+      } else {
+        newSet.add(trackId);
+      }
+      return newSet;
+    });
+  };
 
+  const renderTrackItem = (track, isSubtrack = false) => {
+    const isExpanded = expandedTracks.has(track.id);
+    const hasSubtracks = track.subtracks && track.subtracks.length > 0;
+    const isSelected = selectedTrack?.id === track.id;
 
-
-
-
-
-  const renderTrackSection = (title, tracks) => (
-
-
-
-    <div className="track-section">
-
-
-
-      <h3>{title}</h3>
-
-
-
-      <div className="track-list">
-
-
-
-        {tracks.map(track => (
-
-
-
-          <div 
-
-
-
-            key={track.id} 
-
-
-
-            className={`track-item ${track.status} ${selectedTrack?.id === track.id ? 'selected' : ''}`}
-
-
-
-            onClick={() => setSelectedTrack(track)}
-
-
-
-          >
-
-
-
-            <div className="track-info">
-
-
-
-              {getStatusIcon(track.status)}
-
-
-
-              <span className="track-title">{track.title}</span>
-
-
-
-            </div>
-
-
-
-            {track.filename && (
-
-
-
-              <div className="track-file">
-
-
-
-                <FaPlay className="play-icon" />
-
-
-
-                <span className="filename">{track.filename}</span>
-
-
-
-              </div>
-
-
-
+    return (
+      <React.Fragment key={track.id}>
+        <div 
+          className={`track-item ${track.status} ${isSelected ? 'selected' : ''} ${isSubtrack ? 'subtrack' : ''}`}
+          onClick={() => setSelectedTrack(track)}
+        >
+          <div className="track-info">
+            {hasSubtracks && (
+              <span 
+                className="expand-icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTrackExpansion(track.id);
+                }}
+              >
+                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+              </span>
             )}
-
-
-
+            {getStatusIcon(track.status)}
+            <span className="track-title">
+              {track.title}
+              {track.type === 'substem' && <span className="substem-label">substem</span>}
+            </span>
           </div>
-
-
-
-        ))}
-
-
-
-      </div>
-
-
-
-    </div>
-
-
-
-  );
-
-
-
-
-
-
+          {track.filename && (
+            <div className="track-file">
+              <FaPlay className="play-icon" />
+              <span className="filename">{track.filename}</span>
+            </div>
+          )}
+        </div>
+        {hasSubtracks && isExpanded && (
+          <div className="subtracks">
+            {track.subtracks.map(subtrack => 
+              renderTrackItem(subtrack, true)
+            )}
+          </div>
+        )}
+      </React.Fragment>
+    );
+  };
 
   const handleManagerLogin = (e) => {
     e.preventDefault();
@@ -299,12 +135,6 @@ function TrackManager() {
       setError('Incorrect password');
     }
   };
-
-
-
-
-
-
 
   if (!isManagerAuthenticated) {
     return (
@@ -327,121 +157,55 @@ function TrackManager() {
     );
   }
 
-
-
-
-
-
-
   return (
-
-
-
     <div className="track-manager">
-
-
-
       <div className="track-manager-header">
-
-
-
         <h2>Track Manager</h2>
-
-
-
         <button 
-
-
-
           className="edit-button"
-
-
-
           onClick={() => setEditMode(!editMode)}
-
-
-
         >
-
-
-
           {editMode ? 'Done' : 'Edit'}
-
-
-
         </button>
-
-
-
       </div>
-
-
 
       {error && (
-
         <div className="error-message">
-
           {error}
-
         </div>
-
       )}
 
-
-
       <div className="track-sections">
-
-
-
         {trackList && (
-
-
-
           <>
-
-
-
-            {/* Score section */}
-            {renderTrackSection('Score', trackList.score)}
-
-            {/* Gnome Music section with separator */}
-            <div className="track-section separator">
-              {renderTrackSection('Gnome Music', trackList.gnomeMusic)}
+            <div className="track-section">
+              <h3>Score</h3>
+              <div className="track-list">
+                {trackList.score.map(track => renderTrackItem(track))}
+              </div>
             </div>
 
-            {/* Outside Scope section with separator */}
             <div className="track-section separator">
-              {renderTrackSection('Outside Current Scope', trackList.outsideScope)}
+              <h3>Gnome Music</h3>
+              <div className="track-list">
+                {trackList.gnomeMusic.map(track => renderTrackItem(track))}
+              </div>
             </div>
 
+            <div className="track-section separator">
+              <h3>Outside Current Scope</h3>
+              <div className="track-list">
+                {trackList.outsideScope.map(track => renderTrackItem(track))}
+              </div>
+            </div>
           </>
-
-
-
         )}
-
-
-
       </div>
 
-
-
       {selectedTrack && editMode && (
-
-
-
         <div className="file-assignment">
-
-
-
           <h3>Assign File to "{selectedTrack.title}"</h3>
-
-
-
           <select 
-
-
-
             value={selectedTrack.filename || 'none'}
             onChange={(e) => handleAssignFile(selectedTrack.id, e.target.value)}
           >
@@ -452,32 +216,11 @@ function TrackManager() {
               </option>
             ))}
           </select>
-
-
-
         </div>
-
-
-
       )}
-
-
-
     </div>
-
-
-
   );
-
-
-
 }
-
-
-
-
-
-
 
 export default TrackManager;
 

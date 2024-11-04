@@ -73,7 +73,7 @@
 
 .tracks-header {
   display: grid;
-  grid-template-columns: 50px 1fr 120px 120px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 0 16px;
   border-bottom: 1px solid #282828;
   color: #b3b3b3;
@@ -86,12 +86,13 @@
 
 .track-row {
   display: grid;
-  grid-template-columns: 50px 1fr 120px 120px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
   height: 42px;
   align-items: center;
+  transition: background-color 0.2s ease;
 }
 
 .track-row:hover {
@@ -102,20 +103,32 @@
   background: rgba(29,185,84,0.2);
 }
 
+.track-row.playing:hover {
+  background: rgba(29, 185, 84, 0.3);
+}
+
+.track-row.playing .play-icon-wrapper {
+  color: #1db954;
+}
+
 .track-number {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  width: 40px;
+}
+
+.number {
+  color: #b3b3b3;
+  font-size: 0.9rem;
 }
 
 .track-title {
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding-right: 8px;
-  color: inherit;
-  font-weight: 400;
+  gap: 8px;
 }
 
 .track-duration,
@@ -160,8 +173,7 @@
 }
 
 .track-status-icon {
-  font-size: 12px;
-  opacity: 0.7;
+  display: none;
 }
 
 /* Sorting */
@@ -200,53 +212,24 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 32px;
-    margin-top: 24px;
+    gap: 24px;
+    margin-top: 16px;
+    margin-bottom: 32px;
   }
 
-  .album-cover {
-    width: 192px;
-    height: 192px;
-    min-width: 192px;
-  }
-
-  .album-info h1 {
-    font-size: 2rem;
-  }
-
-  .album-info h2 {
-    font-size: 1.25rem;
-  }
-
-  .album-details {
-    justify-content: center;
-  }
-
-  .tracks-header,
-  .track-row {
-    grid-template-columns: 40px 1fr 80px 80px;
-    font-size: 0.8rem;
-  }
-
-  .track-number {
-    gap: 8px;
-  }
-
-  .section-divider {
-    margin: 24px 0 12px;
-    padding: 0 8px;
-  }
-}
-
-@media (max-width: 480px) {
   .album-cover {
     width: 160px;
     height: 160px;
     min-width: 160px;
   }
 
+  .album-info {
+    padding-top: 0;
+  }
+
   .album-info h1 {
     font-size: 1.5rem;
+    line-height: 1.3;
   }
 
   .album-info h2 {
@@ -254,11 +237,124 @@
   }
 
   .album-details {
+    justify-content: center;
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+
+  .play-all-button {
+    align-self: center;
+    margin-top: 12px;
+  }
+
+  /* Adjust grid layout for mobile */
+  .tracks-header,
+  .track-row {
+    grid-template-columns: 32px 24px 1fr 60px;
+    padding: 0 8px;
     font-size: 0.8rem;
   }
 
   .track-row {
     height: 48px;
+    padding: 4px 8px;
+  }
+
+  /* Hide status column on mobile */
+  .track-status {
+    display: none;
+  }
+
+  /* Adjust spacing for play button and track number */
+  .play-button-cell,
+  .track-number {
+    width: 24px;
+  }
+
+  .play-icon-wrapper {
+    width: 14px;
+    height: 14px;
+  }
+
+  .number {
+    font-size: 0.8rem;
+  }
+
+  /* Adjust subtrack indentation */
+  .track-row.subtrack {
+    padding-left: 24px;
+    grid-template-columns: 32px 24px 1fr 60px;
+  }
+
+  /* Make labels smaller */
+  .substem-label,
+  .stems-label {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+    margin-left: 4px;
+  }
+
+  /* Adjust section dividers */
+  .section-divider {
+    margin: 20px 0 12px;
+    padding: 0 8px;
+  }
+
+  .section-divider h3 {
+    font-size: 0.8rem;
+  }
+
+  /* Adjust duration display */
+  .track-duration {
+    font-size: 0.75rem;
+    width: 60px;
+  }
+
+  /* Make expand icon smaller */
+  .expand-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 380px) {
+  .album-cover {
+    width: 140px;
+    height: 140px;
+    min-width: 140px;
+  }
+
+  .album-info h1 {
+    font-size: 1.25rem;
+  }
+
+  .album-details {
+    font-size: 0.75rem;
+  }
+
+  .tracks-header,
+  .track-row {
+    grid-template-columns: 28px 20px 1fr 50px;
+  }
+
+  .track-row.subtrack {
+    padding-left: 16px;
+  }
+
+  .track-duration {
+    width: 50px;
+  }
+}
+
+/* Adjust dot spacing in album details */
+@media (max-width: 768px) {
+  .dot {
+    margin: 0 4px;
+  }
+
+  .album-details {
+    line-height: 1.8;
   }
 }
 
@@ -300,5 +396,286 @@
   
   .play-all-button svg {
     font-size: 0.9rem;
+  }
+}
+
+/* Add these styles to your existing TrackList.css */
+
+.track-row.subtrack {
+  padding-left: 48px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.track-row.subtrack .track-number {
+  padding-left: 12px;
+}
+
+.expand-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b3b3b3;
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.track-row:hover .expand-icon {
+  opacity: 1;
+}
+
+.subtracks {
+  margin-left: 20px;
+}
+
+.substem-label {
+  font-size: 0.7rem;
+  color: #1db954;
+  background: rgba(29, 185, 84, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.track-row.subtrack .track-number {
+  opacity: 0.7;
+}
+
+.track-row.subtrack:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Update existing styles */
+.track-number {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.play-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.play-icon-wrapper:hover .play-icon {
+  color: #1db954;
+}
+
+.expand-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #b3b3b3;
+  flex-shrink: 0;
+}
+
+/* When a track has both play and expand buttons */
+.track-row:not(.subtrack) .track-number {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Adjust spacing for tracks with both controls */
+.track-row:not(.subtrack) .track-number .play-icon-wrapper + .expand-icon {
+  margin-left: 4px;
+}
+
+.track-title {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* Play button cell */
+.play-button-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+}
+
+.play-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.track-row:hover .play-icon-wrapper {
+  opacity: 1;
+}
+
+/* Track number cell */
+.track-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+}
+
+.number {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+}
+
+/* Track title cell */
+.track-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+  gap: 8px;
+}
+
+/* Update subtrack styles */
+.track-row.subtrack {
+  padding-left: 48px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .tracks-header,
+  .track-row {
+    grid-template-columns: 32px 32px minmax(0, 1fr) 80px;
+  }
+
+  .play-button-cell,
+  .track-number {
+    width: 32px;
+  }
+
+  .track-row.subtrack {
+    padding-left: 32px;
+  }
+}
+
+/* Add this with your other label styles */
+.stems-label {
+  font-size: 0.7rem;
+  color: #9B59B6;  /* Purple color to differentiate from substem green */
+  background: rgba(155, 89, 182, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Update existing styles to handle both labels */
+.track-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+  gap: 8px;
+}
+
+.track-title .substem-label,
+.track-title .stems-label {
+  flex-shrink: 0;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .substem-label,
+  .stems-label {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+  }
+}
+
+/* Update grid layout */
+.tracks-header {
+  display: grid;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  padding: 0 16px;
+  border-bottom: 1px solid #282828;
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  height: 36px;
+  align-items: center;
+}
+
+.track-row {
+  display: grid;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 42px;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+/* Update duration alignment */
+.track-duration {
+  text-align: right;
+  padding-right: 16px;
+  justify-self: end;
+  color: #b3b3b3;
+  font-size: 0.8rem;
+}
+
+/* Update subtrack grid */
+.track-row.subtrack {
+  padding-left: 48px;
+  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .tracks-header,
+  .track-row {
+    grid-template-columns: 32px 32px minmax(0, 1fr) 80px;
+    padding: 0 8px;
+  }
+
+  .track-duration {
+    padding-right: 8px;
+    font-size: 0.75rem;
+  }
+
+  .track-row.subtrack {
+    padding-left: 24px;
+    grid-template-columns: 32px 32px minmax(0, 1fr) 80px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 380px) {
+  .tracks-header,
+  .track-row {
+    grid-template-columns: 28px 28px minmax(0, 1fr) 70px;
+  }
+
+  .track-row.subtrack {
+    padding-left: 16px;
+    grid-template-columns: 28px 28px minmax(0, 1fr) 70px;
+  }
+
+  .track-duration {
+    padding-right: 4px;
   }
 }
