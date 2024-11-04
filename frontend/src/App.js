@@ -61,11 +61,12 @@ function App() {
       }, []);
     };
 
-    // Get all tracks from each section
+    // Get all tracks from each section, including bonus tracks
     const allTracks = [
       ...getAllTracks(trackList.score || []),
       ...getAllTracks(trackList.gnomeMusic || []),
-      ...getAllTracks(trackList.outsideScope || [])
+      ...getAllTracks(trackList.outsideScope || []),
+      ...getAllTracks(trackList.bonusUnassigned || [])
     ];
 
     // If we're playing a subtrack, make sure it's included

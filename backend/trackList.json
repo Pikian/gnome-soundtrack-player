@@ -258,14 +258,14 @@
     {
       "id": "bonus-1",
       "title": "Bonus Track I",
-      "filename": null,
-      "status": "planned"
+      "filename": "magic hour.mp3",
+      "status": "ready"
     },
     {
       "id": "bonus-2",
       "title": "Bonus Track II",
-      "filename": null,
-      "status": "planned"
+      "filename": "DFT 20241017.mp3",
+      "status": "ready"
     },
     {
       "id": "bonus-3",
