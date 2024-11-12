@@ -1309,3 +1309,218 @@
     padding: 8px 12px;
   }
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1002;
+}
+
+.add-track-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1db954;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  transition: background-color 0.2s;
+}
+
+.add-track-button:hover {
+  background: #1ed760;
+}
+
+.track-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.track-controls button {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-controls .edit-button {
+  background: #404040;
+  color: #fff;
+}
+
+.track-controls .delete-button {
+  background: #ff4444;
+  color: #fff;
+}
+
+.track-controls .edit-button:hover {
+  background: #505050;
+}
+
+.track-controls .delete-button:hover {
+  background: #ff6666;
+}
+
+/* Update existing substem-label and add alternative-label */
+.substem-label {
+  font-size: 0.7rem;
+  color: #1db954;
+  background: rgba(29, 185, 84, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.alternative-label {
+  font-size: 0.7rem;
+  color: #b967ff;
+  background: rgba(185, 103, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Add styles for the add subtrack button */
+.add-subtrack-button {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1db954;
+  color: #fff;
+}
+
+.add-subtrack-button:hover {
+  background: #1ed760;
+}
+
+/* Update track controls to include the new button */
+.track-controls {
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  color: #666;
+  cursor: grab;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.track-item:hover .drag-handle {
+  opacity: 1;
+}
+
+.track-item.dragging {
+  background: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Update existing styles */
+.track-item {
+  position: relative;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.subtracks {
+  margin-left: 24px;
+  padding-left: 12px;
+  border-left: 1px solid #333;
+}
+
+.dragging {
+  opacity: 0.8;
+  background: #333;
+}
+
+.dragging-over {
+  background: rgba(29, 185, 84, 0.05);
+  border-radius: 4px;
+}
+
+.track-list {
+  min-height: 10px; /* Ensures empty lists are droppable */
+  padding: 4px;
+  transition: background-color 0.2s;
+}
+
+.subtracks {
+  transition: background-color 0.2s;
+  padding: 4px 0;
+}
+
+.track-item {
+  position: relative;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.track-item.dragging {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.move-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.move-button {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #404040;
+  color: #fff;
+}
+
+.move-button:hover {
+  background: #505050;
+}
+
+.move-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.move-button svg {
+  font-size: 12px;
+}

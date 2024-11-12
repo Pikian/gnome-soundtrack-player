@@ -1,0 +1,101 @@
+.track-editor {
+  background: #282828;
+  padding: 24px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.track-editor h3 {
+  margin: 0 0 20px 0;
+  color: #fff;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #b3b3b3;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  background: #3e3e3e;
+  border: 1px solid #484848;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1db954;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-button,
+.save-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background: #404040;
+  color: #fff;
+}
+
+.save-button {
+  background: #1db954;
+  color: #fff;
+}
+
+.cancel-button:hover {
+  background: #505050;
+}
+
+.save-button:hover {
+  background: #1ed760;
+}
+
+.error-message {
+  color: #ff4444;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+/* Add styles for the type select dropdown */
+.type-select {
+  width: 100%;
+  padding: 12px;
+  background: #3e3e3e;
+  border: 1px solid #484848;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.type-select:focus {
+  outline: none;
+  border-color: #1db954;
+}
+
+.type-select option {
+  background: #282828;
+  color: #fff;
+  padding: 8px;
+} 

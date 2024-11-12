@@ -475,3 +475,262 @@ app.delete('/tracks/:filename', (req, res) => {
     res.status(500).json({ error: 'Failed to delete file: ' + error.message });
   }
 });
+
+// Add these new endpoints after your existing ones
+
+// Update track list
+app.post('/track-list/update', async (req, res) => {
+  try {
+    const { section, trackId, updates } = req.body;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Helper function to find and update track
+    const updateTrackInSection = (tracks) => {
+      return tracks.map(track => {
+        if (track.id === trackId) {
+          return { ...track, ...updates };
+        }
+        if (track.subtracks) {
+          return {
+            ...track,
+            subtracks: updateTrackInSection(track.subtracks)
+          };
+        }
+        return track;
+      });
+    };
+
+    if (section in trackList) {
+      trackList[section] = updateTrackInSection(trackList[section]);
+      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+      res.json({ message: 'Track updated successfully', trackList });
+    } else {
+      res.status(400).json({ error: 'Invalid section' });
+    }
+  } catch (error) {
+    console.error('Error updating track:', error);
+    res.status(500).json({ error: 'Failed to update track' });
+  }
+});
+
+// Add new track or subtrack
+app.post('/track-list/add', async (req, res) => {
+  try {
+    const { section, parentTrackId, newTrack } = req.body;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Helper function to add subtrack to parent
+    const addSubtrackToParent = (tracks) => {
+      return tracks.map(track => {
+        if (track.id === parentTrackId) {
+          return {
+            ...track,
+            subtracks: [...(track.subtracks || []), newTrack]
+          };
+        }
+        if (track.subtracks) {
+          return {
+            ...track,
+            subtracks: addSubtrackToParent(track.subtracks)
+          };
+        }
+        return track;
+      });
+    };
+
+    if (parentTrackId) {
+      // Adding a subtrack
+      trackList[section] = addSubtrackToParent(trackList[section]);
+    } else {
+      // Adding a main track
+      trackList[section].push(newTrack);
+    }
+
+    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+    res.json({ message: 'Track added successfully', trackList });
+  } catch (error) {
+    console.error('Error adding track:', error);
+    res.status(500).json({ error: 'Failed to add track' });
+  }
+});
+
+// Delete track or subtrack
+app.delete('/track-list/:section/:trackId', async (req, res) => {
+  try {
+    const { section, trackId } = req.params;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Helper function to remove track
+    const removeTrack = (tracks) => {
+      return tracks.filter(track => {
+        if (track.id === trackId) return false;
+        if (track.subtracks) {
+          track.subtracks = removeTrack(track.subtracks);
+        }
+        return true;
+      });
+    };
+
+    if (section in trackList) {
+      trackList[section] = removeTrack(trackList[section]);
+      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+      res.json({ message: 'Track deleted successfully', trackList });
+    } else {
+      res.status(400).json({ error: 'Invalid section' });
+    }
+  } catch (error) {
+    console.error('Error deleting track:', error);
+    res.status(500).json({ error: 'Failed to delete track' });
+  }
+});
+
+// Update reorder endpoint
+app.post('/track-list/reorder', async (req, res) => {
+  try {
+    const {
+      trackId,
+      sourceSection,
+      sourceParentId,
+      destinationSection,
+      destinationParentId,
+      sourceIndex,
+      destinationIndex
+    } = req.body;
+
+    console.log('Reorder request:', {
+      trackId,
+      sourceSection,
+      sourceParentId,
+      destinationSection,
+      destinationParentId,
+      sourceIndex,
+      destinationIndex
+    });
+
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    // Helper function to find and remove track
+    const findAndRemoveTrack = (tracks, id) => {
+      let removedTrack = null;
+      const newTracks = tracks.filter(track => {
+        if (track?.id === id) {
+          removedTrack = track;
+          return false;
+        }
+        if (track?.subtracks) {
+          const [newSubtracks, found] = findAndRemoveTrack(track.subtracks, id);
+          if (found) {
+            removedTrack = found;
+            track.subtracks = newSubtracks;
+          }
+        }
+        return true;
+      });
+      return [newTracks.filter(t => t !== null), removedTrack];
+    };
+
+    // Helper function to find parent track
+    const findParentTrack = (tracks, parentId) => {
+      for (const track of tracks) {
+        if (track?.id === parentId) {
+          return track;
+        }
+        if (track?.subtracks) {
+          const found = findParentTrack(track.subtracks, parentId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    // Remove track from source
+    let trackToMove;
+    if (sourceParentId) {
+      const sourceParent = findParentTrack(trackList[sourceSection], sourceParentId);
+      if (sourceParent) {
+        trackToMove = sourceParent.subtracks[sourceIndex];
+        sourceParent.subtracks.splice(sourceIndex, 1);
+      }
+    } else {
+      trackToMove = trackList[sourceSection][sourceIndex];
+      trackList[sourceSection].splice(sourceIndex, 1);
+    }
+
+    // Insert track at destination
+    if (destinationParentId) {
+      const destParent = findParentTrack(trackList[destinationSection], destinationParentId);
+      if (destParent) {
+        destParent.subtracks = destParent.subtracks || [];
+        destParent.subtracks.splice(destinationIndex, 0, trackToMove);
+      }
+    } else {
+      trackList[destinationSection].splice(destinationIndex, 0, trackToMove);
+    }
+
+    // Clean up any null entries
+    Object.keys(trackList).forEach(section => {
+      trackList[section] = trackList[section].filter(track => track !== null);
+    });
+
+    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+    res.json({ message: 'Track reordered successfully', trackList });
+  } catch (error) {
+    console.error('Error reordering track:', error);
+    res.status(500).json({ error: 'Failed to reorder track: ' + error.message });
+  }
+});
+
+// Add move endpoint
+app.post('/track-list/move', async (req, res) => {
+  try {
+    const { trackId, section, direction, parentId } = req.body;
+    const trackListPath = path.join(__dirname, 'trackList.json');
+    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+
+    const moveInArray = (array, trackId, direction) => {
+      const index = array.findIndex(track => track.id === trackId);
+      if (index === -1) return false;
+
+      if (direction === 'up' && index > 0) {
+        [array[index - 1], array[index]] = [array[index], array[index - 1]];
+        return true;
+      } else if (direction === 'down' && index < array.length - 1) {
+        [array[index], array[index + 1]] = [array[index + 1], array[index]];
+        return true;
+      }
+      return false;
+    };
+
+    let moved = false;
+    if (parentId) {
+      // Move within subtracks
+      const findAndMove = (tracks) => {
+        tracks.forEach(track => {
+          if (track.id === parentId && track.subtracks) {
+            moved = moveInArray(track.subtracks, trackId, direction);
+          } else if (track.subtracks) {
+            findAndMove(track.subtracks);
+          }
+        });
+      };
+      findAndMove(trackList[section]);
+    } else {
+      // Move main track
+      moved = moveInArray(trackList[section], trackId, direction);
+    }
+
+    if (moved) {
+      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+      res.json({ message: 'Track moved successfully', trackList });
+    } else {
+      res.status(400).json({ error: 'Could not move track' });
+    }
+  } catch (error) {
+    console.error('Error moving track:', error);
+    res.status(500).json({ error: 'Failed to move track: ' + error.message });
+  }
+});

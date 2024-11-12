@@ -25,6 +25,8 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
 
     // Helper function to process a track and its subtracks
     const processTrack = (track) => {
+      if (!track) return;
+
       const trackFile = tracks.find(t => t.filename === track.filename);
       if (trackFile?.rawDuration) {
         totalSeconds += trackFile.rawDuration;
@@ -33,9 +35,11 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
       // Process subtracks if they exist
       if (track.subtracks) {
         track.subtracks.forEach(subtrack => {
-          const subtrackFile = tracks.find(t => t.filename === subtrack.filename);
-          if (subtrackFile?.rawDuration) {
-            totalSeconds += subtrackFile.rawDuration;
+          if (subtrack) {
+            const subtrackFile = tracks.find(t => t.filename === subtrack.filename);
+            if (subtrackFile?.rawDuration) {
+              totalSeconds += subtrackFile.rawDuration;
+            }
           }
         });
       }
@@ -43,9 +47,10 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
 
     // Process all tracks in each section
     if (trackList) {
-      trackList.score.forEach(processTrack);
-      trackList.gnomeMusic.forEach(processTrack);
-      trackList.outsideScope.forEach(processTrack);
+      trackList.score.filter(track => track).forEach(processTrack);
+      trackList.gnomeMusic.filter(track => track).forEach(processTrack);
+      trackList.outsideScope.filter(track => track).forEach(processTrack);
+      trackList.bonusUnassigned.filter(track => track).forEach(processTrack);
     }
     
     // Format the total duration
@@ -94,9 +99,10 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
     
     // Get only main tracks (no subtracks)
     const allTracks = [
-      ...trackList.score.filter(track => !track.type), // Exclude subtracks
-      ...trackList.gnomeMusic.filter(track => !track.type),
-      ...trackList.outsideScope.filter(track => !track.type)
+      ...trackList.score.filter(track => track && !track.type),
+      ...trackList.gnomeMusic.filter(track => track && !track.type),
+      ...trackList.outsideScope.filter(track => track && !track.type),
+      ...trackList.bonusUnassigned.filter(track => track && !track.type)
     ];
 
     // Sort tracks: ready first, then planned
@@ -252,6 +258,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
               )}
               <div className="badge-container">
                 {track.type === 'substem' && <span className="substem-label">substem</span>}
+                {track.type === 'alternative' && <span className="alternative-label">alternative</span>}
                 {hasSubtracks && !isSubtrack && <span className="stems-label">stems</span>}
               </div>
               {hasSubtracks && (
@@ -331,7 +338,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         </div>
         
         {/* Score section */}
-        {sortTracks(trackList?.score || [], sortConfig).map((track, index) => 
+        {sortTracks(trackList?.score.filter(track => track) || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
         )}
         
@@ -341,7 +348,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         </div>
         
         {/* Gnome Music section */}
-        {sortTracks(trackList?.gnomeMusic || [], sortConfig).map((track, index) => 
+        {sortTracks(trackList?.gnomeMusic.filter(track => track) || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
         )}
         
@@ -351,7 +358,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         </div>
         
         {/* Outside Scope section */}
-        {sortTracks(trackList?.outsideScope || [], sortConfig).map((track, index) => 
+        {sortTracks(trackList?.outsideScope.filter(track => track) || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
         )}
         
@@ -361,7 +368,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         </div>
         
         {/* Bonus & Unassigned section */}
-        {sortTracks(trackList?.bonusUnassigned || [], sortConfig).map((track, index) => 
+        {sortTracks(trackList?.bonusUnassigned.filter(track => track) || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
         )}
       </div>

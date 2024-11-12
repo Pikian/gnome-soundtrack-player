@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash } from 'react-icons/fa';
+import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash, FaPlus, FaEdit, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import './TrackManager.css';
+import TrackEditor from './TrackEditor';
 
 function TrackManager() {
   const [trackList, setTrackList] = useState(null);
@@ -16,6 +17,10 @@ function TrackManager() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [editingTrack, setEditingTrack] = useState(null);
+  const [editingSection, setEditingSection] = useState(null);
+  const [parentTrack, setParentTrack] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -82,7 +87,9 @@ function TrackManager() {
     });
   };
 
-  const renderTrackItem = (track, isSubtrack = false) => {
+  const renderTrackItem = (track, section, isSubtrack = false, index, parentId = null) => {
+    if (!track) return null;
+    
     const isExpanded = expandedTracks.has(track.id);
     const hasSubtracks = track.subtracks && track.subtracks.length > 0;
 
@@ -103,7 +110,12 @@ function TrackManager() {
             {getStatusIcon(track.status)}
             <span className="track-title">
               {track.title}
-              {track.type === 'substem' && <span className="substem-label">substem</span>}
+              {track.type === 'substem' && (
+                <span className="substem-label">substem</span>
+              )}
+              {track.type === 'alternative' && (
+                <span className="alternative-label">alternative</span>
+              )}
             </span>
           </div>
           {editMode && (
@@ -127,12 +139,65 @@ function TrackManager() {
               <span className="filename">{track.filename}</span>
             </div>
           )}
+          {editMode && (
+            <div className="track-controls">
+              <div className="move-buttons">
+                <button
+                  className="move-button"
+                  onClick={() => moveTrack(track.id, section, 'up', parentId)}
+                  disabled={index === 0}
+                  title="Move up"
+                >
+                  <FaArrowUp />
+                </button>
+                <button
+                  className="move-button"
+                  onClick={() => moveTrack(track.id, section, 'down', parentId)}
+                  title="Move down"
+                >
+                  <FaArrowDown />
+                </button>
+              </div>
+              {!isSubtrack && (
+                <button
+                  className="add-subtrack-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddSubtrack(track, section);
+                  }}
+                  title="Add subtrack"
+                >
+                  <FaPlus />
+                </button>
+              )}
+              <button
+                className="edit-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditTrack(track, section);
+                }}
+              >
+                <FaEdit />
+              </button>
+              <button
+                className="delete-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteTrack(track.id, section);
+                }}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          )}
         </div>
         {hasSubtracks && isExpanded && (
           <div className="subtracks">
-            {track.subtracks.map(subtrack => 
-              renderTrackItem(subtrack, true)
-            )}
+            {track.subtracks
+              .filter(subtrack => subtrack !== null)
+              .map((subtrack, subIndex) => 
+                renderTrackItem(subtrack, section, true, subIndex, track.id)
+              )}
           </div>
         )}
       </React.Fragment>
@@ -258,6 +323,58 @@ function TrackManager() {
     );
   };
 
+  const handleAddTrack = (section) => {
+    setEditingTrack(null);
+    setEditingSection(section);
+    setShowEditor(true);
+  };
+
+  const handleEditTrack = (track, section) => {
+    setEditingTrack(track);
+    setEditingSection(section);
+    setShowEditor(true);
+  };
+
+  const handleDeleteTrack = async (trackId, section) => {
+    if (!window.confirm('Are you sure you want to delete this track?')) return;
+
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/track-list/${section}/${trackId}`
+      );
+      setTrackList(response.data.trackList);
+    } catch (error) {
+      setError('Failed to delete track');
+    }
+  };
+
+  const handleAddSubtrack = (parentTrack, section) => {
+    setEditingTrack(null);
+    setEditingSection(section);
+    setParentTrack(parentTrack);
+    setShowEditor(true);
+  };
+
+  const moveTrack = async (trackId, section, direction, parentId = null) => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/move`, {
+        trackId,
+        section,
+        direction,
+        parentId
+      });
+      
+      if (response.data.trackList) {
+        setTrackList(response.data.trackList);
+      } else {
+        throw new Error('Invalid server response');
+      }
+    } catch (error) {
+      console.error('Move error:', error);
+      setError('Failed to move track');
+    }
+  };
+
   if (!isManagerAuthenticated) {
     return (
       <div className="track-manager-login">
@@ -302,29 +419,77 @@ function TrackManager() {
           <>
             <div className="track-section">
               <h3>Score</h3>
+              {editMode && (
+                <button
+                  className="add-track-button"
+                  onClick={() => handleAddTrack('score')}
+                >
+                  <FaPlus /> Add Track
+                </button>
+              )}
               <div className="track-list">
-                {trackList.score.map(track => renderTrackItem(track))}
+                {trackList.score
+                  .filter(track => track !== null)
+                  .map((track, index) => 
+                    renderTrackItem(track, 'score', false, index)
+                  )}
               </div>
             </div>
 
             <div className="track-section separator">
               <h3>Gnome Music</h3>
+              {editMode && (
+                <button
+                  className="add-track-button"
+                  onClick={() => handleAddTrack('gnomeMusic')}
+                >
+                  <FaPlus /> Add Track
+                </button>
+              )}
               <div className="track-list">
-                {trackList.gnomeMusic.map(track => renderTrackItem(track))}
+                {trackList.gnomeMusic
+                  .filter(track => track !== null)
+                  .map((track, index) => 
+                    renderTrackItem(track, 'gnomeMusic', false, index)
+                  )}
               </div>
             </div>
 
             <div className="track-section separator">
               <h3>Outside Current Scope</h3>
+              {editMode && (
+                <button
+                  className="add-track-button"
+                  onClick={() => handleAddTrack('outsideScope')}
+                >
+                  <FaPlus /> Add Track
+                </button>
+              )}
               <div className="track-list">
-                {trackList.outsideScope.map(track => renderTrackItem(track))}
+                {trackList.outsideScope
+                  .filter(track => track !== null)
+                  .map((track, index) => 
+                    renderTrackItem(track, 'outsideScope', false, index)
+                  )}
               </div>
             </div>
 
             <div className="track-section separator">
               <h3>Bonus & Unassigned</h3>
+              {editMode && (
+                <button
+                  className="add-track-button"
+                  onClick={() => handleAddTrack('bonusUnassigned')}
+                >
+                  <FaPlus /> Add Track
+                </button>
+              )}
               <div className="track-list">
-                {trackList.bonusUnassigned.map(track => renderTrackItem(track))}
+                {trackList.bonusUnassigned
+                  .filter(track => track !== null)
+                  .map((track, index) => 
+                    renderTrackItem(track, 'bonusUnassigned', false, index)
+                  )}
               </div>
             </div>
           </>
@@ -332,6 +497,21 @@ function TrackManager() {
       </div>
 
       {renderMediaLibrary()}
+
+      {showEditor && (
+        <div className="modal-overlay">
+          <TrackEditor
+            track={editingTrack}
+            section={editingSection}
+            parentTrack={parentTrack}
+            onUpdate={(newTrackList) => setTrackList(newTrackList)}
+            onClose={() => {
+              setShowEditor(false);
+              setParentTrack(null);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
