@@ -851,3 +851,42 @@ app.post('/track-list/save', async (req, res) => {
     res.status(500).json({ error: 'Failed to save track list: ' + error.message });
   }
 });
+
+// Get stem mixes
+app.get('/stem-mixes/:trackId', (req, res) => {
+  try {
+    const mixesPath = path.join(MEDIA_DIRECTORY, 'stemMixes.json');
+    if (!fs.existsSync(mixesPath)) {
+      fs.writeFileSync(mixesPath, JSON.stringify({ mixes: {} }, null, 2));
+    }
+    
+    const mixes = JSON.parse(fs.readFileSync(mixesPath, 'utf8'));
+    res.json(mixes.mixes[req.params.trackId] || []);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load mixes' });
+  }
+});
+
+// Save stem mix
+app.post('/stem-mixes/:trackId', (req, res) => {
+  try {
+    const { name, stems } = req.body;
+    const mixesPath = path.join(MEDIA_DIRECTORY, 'stemMixes.json');
+    
+    let mixes = { mixes: {} };
+    if (fs.existsSync(mixesPath)) {
+      mixes = JSON.parse(fs.readFileSync(mixesPath, 'utf8'));
+    }
+    
+    if (!mixes.mixes[req.params.trackId]) {
+      mixes.mixes[req.params.trackId] = [];
+    }
+    
+    mixes.mixes[req.params.trackId].push({ name, stems });
+    fs.writeFileSync(mixesPath, JSON.stringify(mixes, null, 2));
+    
+    res.json({ message: 'Mix saved successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save mix' });
+  }
+});

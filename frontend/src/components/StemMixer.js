@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './StemMixer.css';
 import { FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function StemMixer({ track, onPlayStateChange }) {
   const [activeStems, setActiveStems] = useState(new Map());
@@ -9,6 +11,9 @@ function StemMixer({ track, onPlayStateChange }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const currentTimeRef = useRef(0);
   const fadeTimeout = useRef(null);
+  const [mixes, setMixes] = useState([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [mixName, setMixName] = useState('');
 
   // Initialize all stems with volume 0 except main track
   useEffect(() => {
@@ -52,6 +57,15 @@ function StemMixer({ track, onPlayStateChange }) {
       audioRefs.current.clear();
       if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
     };
+  }, [track]);
+
+  // Load saved mixes
+  useEffect(() => {
+    if (track?.id) {
+      axios.get(`${process.env.REACT_APP_API_URL}/stem-mixes/${track.id}`)
+        .then(response => setMixes(response.data))
+        .catch(error => console.error('Failed to load mixes:', error));
+    }
   }, [track]);
 
   const fadeVolume = (audio, start, end, duration = 200) => {
@@ -138,6 +152,59 @@ function StemMixer({ track, onPlayStateChange }) {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
+  const handleSaveMix = async () => {
+    if (!mixName) return;
+
+    try {
+      const stems = {};
+      stemVolumes.forEach((volume, stemId) => {
+        stems[stemId] = volume;
+      });
+
+      await axios.post(`${process.env.REACT_APP_API_URL}/stem-mixes/${track.id}`, {
+        name: mixName,
+        stems
+      });
+
+      setShowSaveDialog(false);
+      setMixName('');
+      toast.success('Mix saved successfully');
+      
+      // Refresh mixes
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/stem-mixes/${track.id}`);
+      setMixes(response.data);
+    } catch (error) {
+      toast.error('Failed to save mix');
+    }
+  };
+
+  const loadMix = async (mix) => {
+    try {
+      // Fade out all current stems
+      const fadePromises = Array.from(stemVolumes.entries()).map(([stemId, currentVolume]) => {
+        const audio = audioRefs.current.get(stemId);
+        return fadeVolume(audio, currentVolume, 0);
+      });
+      
+      await Promise.all(fadePromises);
+
+      // Set new volumes
+      const newVolumes = new Map();
+      Object.entries(mix.stems).forEach(([stemId, volume]) => {
+        newVolumes.set(stemId, volume);
+        const audio = audioRefs.current.get(stemId);
+        if (audio) {
+          fadeVolume(audio, 0, volume);
+        }
+      });
+
+      setStemVolumes(newVolumes);
+      toast.success('Mix loaded');
+    } catch (error) {
+      toast.error('Failed to load mix');
+    }
+  };
+
   if (!track || !track.filename) return null;
 
   return (
@@ -206,6 +273,40 @@ function StemMixer({ track, onPlayStateChange }) {
           )
         ))}
       </div>
+
+      <div className="mix-controls">
+        <button 
+          className="save-mix-button"
+          onClick={() => setShowSaveDialog(true)}
+        >
+          Save Mix
+        </button>
+        
+        <div className="mix-presets">
+          {mixes.map((mix, index) => (
+            <button
+              key={index}
+              className="mix-preset-button"
+              onClick={() => loadMix(mix)}
+            >
+              {mix.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {showSaveDialog && (
+        <div className="save-mix-dialog">
+          <input
+            type="text"
+            value={mixName}
+            onChange={(e) => setMixName(e.target.value)}
+            placeholder="Enter mix name"
+          />
+          <button onClick={handleSaveMix}>Save</button>
+          <button onClick={() => setShowSaveDialog(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 }
