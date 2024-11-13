@@ -48,8 +48,8 @@
 
 .stem-channel {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
   padding: 12px;
   background: #333;
   border-radius: 6px;
@@ -76,6 +76,7 @@
   color: white;
   transition: all 0.2s;
   font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .stem-toggle.active {
@@ -91,22 +92,47 @@
 
 .volume-control input[type="range"] {
   flex: 1;
-  height: 4px;
+  height: 24px;
   -webkit-appearance: none;
   appearance: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.volume-control input[type="range"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
   background: #666;
   border-radius: 2px;
-  cursor: pointer;
+  transform: translateY(-50%);
 }
 
 .volume-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 20px;
+  height: 20px;
   background: #fff;
   border-radius: 50%;
   cursor: pointer;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.volume-control input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .stem-type {
@@ -128,4 +154,73 @@
 
 .main-stem {
   border: 1px solid #444;
+}
+
+.volume-value {
+  min-width: 40px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+@media (max-width: 768px) {
+  .stem-mixer {
+    padding: 16px;
+  }
+
+  .stem-channel {
+    padding: 16px;
+  }
+
+  .stem-toggle {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+
+  .volume-control {
+    padding: 8px 0;
+  }
+
+  .volume-control input[type="range"] {
+    height: 32px;
+  }
+
+  .volume-control input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .volume-control input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stem-info {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .volume-display {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1db954;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .volume-control:active .volume-display {
+    opacity: 1;
+  }
+}
+
+@supports (padding: max(0px)) {
+  .stem-mixer {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
 } 

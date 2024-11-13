@@ -19,6 +19,7 @@ function Navigation() {
           className={`nav-link ${location.pathname === '/stems' ? 'active' : ''}`}
         >
           Stem Mixer
+          <span className="new-tag">New</span>
         </Link>
         <Link 
           to="/manage" 

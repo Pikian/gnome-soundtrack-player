@@ -16,9 +16,9 @@ function StemMixer({ track, onPlayStateChange }) {
       const initialStems = new Map();
       const initialVolumes = new Map();
       
-      // Set up main track
+      // Set up main track with 50% volume
       initialStems.set(track.id, track);
-      initialVolumes.set(track.id, 1);
+      initialVolumes.set(track.id, 0.5);
       
       // Set up all substems (but muted)
       track.subtracks?.forEach(subtrack => {
@@ -36,7 +36,7 @@ function StemMixer({ track, onPlayStateChange }) {
         const audio = new Audio();
         audio.src = `${process.env.REACT_APP_API_URL}/tracks/${stem.filename}`;
         audio.loop = true;
-        audio.volume = stem.id === track.id ? 1 : 0;
+        audio.volume = stem.id === track.id ? 0.5 : 0;
         audio.preload = 'auto';
         audioRefs.current.set(stem.id, audio);
       });

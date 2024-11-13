@@ -83,6 +83,7 @@ function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
             <option value="">Normal</option>
             <option value="substem">Substem</option>
             <option value="alternative">Alternative Version</option>
+            <option value="audioqueue">Audio Queue</option>
           </select>
         </div>
 

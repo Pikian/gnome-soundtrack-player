@@ -871,3 +871,15 @@
     height: 14px;
   }
 }
+
+/* Add this with your other label styles */
+.audioqueue-label {
+  font-size: 0.7rem;
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

@@ -145,13 +145,6 @@
           "filename": null,
           "status": "planned",
           "type": "substem"
-        },
-        {
-          "id": "tense",
-          "title": "Tense",
-          "filename": null,
-          "status": "planned",
-          "type": "alternative"
         }
       ]
     },
@@ -236,12 +229,6 @@
     {
       "id": "combat",
       "title": "Combat",
-      "filename": null,
-      "status": "planned"
-    },
-    {
-      "id": "tense",
-      "title": "Tense",
       "filename": null,
       "status": "planned"
     }
