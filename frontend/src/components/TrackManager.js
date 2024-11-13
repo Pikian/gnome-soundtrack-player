@@ -197,8 +197,9 @@ function TrackManager() {
                 className="delete-button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteTrack(track.id, section);
+                  handleDeleteTrack(track, section);
                 }}
+                title="Delete track"
               >
                 <FaTrash />
               </button>
@@ -349,15 +350,25 @@ function TrackManager() {
     setShowEditor(true);
   };
 
-  const handleDeleteTrack = async (trackId, section) => {
+  const handleDeleteTrack = async (track, section) => {
     if (!window.confirm('Are you sure you want to delete this track?')) return;
 
     try {
+      const loadingToast = toast.loading('Deleting track...');
+      
       const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/track-list/${section}/${trackId}`
+        `${process.env.REACT_APP_API_URL}/track-list/${section}/${track.id}`
       );
-      setTrackList(response.data.trackList);
+      
+      if (response.data.trackList) {
+        setTrackList(response.data.trackList);
+        toast.success('Track deleted successfully', { id: loadingToast });
+      } else {
+        throw new Error('Invalid server response');
+      }
     } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete track. Please try again.');
       setError('Failed to delete track');
     }
   };

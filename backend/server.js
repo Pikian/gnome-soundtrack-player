@@ -626,13 +626,19 @@ app.post('/track-list/add', async (req, res) => {
 app.delete('/track-list/:section/:trackId', async (req, res) => {
   try {
     const { section, trackId } = req.params;
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    console.log('Deleting track:', { section, trackId });
+    
+    // Create backup before modification
+    const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    backupTrackList(currentTrackList);
 
     // Helper function to remove track
     const removeTrack = (tracks) => {
       return tracks.filter(track => {
-        if (track.id === trackId) return false;
+        if (track.id === trackId) {
+          console.log('Found track to remove:', track);
+          return false;
+        }
         if (track.subtracks) {
           track.subtracks = removeTrack(track.subtracks);
         }
@@ -640,16 +646,30 @@ app.delete('/track-list/:section/:trackId', async (req, res) => {
       });
     };
 
-    if (section in trackList) {
-      trackList[section] = removeTrack(trackList[section]);
-      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-      res.json({ message: 'Track deleted successfully', trackList });
+    if (section in currentTrackList) {
+      currentTrackList[section] = removeTrack(currentTrackList[section]);
+      
+      // Save the updated track list
+      fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
+      console.log('Track list updated after deletion');
+      
+      res.json({ 
+        message: 'Track deleted successfully', 
+        trackList: currentTrackList 
+      });
     } else {
       res.status(400).json({ error: 'Invalid section' });
     }
   } catch (error) {
     console.error('Error deleting track:', error);
-    res.status(500).json({ error: 'Failed to delete track' });
+    res.status(500).json({ 
+      error: 'Failed to delete track: ' + error.message,
+      details: {
+        section: req.params.section,
+        trackId: req.params.trackId,
+        path: TRACK_LIST_PATH
+      }
+    });
   }
 });
 
