@@ -8,6 +8,7 @@ import Error404 from './components/Error404';
 import TrackManager from './components/TrackManager';
 import './App.css';
 import Navigation from './components/Navigation';
+import StemMixerView from './components/StemMixerView';
 
 function App() {
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -207,6 +208,7 @@ function App() {
                 />
               } 
             />
+            <Route path="/stems" element={<StemMixerView />} />
             <Route path="/manage" element={<TrackManager />} />
             <Route path="*" element={<Error404 />} />
           </Routes>

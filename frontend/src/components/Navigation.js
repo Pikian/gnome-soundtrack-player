@@ -15,6 +15,12 @@ function Navigation() {
           Library
         </Link>
         <Link 
+          to="/stems" 
+          className={`nav-link ${location.pathname === '/stems' ? 'active' : ''}`}
+        >
+          Stem Mixer
+        </Link>
+        <Link 
           to="/manage" 
           className={`nav-link ${location.pathname === '/manage' ? 'active' : ''}`}
         >

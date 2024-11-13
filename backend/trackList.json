@@ -3,14 +3,14 @@
     {
       "id": "dark-forest",
       "title": "The Dark Forest",
-      "filename": "DFT 20241017.mp3",
+      "filename": "2024_11_12_The Dark Forest Theme Final .mp3",
       "status": "ready",
       "subtracks": [
         {
           "id": "dark-forest-lakes",
           "title": "Biome - Lakes",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_Biome Lake.mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
@@ -37,22 +37,22 @@
         {
           "id": "dark-forest-comforting",
           "title": "Comforting",
-          "filename": "Hisaishi 1.mp3",
+          "filename": "2024_11_12_Guitar.mp3",
           "status": "ready",
           "type": "substem"
         },
         {
           "id": "dark-forest-fear",
           "title": "Fear",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_Fear.mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
           "id": "dark-forest-tense",
           "title": "Tense",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_Taikodrum.mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
@@ -79,8 +79,8 @@
         {
           "id": "dark-forest-inquisitive",
           "title": "Inquisitiveness",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_Spiccato runs (vln1+vcl1).mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
@@ -93,15 +93,15 @@
         {
           "id": "dark-forest-urgency",
           "title": "Urgency",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_Cello Ornament 2.mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
           "id": "dark-forest-heroic",
           "title": "Heroic",
-          "filename": null,
-          "status": "planned",
+          "filename": "2024_11_12_EPIC bass.mp3",
+          "status": "ready",
           "type": "substem"
         },
         {
