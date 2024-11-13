@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash, FaPlus, FaEdit, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import './TrackManager.css';
 import TrackEditor from './TrackEditor';
+import { toast } from 'react-hot-toast';
 
 function TrackManager() {
   const [trackList, setTrackList] = useState(null);
@@ -58,19 +59,32 @@ function TrackManager() {
       setError(null);
       console.log('Assigning file:', { trackId, filename });
       
+      // Show loading state
+      const loadingToast = toast.loading('Saving changes...');
+      
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/assign-track`, {
         trackId,
         filename: filename === 'none' ? null : filename
       });
       
-      console.log('Assignment response:', response.data);
-      await fetchData();
+      if (response.data.trackList) {
+        setTrackList(response.data.trackList);
+        
+        // Save to local backup
+        localStorage.setItem('trackListBackup', JSON.stringify(response.data.trackList));
+        localStorage.setItem('lastSaveTime', new Date().toISOString());
+        
+        toast.success('Changes saved successfully', { id: loadingToast });
+      } else {
+        throw new Error('Invalid server response');
+      }
       
       if (filename === 'none') {
         setSelectedTrack(null);
       }
     } catch (error) {
       console.error('Error assigning file:', error);
+      toast.error('Failed to save changes. Please try again.', { duration: 5000 });
       setError(error.response?.data?.error || 'Failed to assign file');
     }
   };
@@ -374,6 +388,74 @@ function TrackManager() {
       setError('Failed to move track');
     }
   };
+
+  // Add auto-save when exiting edit mode
+  const handleEditModeToggle = async (newEditMode) => {
+    if (editMode && !newEditMode) { // If exiting edit mode
+      try {
+        const loadingToast = toast.loading('Saving changes...');
+        
+        // Force a final save of the current state
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/save`, {
+          trackList
+        });
+        
+        if (response.data.success) {
+          toast.success('All changes saved', { id: loadingToast });
+        }
+      } catch (error) {
+        console.error('Error saving changes:', error);
+        toast.error('Failed to save some changes. Please try again.');
+        return; // Prevent exiting edit mode if save failed
+      }
+    }
+    setEditMode(newEditMode);
+  };
+
+  // Add periodic auto-save
+  useEffect(() => {
+    let autoSaveInterval;
+    
+    if (editMode) {
+      autoSaveInterval = setInterval(async () => {
+        try {
+          const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/save`, {
+            trackList
+          });
+          
+          if (response.data.success) {
+            console.log('Auto-save successful');
+            localStorage.setItem('trackListBackup', JSON.stringify(trackList));
+            localStorage.setItem('lastSaveTime', new Date().toISOString());
+          }
+        } catch (error) {
+          console.error('Auto-save failed:', error);
+        }
+      }, 30000); // Auto-save every 30 seconds
+    }
+    
+    return () => {
+      if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+      }
+    };
+  }, [editMode, trackList]);
+
+  // Add recovery from local backup
+  useEffect(() => {
+    const backupData = localStorage.getItem('trackListBackup');
+    const lastSaveTime = localStorage.getItem('lastSaveTime');
+    
+    if (backupData && lastSaveTime) {
+      const timeSinceLastSave = new Date() - new Date(lastSaveTime);
+      const backupTrackList = JSON.parse(backupData);
+      
+      // If there's a recent backup (less than 1 hour old)
+      if (timeSinceLastSave < 3600000) {
+        setTrackList(backupTrackList);
+      }
+    }
+  }, []);
 
   if (!isManagerAuthenticated) {
     return (

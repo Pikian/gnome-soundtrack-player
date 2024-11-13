@@ -79,54 +79,82 @@ const formatDuration = (seconds) => {
 // Move this before any other route definitions
 app.use(express.json());
 
-// Add the assign-track endpoint near the top with other main routes
+// Add backup functionality
+const backupTrackList = (trackList) => {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backupPath = path.join(__dirname, 'backups', `trackList-${timestamp}.json`);
+  
+  // Ensure backups directory exists
+  if (!fs.existsSync(path.join(__dirname, 'backups'))) {
+    fs.mkdirSync(path.join(__dirname, 'backups'));
+  }
+  
+  // Save backup
+  fs.writeFileSync(backupPath, JSON.stringify(trackList, null, 2));
+  
+  // Clean up old backups (keep last 10)
+  const backups = fs.readdirSync(path.join(__dirname, 'backups'))
+    .sort()
+    .reverse()
+    .slice(10);
+    
+  backups.forEach(backup => {
+    fs.unlinkSync(path.join(__dirname, 'backups', backup));
+  });
+};
+
+// Update the assign-track endpoint
 app.post('/assign-track', async (req, res) => {
   try {
-    console.log('Received assign track request:', req.body);
     const { trackId, filename } = req.body;
     const trackListPath = path.join(__dirname, 'trackList.json');
     
-    console.log('Reading track list from:', trackListPath);
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
-
-    // Find and update the track (including subtracks)
+    // Create backup before modification
+    const currentTrackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    backupTrackList(currentTrackList);
+    
+    // Update track list
     let updated = false;
     
     const updateTrack = (tracks) => {
       tracks.forEach(track => {
         if (track.id === trackId) {
-          console.log(`Updating track ${trackId}:`, {
-            before: track,
-            after: { ...track, filename, status: filename ? 'ready' : 'planned' }
-          });
           track.filename = filename;
           track.status = filename ? 'ready' : 'planned';
           updated = true;
         }
-        // Check subtracks if they exist
         if (track.subtracks) {
           updateTrack(track.subtracks);
         }
       });
     };
 
-    // Update tracks in all sections
-    Object.values(trackList).forEach(section => {
+    Object.values(currentTrackList).forEach(section => {
       updateTrack(section);
     });
 
     if (!updated) {
-      console.log('Track not found:', trackId);
       return res.status(404).json({ error: 'Track not found' });
     }
 
-    // Save the updated track list
-    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-    console.log('Track list updated successfully');
-    res.json({ message: 'Track updated successfully', trackList });
+    // Save with error handling
+    try {
+      fs.writeFileSync(trackListPath, JSON.stringify(currentTrackList, null, 2));
+      res.json({ 
+        message: 'Track updated successfully', 
+        trackList: currentTrackList,
+        timestamp: new Date().toISOString()
+      });
+    } catch (writeError) {
+      // Try to restore from backup if save fails
+      console.error('Error saving track list:', writeError);
+      const backup = fs.readFileSync(path.join(__dirname, 'backups', fs.readdirSync(path.join(__dirname, 'backups')).pop()));
+      fs.writeFileSync(trackListPath, backup);
+      throw new Error('Failed to save changes, restored from backup');
+    }
   } catch (error) {
-    console.error('Error assigning track:', error);
-    res.status(500).json({ error: 'Failed to assign track: ' + error.message });
+    console.error('Error in assign-track:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
