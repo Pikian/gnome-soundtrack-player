@@ -578,8 +578,11 @@ app.post('/track-list/update', async (req, res) => {
 app.post('/track-list/add', async (req, res) => {
   try {
     const { section, parentTrackId, newTrack } = req.body;
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    console.log('Adding track:', { section, parentTrackId, newTrack });
+    
+    // Create backup before modification
+    const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    backupTrackList(currentTrackList);
 
     // Helper function to add subtrack to parent
     const addSubtrackToParent = (tracks) => {
@@ -602,17 +605,20 @@ app.post('/track-list/add', async (req, res) => {
 
     if (parentTrackId) {
       // Adding a subtrack
-      trackList[section] = addSubtrackToParent(trackList[section]);
+      currentTrackList[section] = addSubtrackToParent(currentTrackList[section]);
     } else {
       // Adding a main track
-      trackList[section].push(newTrack);
+      if (!currentTrackList[section]) {
+        currentTrackList[section] = [];
+      }
+      currentTrackList[section].push(newTrack);
     }
 
-    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-    res.json({ message: 'Track added successfully', trackList });
+    fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
+    res.json({ message: 'Track added successfully', trackList: currentTrackList });
   } catch (error) {
     console.error('Error adding track:', error);
-    res.status(500).json({ error: 'Failed to add track' });
+    res.status(500).json({ error: 'Failed to add track: ' + error.message });
   }
 });
 
@@ -792,5 +798,30 @@ app.post('/track-list/move', async (req, res) => {
   } catch (error) {
     console.error('Error moving track:', error);
     res.status(500).json({ error: 'Failed to move track: ' + error.message });
+  }
+});
+
+// Save track list
+app.post('/track-list/save', async (req, res) => {
+  try {
+    const { trackList } = req.body;
+    console.log('Saving track list');
+    
+    // Create backup before saving
+    if (fs.existsSync(TRACK_LIST_PATH)) {
+      backupTrackList(JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8')));
+    }
+
+    // Save new track list
+    fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(trackList, null, 2));
+    
+    res.json({ 
+      success: true, 
+      message: 'Track list saved successfully',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error saving track list:', error);
+    res.status(500).json({ error: 'Failed to save track list: ' + error.message });
   }
 });
