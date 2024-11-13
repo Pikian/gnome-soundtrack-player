@@ -542,8 +542,11 @@ app.delete('/tracks/:filename', (req, res) => {
 app.post('/track-list/update', async (req, res) => {
   try {
     const { section, trackId, updates } = req.body;
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    console.log('Updating track:', { section, trackId, updates });
+    
+    // Create backup before modification
+    const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    backupTrackList(currentTrackList);
 
     // Helper function to find and update track
     const updateTrackInSection = (tracks) => {
@@ -561,16 +564,16 @@ app.post('/track-list/update', async (req, res) => {
       });
     };
 
-    if (section in trackList) {
-      trackList[section] = updateTrackInSection(trackList[section]);
-      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-      res.json({ message: 'Track updated successfully', trackList });
+    if (section in currentTrackList) {
+      currentTrackList[section] = updateTrackInSection(currentTrackList[section]);
+      fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
+      res.json({ message: 'Track updated successfully', trackList: currentTrackList });
     } else {
       res.status(400).json({ error: 'Invalid section' });
     }
   } catch (error) {
     console.error('Error updating track:', error);
-    res.status(500).json({ error: 'Failed to update track' });
+    res.status(500).json({ error: 'Failed to update track: ' + error.message });
   }
 });
 
@@ -770,12 +773,15 @@ app.post('/track-list/reorder', async (req, res) => {
   }
 });
 
-// Add move endpoint
+// Update move endpoint
 app.post('/track-list/move', async (req, res) => {
   try {
     const { trackId, section, direction, parentId } = req.body;
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    console.log('Moving track:', { trackId, section, direction, parentId });
+    
+    // Create backup before modification
+    const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    backupTrackList(currentTrackList);
 
     const moveInArray = (array, trackId, direction) => {
       const index = array.findIndex(track => track.id === trackId);
@@ -803,15 +809,15 @@ app.post('/track-list/move', async (req, res) => {
           }
         });
       };
-      findAndMove(trackList[section]);
+      findAndMove(currentTrackList[section]);
     } else {
       // Move main track
-      moved = moveInArray(trackList[section], trackId, direction);
+      moved = moveInArray(currentTrackList[section], trackId, direction);
     }
 
     if (moved) {
-      fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
-      res.json({ message: 'Track moved successfully', trackList });
+      fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
+      res.json({ message: 'Track moved successfully', trackList: currentTrackList });
     } else {
       res.status(400).json({ error: 'Could not move track' });
     }
