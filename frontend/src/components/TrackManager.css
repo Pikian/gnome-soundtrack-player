@@ -1,1179 +1,151 @@
 .track-manager {
-
-
-
   padding: 20px;
-
-
-
   max-width: 1200px;
-
-
-
   margin: 0 auto;
-
-
-
   color: white;
-
-
-
 }
-
-
-
-
-
-
 
 .track-manager-header {
-
-
-
   display: flex;
-
-
-
   justify-content: space-between;
-
-
-
   align-items: center;
-
-
-
   margin-bottom: 24px;
-
-
-
 }
-
-
-
-
-
-
 
 .edit-button {
-
-
-
   padding: 8px 16px;
-
-
-
   background: #1db954;
-
-
-
   border: none;
-
-
-
   border-radius: 20px;
-
-
-
   color: white;
-
-
-
   cursor: pointer;
-
-
-
   font-size: 0.9rem;
-
-
-
   transition: background-color 0.2s;
-
-
-
 }
-
-
-
-
-
-
 
 .edit-button:hover {
-
-
-
   background: #1ed760;
-
-
-
 }
 
-
-
-
-
-
-
+/* Track sections */
 .track-section {
-
-
-
   margin-bottom: 32px;
-
-
-
 }
-
-
-
-
-
-
 
 .track-section h3 {
-
-
-
   color: #b3b3b3;
-
-
-
   font-size: 0.875rem;
-
-
-
   text-transform: uppercase;
-
-
-
   letter-spacing: 0.1em;
-
-
-
   margin-bottom: 16px;
-
-
-
 }
 
-
-
-
-
-
-
+/* Track items */
 .track-list {
-
-
-
-  display: grid;
-
-
-
-  gap: 8px;
-
-
-
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-
-
-
-
-
-
 
 .track-item {
-
-
-
   display: flex;
-
-
-
   justify-content: space-between;
-
-
-
   align-items: center;
-
-
-
   padding: 12px 16px;
-
-
-
   background: #282828;
-
-
-
   border-radius: 4px;
-
-
-
-  cursor: pointer;
-
-
-
-  transition: all 0.2s ease;
-
-
-
-  margin-bottom: 4px;
-
-
-
+  transition: background-color 0.2s;
 }
-
-
-
-
-
-
 
 .track-item:hover {
-
-
-
   background: #333;
-
-
-
 }
-
-
-
-
-
-
-
-.track-item.selected {
-
-
-
-  background: rgba(29, 185, 84, 0.2);
-
-
-
-}
-
-
-
-
-
-
-
-.track-item.selected:hover {
-
-
-
-  background: rgba(29, 185, 84, 0.3);
-
-
-
-}
-
-
-
-
-
-
 
 .track-info {
-
-
-
   display: flex;
-
-
-
   align-items: center;
-
-
-
   gap: 12px;
-
-
-
+  flex: 1;
+  min-width: 0;
 }
-
-
-
-
-
-
-
-.status-icon {
-
-
-
-  font-size: 14px;
-
-
-
-}
-
-
-
-
-
-
-
-.status-icon.ready {
-
-
-
-  color: #1db954;
-
-
-
-}
-
-
-
-
-
-
-
-.status-icon.planned {
-
-
-
-  color: #b3b3b3;
-
-
-
-}
-
-
-
-
-
-
 
 .track-title {
-
-
-
-  font-size: 0.9rem;
-
-
-
-}
-
-
-
-
-
-
-
-.track-file {
-
-
-
-  display: flex;
-
-
-
-  align-items: center;
-
-
-
-  gap: 8px;
-
-
-
-  color: #b3b3b3;
-
-
-
-  font-size: 0.8rem;
-
-
-
-}
-
-
-
-
-
-
-
-.file-assignment {
-
-
-
-  position: fixed;
-
-
-
-  bottom: calc(90px + env(safe-area-inset-bottom));
-
-
-
-  left: 0;
-
-
-
-  right: 0;
-
-
-
-  background: rgba(24, 24, 24, 0.98);
-
-
-
-  backdrop-filter: blur(10px);
-
-
-
-  padding: 16px;
-
-
-
-  border-top: 1px solid #282828;
-
-
-
-  border-bottom: 1px solid #282828;
-
-
-
-  z-index: 1001;
-
-
-
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-
-
-
-}
-
-
-
-
-
-
-
-.file-assignment h3 {
-
-
-
-  margin: 0 0 12px 0;
-
-
-
-  font-size: 1rem;
-
-
-
-  color: #fff;
-
-
-
-}
-
-
-
-
-
-
-
-.error-message {
-
-
-
-  background: rgba(255, 0, 0, 0.1);
-
-
-
-  border: 1px solid rgba(255, 0, 0, 0.2);
-
-
-
-  color: #ff4444;
-
-
-
-  padding: 12px;
-
-
-
-  border-radius: 4px;
-
-
-
-  margin-bottom: 20px;
-
-
-
-}
-
-
-
-.file-assignment select {
-
-
-
-  width: 100%;
-
-
-
-  padding: 12px;
-
-
-
-  background: #282828;
-
-
-
-  border: 1px solid #333;
-
-
-
-  border-radius: 4px;
-
-
-
-  color: white;
-
-
-
-  font-size: 0.9rem;
-
-
-
-  cursor: pointer;
-
-
-
-  margin-bottom: env(safe-area-inset-bottom);
-
-
-
-  transition: border-color 0.2s;
-
-
-
-}
-
-
-
-.file-assignment select:hover {
-
-
-
-  border-color: #1db954;
-
-
-
-}
-
-
-
-.file-assignment select:focus {
-
-
-
-  outline: none;
-
-
-
-  border-color: #1db954;
-
-
-
-}
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-
-
-
-  .track-manager {
-
-
-
-    padding: 16px;
-
-
-
-  }
-
-
-
-
-
-
-
-  .track-item {
-
-
-
-    padding: 10px 12px;
-
-
-
-  }
-
-
-
-
-
-
-
-  .file-assignment {
-
-
-
-    padding: 12px;
-
-
-
-    bottom: calc(80px + env(safe-area-inset-bottom));
-
-
-
-  }
-
-
-
-}
-
-
-
-
-
-
-
-/* Add section separator styles */
-.track-section.separator {
-
-
-
-  margin-top: 40px;
-
-
-
-  padding-top: 24px;
-
-
-
-  border-top: 1px solid #282828;
-
-
-
-}
-
-
-
-.track-section.separator h3 {
-
-
-
-  color: #b3b3b3;
-
-
-
-  margin-bottom: 20px;
-
-
-
-}
-
-
-
-@media (max-width: 768px) {
-
-
-
-  .track-section.separator {
-
-
-
-    margin-top: 32px;
-
-
-
-    padding-top: 20px;
-
-
-
-  }
-
-
-
-}
-
-
-
-
-
-
-
-/* Add these styles for the login form */
-.track-manager-login {
-
-
-
-  display: flex;
-
-
-
-  justify-content: center;
-
-
-
-  align-items: center;
-
-
-
-  min-height: calc(100vh - 64px);
-
-
-
-  padding: 20px;
-
-
-
-}
-
-
-
-.track-manager-login .login-box {
-
-
-
-  background-color: #282828;
-
-
-
-  padding: 2rem;
-
-
-
-  border-radius: 8px;
-
-
-
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-
-
-  text-align: center;
-
-
-
-  width: 100%;
-
-
-
-  max-width: 400px;
-
-
-
-}
-
-
-
-.track-manager-login h2 {
-
-
-
-  color: #fff;
-
-
-
-  margin-bottom: 2rem;
-
-
-
-  font-size: 1.8rem;
-
-
-
-}
-
-
-
-.track-manager-login .password-input {
-
-
-
-  width: 100%;
-
-
-
-  padding: 12px;
-
-
-
-  margin-bottom: 1rem;
-
-
-
-  border: none;
-
-
-
-  border-radius: 4px;
-
-
-
-  background-color: #3e3e3e;
-
-
-
-  color: #fff;
-
-
-
-  font-size: 1rem;
-
-
-
-}
-
-
-
-.track-manager-login .password-input:focus {
-
-
-
-  outline: 2px solid #1db954;
-
-
-
-}
-
-
-
-.track-manager-login .login-button {
-
-
-
-  width: 100%;
-
-
-
-  padding: 12px;
-
-
-
-  background-color: #1db954;
-
-
-
-  color: white;
-
-
-
-  border: none;
-
-
-
-  border-radius: 4px;
-
-
-
-  font-size: 1rem;
-
-
-
-  cursor: pointer;
-
-
-
-  transition: background-color 0.2s;
-
-
-
-}
-
-
-
-.track-manager-login .login-button:hover {
-
-
-
-  background-color: #1ed760;
-
-
-
-}
-
-
-
-.track-item.subtrack {
-
-
-
-  padding-left: 48px;
-
-
-
-  background: rgba(255, 255, 255, 0.03);
-
-
-
-}
-
-
-
-.expand-icon {
-
-
-
-  display: flex;
-
-
-
-  align-items: center;
-
-
-
-  justify-content: center;
-
-
-
-  width: 20px;
-
-
-
-  height: 20px;
-
-
-
-  cursor: pointer;
-
-
-
-  color: #b3b3b3;
-
-
-
-  margin-right: 4px;
-
-
-
-}
-
-
-
-.track-item:hover .expand-icon {
-
-
-
-  color: #fff;
-
-
-
-}
-
-
-
-.subtracks {
-
-
-
-  margin-left: 20px;
-
-
-
-}
-
-
-
-.substem-label {
-
-
-
-  font-size: 0.7rem;
-
-
-
-  color: #1db954;
-
-
-
-  background: rgba(29, 185, 84, 0.1);
-
-
-
-  padding: 2px 6px;
-
-
-
-  border-radius: 10px;
-
-
-
-  margin-left: 8px;
-
-
-
-  text-transform: uppercase;
-
-
-
-  letter-spacing: 0.05em;
-
-
-
-}
-
-
-
-.track-item.subtrack:hover {
-
-
-
-  background: rgba(255, 255, 255, 0.05);
-
-
-
-}
-
-
-
-/* iPhone notch support */
-@supports (padding: max(0px)) {
-
-
-
-  .file-assignment {
-
-
-
-    bottom: max(90px, calc(90px + env(safe-area-inset-bottom)));
-
-
-
-  }
-
-
-
-}
-
-/* Add to your existing styles */
-
-.manager-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.upload-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: #333;
-  border: none;
-  border-radius: 20px;
-  color: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.upload-button:hover {
-  background: #444;
-}
-
-.upload-button.uploading {
-  background: #666;
-  cursor: not-allowed;
-}
-
-.upload-status {
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  animation: fadeIn 0.3s ease;
-}
-
-.upload-status.success {
-  background: rgba(29, 185, 84, 0.1);
-  border: 1px solid rgba(29, 185, 84, 0.2);
-  color: #1db954;
-}
-
-.upload-status.error {
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .manager-controls {
-    gap: 8px;
-  }
-
-  .upload-button,
-  .edit-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-}
-
-.file-selector {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.file-selector select {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   flex: 1;
 }
 
-.delete-button {
+.track-file {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: #ff4444;
-  border: none;
+  gap: 8px;
+  color: #b3b3b3;
+  font-size: 0.8rem;
+}
+
+/* File selector */
+.file-select {
+  padding: 6px 12px;
+  background: #333;
+  border: 1px solid #444;
   border-radius: 4px;
   color: white;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
+  min-width: 200px;
+  margin: 0 16px;
 }
 
-.delete-button:hover {
-  background: #ff6666;
+.file-select:hover {
+  border-color: #1db954;
 }
 
-.delete-button svg {
+/* Subtracks */
+.track-item.subtrack {
+  padding-left: 48px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.track-item.subtrack:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Status icons */
+.status-icon {
   font-size: 14px;
 }
 
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .delete-button {
-    width: 32px;
-    height: 32px;
-  }
-
-  .delete-button svg {
-    font-size: 12px;
-  }
+.status-icon.ready {
+  color: #1db954;
 }
 
-/* Add to your existing styles */
+.status-icon.planned {
+  color: #b3b3b3;
+}
 
+/* Labels */
+.substem-label,
+.alternative-label {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.substem-label {
+  background: rgba(29, 185, 84, 0.1);
+  color: #1db954;
+}
+
+.alternative-label {
+  background: rgba(185, 103, 255, 0.1);
+  color: #b967ff;
+}
+
+/* Media library */
 .media-library {
   margin-top: 40px;
   padding-top: 24px;
@@ -1187,18 +159,10 @@
   margin-bottom: 20px;
 }
 
-.media-library-header h3 {
-  color: #b3b3b3;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 0;
-}
-
 .media-files {
-  display: grid;
-  gap: 8px;
-  margin-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .media-file {
@@ -1208,143 +172,12 @@
   padding: 12px 16px;
   background: #282828;
   border-radius: 4px;
-  transition: background-color 0.2s;
 }
 
-.media-file:hover {
-  background: #333;
-}
-
-.file-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.filename {
-  font-size: 0.9rem;
-  color: #fff;
-}
-
-.duration {
-  font-size: 0.8rem;
-  color: #b3b3b3;
-}
-
-/* Update mobile styles */
-@media (max-width: 768px) {
-  .media-library {
-    margin-top: 32px;
-    padding-top: 20px;
-  }
-
-  .media-file {
-    padding: 10px 12px;
-  }
-
-  .file-info {
-    gap: 12px;
-  }
-
-  .filename {
-    font-size: 0.85rem;
-  }
-
-  .duration {
-    font-size: 0.75rem;
-  }
-}
-
-/* Ensure bottom padding for iPhone notch */
-@supports (padding: max(0px)) {
-  .media-files {
-    margin-bottom: max(20px, calc(20px + env(safe-area-inset-bottom)));
-  }
-}
-
-/* Add these styles for the file select dropdown */
-.file-select {
-  padding: 6px 12px;
-  background: #333;
-  border: 1px solid #444;
-  border-radius: 4px;
-  color: white;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 200px;
-}
-
-.file-select:hover {
-  border-color: #1db954;
-}
-
-.file-select:focus {
-  outline: none;
-  border-color: #1db954;
-  background: #3a3a3a;
-}
-
-/* Update track item styles */
-.track-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: #282828;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  margin-bottom: 4px;
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .file-select {
-    min-width: 140px;
-    font-size: 0.8rem;
-    padding: 4px 8px;
-  }
-  
-  .track-item {
-    padding: 8px 12px;
-  }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 1002;
-}
-
-.add-track-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: #1db954;
-  border: none;
-  border-radius: 20px;
-  color: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-bottom: 16px;
-  transition: background-color 0.2s;
-}
-
-.add-track-button:hover {
-  background: #1ed760;
-}
-
+/* Track controls */
 .track-controls {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
@@ -1357,143 +190,70 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 
 .track-controls .edit-button {
   background: #404040;
-  color: #fff;
 }
 
 .track-controls .delete-button {
   background: #ff4444;
-  color: #fff;
 }
 
-.track-controls .edit-button:hover {
-  background: #505050;
-}
-
-.track-controls .delete-button:hover {
-  background: #ff6666;
-}
-
-/* Update existing substem-label and add alternative-label */
-.substem-label {
-  font-size: 0.7rem;
-  color: #1db954;
-  background: rgba(29, 185, 84, 0.1);
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.alternative-label {
-  font-size: 0.7rem;
-  color: #b967ff;
-  background: rgba(185, 103, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Add styles for the add subtrack button */
-.add-subtrack-button {
-  padding: 6px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.track-controls .add-subtrack-button {
   background: #1db954;
-  color: #fff;
 }
 
-.add-subtrack-button:hover {
-  background: #1ed760;
+/* Section separators */
+.track-section.separator {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #282828;
 }
 
-/* Update track controls to include the new button */
-.track-controls {
-  display: flex;
-  gap: 8px;
-  margin-left: 8px;
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .track-manager {
+    padding: 16px;
+  }
+
+  .track-item {
+    padding: 10px 12px;
+  }
+
+  .file-select {
+    min-width: 140px;
+    font-size: 0.8rem;
+  }
 }
 
-.drag-handle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  color: #666;
-  cursor: grab;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity 0.2s;
+/* Override styles */
+.track-manager .track-item {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  background: #282828 !important;
+  border-radius: 4px !important;
+  margin-bottom: 4px !important;
 }
 
-.track-item:hover .drag-handle {
-  opacity: 1;
+.track-manager .track-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex: 1 !important;
 }
 
-.track-item.dragging {
-  background: #333;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.track-manager .track-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
 }
 
-.track-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Update existing styles */
-.track-item {
-  position: relative;
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
-
-.subtracks {
-  margin-left: 24px;
-  padding-left: 12px;
-  border-left: 1px solid #333;
-}
-
-.dragging {
-  opacity: 0.8;
-  background: #333;
-}
-
-.dragging-over {
-  background: rgba(29, 185, 84, 0.05);
-  border-radius: 4px;
-}
-
-.track-list {
-  min-height: 10px; /* Ensures empty lists are droppable */
-  padding: 4px;
-  transition: background-color 0.2s;
-}
-
-.subtracks {
-  transition: background-color 0.2s;
-  padding: 4px 0;
-}
-
-.track-item {
-  position: relative;
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
-
-.track-item.dragging {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
+/* Fix reorder buttons styling */
 .move-buttons {
   display: flex;
   gap: 4px;
@@ -1508,12 +268,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #404040;
-  color: #fff;
+  background: #333;
+  color: #b3b3b3;
 }
 
 .move-button:hover {
-  background: #505050;
+  background: #404040;
+  color: #fff;
 }
 
 .move-button:disabled {
@@ -1523,4 +284,92 @@
 
 .move-button svg {
   font-size: 12px;
+}
+
+/* Improve Add Track button styling */
+.add-track-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.add-track-button:hover {
+  background: #404040;
+  border-color: #1db954;
+}
+
+.add-track-button svg {
+  font-size: 14px;
+}
+
+/* Update the login form styles */
+.track-manager-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px); /* Account for header and footer */
+  padding: 20px;
+}
+
+.track-manager-login .login-box {
+  background-color: #282828;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.track-manager-login h2 {
+  color: #fff;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.track-manager-login .password-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #3e3e3e;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.track-manager-login .password-input:focus {
+  outline: 2px solid #1db954;
+}
+
+.track-manager-login .login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.track-manager-login .login-button:hover {
+  background-color: #1ed760;
+}
+
+/* Add error message styling */
+.track-manager-login .error-message {
+  color: #ff4444;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
