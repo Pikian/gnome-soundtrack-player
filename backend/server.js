@@ -43,16 +43,20 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Directory where all media files are stored
-const mediaDirectory = process.env.NODE_ENV === 'production' 
+// Update the directory constants
+const MEDIA_DIRECTORY = process.env.NODE_ENV === 'production' 
   ? '/app/media'  // Railway mount point
   : path.join(__dirname, 'media');
 
+// Store trackList.json in the media directory
+const TRACK_LIST_PATH = path.join(MEDIA_DIRECTORY, 'trackList.json');
+const TEMPLATE_TRACK_LIST_PATH = path.join(__dirname, 'trackList.template.json');
+
 // Add logging to help debug paths
-console.log('Media directory:', mediaDirectory);
+console.log('Media directory:', MEDIA_DIRECTORY);
 
 // Serve static files from media directory
-app.use('/media', express.static(mediaDirectory));
+app.use('/media', express.static(MEDIA_DIRECTORY));
 
 // Add this helper function at the top with other helpers
 const getDuration = async (filepath) => {
@@ -79,38 +83,71 @@ const formatDuration = (seconds) => {
 // Move this before any other route definitions
 app.use(express.json());
 
-// Add backup functionality
+// Update backup directory to be in media directory
 const backupTrackList = (trackList) => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupPath = path.join(__dirname, 'backups', `trackList-${timestamp}.json`);
+  const backupDir = path.join(MEDIA_DIRECTORY, 'backups');
+  const backupPath = path.join(backupDir, `trackList-${timestamp}.json`);
   
   // Ensure backups directory exists
-  if (!fs.existsSync(path.join(__dirname, 'backups'))) {
-    fs.mkdirSync(path.join(__dirname, 'backups'));
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true });
   }
   
   // Save backup
   fs.writeFileSync(backupPath, JSON.stringify(trackList, null, 2));
   
   // Clean up old backups (keep last 10)
-  const backups = fs.readdirSync(path.join(__dirname, 'backups'))
+  const backups = fs.readdirSync(backupDir)
+    .filter(file => file.startsWith('trackList-'))
     .sort()
     .reverse()
     .slice(10);
     
   backups.forEach(backup => {
-    fs.unlinkSync(path.join(__dirname, 'backups', backup));
+    fs.unlinkSync(path.join(backupDir, backup));
   });
 };
 
-// Update the assign-track endpoint
+// Initialize trackList.json if it doesn't exist
+if (!fs.existsSync(TRACK_LIST_PATH)) {
+  // Copy template if it exists, otherwise create empty structure
+  if (fs.existsSync(TEMPLATE_TRACK_LIST_PATH)) {
+    fs.copyFileSync(TEMPLATE_TRACK_LIST_PATH, TRACK_LIST_PATH);
+  } else {
+    const emptyTrackList = {
+      score: [],
+      gnomeMusic: [],
+      outsideScope: [],
+      bonusUnassigned: []
+    };
+    fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(emptyTrackList, null, 2));
+  }
+}
+
+// Update all references to trackList.json to use TRACK_LIST_PATH
+// For example, in your /track-list endpoint:
+app.get('/track-list', (req, res) => {
+  try {
+    if (!fs.existsSync(TRACK_LIST_PATH)) {
+      return res.status(404).json({ error: 'Track list file not found' });
+    }
+    
+    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    res.json(trackList);
+  } catch (error) {
+    console.error('Error reading track list:', error);
+    res.status(500).json({ error: 'Failed to read track list: ' + error.message });
+  }
+});
+
+// Update assign-track endpoint
 app.post('/assign-track', async (req, res) => {
   try {
     const { trackId, filename } = req.body;
-    const trackListPath = path.join(__dirname, 'trackList.json');
     
     // Create backup before modification
-    const currentTrackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
     backupTrackList(currentTrackList);
     
     // Update track list
@@ -139,7 +176,7 @@ app.post('/assign-track', async (req, res) => {
 
     // Save with error handling
     try {
-      fs.writeFileSync(trackListPath, JSON.stringify(currentTrackList, null, 2));
+      fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
       res.json({ 
         message: 'Track updated successfully', 
         trackList: currentTrackList,
@@ -148,8 +185,8 @@ app.post('/assign-track', async (req, res) => {
     } catch (writeError) {
       // Try to restore from backup if save fails
       console.error('Error saving track list:', writeError);
-      const backup = fs.readFileSync(path.join(__dirname, 'backups', fs.readdirSync(path.join(__dirname, 'backups')).pop()));
-      fs.writeFileSync(trackListPath, backup);
+      const backup = fs.readFileSync(path.join(MEDIA_DIRECTORY, 'backups', fs.readdirSync(path.join(MEDIA_DIRECTORY, 'backups')).pop()));
+      fs.writeFileSync(TRACK_LIST_PATH, backup);
       throw new Error('Failed to save changes, restored from backup');
     }
   } catch (error) {
@@ -162,14 +199,14 @@ app.post('/assign-track', async (req, res) => {
 app.get('/tracks', async (req, res) => {
   try {
     console.log('\n=== Tracks Request ===');
-    console.log('Media directory:', mediaDirectory);
+    console.log('Media directory:', MEDIA_DIRECTORY);
     
-    const allFiles = fs.readdirSync(mediaDirectory);
+    const allFiles = fs.readdirSync(MEDIA_DIRECTORY);
     const mp3Files = allFiles.filter(file => file.toLowerCase().endsWith('.mp3'));
     
     const tracks = await Promise.all(mp3Files.map(async filename => {
       try {
-        const filepath = path.join(mediaDirectory, filename);
+        const filepath = path.join(MEDIA_DIRECTORY, filename);
         console.log('Processing:', filepath);
         
         // Get metadata including duration
@@ -213,13 +250,13 @@ app.get('/tracks', async (req, res) => {
 // Endpoint to stream a specific track
 app.get('/tracks/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filepath = path.join(mediaDirectory, filename);
+  const filepath = path.join(MEDIA_DIRECTORY, filename);
 
   console.log('Track request:', {
     filename,
     filepath,
     exists: fs.existsSync(filepath),
-    mediaDirectory
+    mediaDirectory: MEDIA_DIRECTORY
   });
 
   // Check if file exists
@@ -258,7 +295,7 @@ app.get('/tracks/:filename', (req, res) => {
 app.get('/album-info', (req, res) => {
   try {
     // Get the first image file from the media directory
-    const imageFiles = fs.readdirSync(mediaDirectory)
+    const imageFiles = fs.readdirSync(MEDIA_DIRECTORY)
       .filter(file => file.match(/\.(jpg|jpeg|png|gif)$/i));
     
     const albumCover = imageFiles.length > 0 ? imageFiles[0] : null;
@@ -289,7 +326,7 @@ app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
   console.log('Environment:', process.env.NODE_ENV);
   console.log('CORS Origin:', process.env.CORS_ORIGIN);
-  console.log('Media Directory:', mediaDirectory);
+  console.log('Media Directory:', MEDIA_DIRECTORY);
   console.log('Current Directory:', __dirname);
 });
 
@@ -297,10 +334,10 @@ app.listen(PORT, () => {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Ensure the directory exists
-    if (!fs.existsSync(mediaDirectory)) {
-      fs.mkdirSync(mediaDirectory, { recursive: true });
+    if (!fs.existsSync(MEDIA_DIRECTORY)) {
+      fs.mkdirSync(MEDIA_DIRECTORY, { recursive: true });
     }
-    cb(null, mediaDirectory);
+    cb(null, MEDIA_DIRECTORY);
   },
   filename: (req, file, cb) => {
     // Keep original filename
@@ -319,7 +356,7 @@ app.post('/upload', upload.array('files'), (req, res) => {
     const metadataFile = req.files.find(f => f.originalname === 'metadata.json');
     if (metadataFile) {
       // Save metadata.json in the media directory instead of __dirname
-      const metadataPath = path.join(mediaDirectory, 'metadata.json');
+      const metadataPath = path.join(MEDIA_DIRECTORY, 'metadata.json');
       fs.copyFileSync(metadataFile.path, metadataPath);
       console.log('Metadata file saved to:', metadataPath);
     }
@@ -337,13 +374,13 @@ app.post('/upload', upload.array('files'), (req, res) => {
 // Add this debug endpoint near your other endpoints
 app.get('/debug-media', (req, res) => {
   try {
-    const files = fs.readdirSync(mediaDirectory);
+    const files = fs.readdirSync(MEDIA_DIRECTORY);
     const stats = {
-      directory: mediaDirectory,
-      exists: fs.existsSync(mediaDirectory),
+      directory: MEDIA_DIRECTORY,
+      exists: fs.existsSync(MEDIA_DIRECTORY),
       files: files,
       fileDetails: files.map(file => {
-        const filepath = path.join(mediaDirectory, file);
+        const filepath = path.join(MEDIA_DIRECTORY, file);
         return {
           name: file,
           size: fs.statSync(filepath).size,
@@ -356,7 +393,7 @@ app.get('/debug-media', (req, res) => {
     res.status(500).json({
       error: error.message,
       stack: error.stack,
-      mediaDirectory
+      mediaDirectory: MEDIA_DIRECTORY
     });
   }
 });
@@ -366,9 +403,9 @@ app.get('/debug', (req, res) => {
   try {
     const debug = {
       environment: process.env.NODE_ENV,
-      mediaDirectory,
-      mediaExists: fs.existsSync(mediaDirectory),
-      mediaContents: fs.existsSync(mediaDirectory) ? fs.readdirSync(mediaDirectory) : [],
+      mediaDirectory: MEDIA_DIRECTORY,
+      mediaExists: fs.existsSync(MEDIA_DIRECTORY),
+      mediaContents: fs.existsSync(MEDIA_DIRECTORY) ? fs.readdirSync(MEDIA_DIRECTORY) : [],
       corsOrigin: process.env.CORS_ORIGIN,
       currentWorkingDir: process.cwd(),
       dirname: __dirname
@@ -387,16 +424,11 @@ app.get('/debug', (req, res) => {
 // Get track list
 app.get('/track-list', (req, res) => {
   try {
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    console.log('Reading track list from:', trackListPath);
-    
-    if (!fs.existsSync(trackListPath)) {
-      console.error('Track list file not found at:', trackListPath);
+    if (!fs.existsSync(TRACK_LIST_PATH)) {
       return res.status(404).json({ error: 'Track list file not found' });
     }
     
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
-    console.log('Track list loaded successfully');
+    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
     res.json(trackList);
   } catch (error) {
     console.error('Error reading track list:', error);
@@ -433,7 +465,7 @@ app.use((req, res, next) => {
 // Add this endpoint for downloads
 app.get('/tracks/:filename/download', (req, res) => {
   const filename = req.params.filename;
-  const filepath = path.join(mediaDirectory, filename);
+  const filepath = path.join(MEDIA_DIRECTORY, filename);
 
   console.log('Download request:', {
     filename,
@@ -459,7 +491,7 @@ app.get('/tracks/:filename/download', (req, res) => {
 // Add delete endpoint
 app.delete('/tracks/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filepath = path.join(mediaDirectory, filename);
+  const filepath = path.join(MEDIA_DIRECTORY, filename);
 
   console.log('Delete request:', {
     filename,
