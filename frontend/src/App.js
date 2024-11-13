@@ -9,6 +9,7 @@ import TrackManager from './components/TrackManager';
 import './App.css';
 import Navigation from './components/Navigation';
 import StemMixerView from './components/StemMixerView';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -190,57 +191,60 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Navigation />
-        <div className="content">
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                <TrackList 
-                  onPlayTrack={handlePlayTrack}
-                  currentTrack={currentTrack}
-                  isPlaying={isPlaying}
-                  trackListData={trackList}
-                  onPlayStateChange={handlePlayStateChange}
-                  isTransitioning={isTransitioning}
-                />
-              } 
-            />
-            <Route path="/stems" element={<StemMixerView />} />
-            <Route path="/manage" element={<TrackManager />} />
-            <Route path="*" element={<Error404 />} />
-          </Routes>
-          <div className="copyright">
-            © {new Date().getFullYear()} Trollheim Studios AB. All rights reserved.
-          </div>
-        </div>
-        {currentTrack && (
-          <div className="fixed-player">
-            <div className="track-info">
-              <h3>
-                {currentTrack.title}
-                {currentTrack.parentTrack && (
-                  <span className="parent-track"> (from {currentTrack.parentTrack})</span>
-                )}
-              </h3>
-              <span className="filename">{currentTrack.filename}</span>
+    <>
+      <Router>
+        <div className="App">
+          <Navigation />
+          <div className="content">
+            <Routes>
+              <Route 
+                path="/" 
+                element={
+                  <TrackList 
+                    onPlayTrack={handlePlayTrack}
+                    currentTrack={currentTrack}
+                    isPlaying={isPlaying}
+                    trackListData={trackList}
+                    onPlayStateChange={handlePlayStateChange}
+                    isTransitioning={isTransitioning}
+                  />
+                } 
+              />
+              <Route path="/stems" element={<StemMixerView />} />
+              <Route path="/manage" element={<TrackManager />} />
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+            <div className="copyright">
+              © {new Date().getFullYear()} Trollheim Studios AB. All rights reserved.
             </div>
-            <TrackPlayer 
-              filename={currentTrack.filename}
-              onPlayStateChange={handlePlayStateChange}
-              onEnded={handleTrackEnd}
-              onNext={handleNextTrack}
-              onPrevious={handlePreviousTrack}
-              isPlaying={isPlaying}
-              isTransitioning={isTransitioning}
-              key={currentTrack.filename}
-            />
           </div>
-        )}
-      </div>
-    </Router>
+          {currentTrack && (
+            <div className="fixed-player">
+              <div className="track-info">
+                <h3>
+                  {currentTrack.title}
+                  {currentTrack.parentTrack && (
+                    <span className="parent-track"> (from {currentTrack.parentTrack})</span>
+                  )}
+                </h3>
+                <span className="filename">{currentTrack.filename}</span>
+              </div>
+              <TrackPlayer 
+                filename={currentTrack.filename}
+                onPlayStateChange={handlePlayStateChange}
+                onEnded={handleTrackEnd}
+                onNext={handleNextTrack}
+                onPrevious={handlePreviousTrack}
+                isPlaying={isPlaying}
+                isTransitioning={isTransitioning}
+                key={currentTrack.filename}
+              />
+            </div>
+          )}
+        </div>
+      </Router>
+      <Toaster position="bottom-center" />
+    </>
   );
 }
 
