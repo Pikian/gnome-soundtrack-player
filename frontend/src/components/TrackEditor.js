@@ -5,7 +5,7 @@ import './TrackEditor.css';
 
 function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
   const [title, setTitle] = useState(track?.title || '');
-  const [type, setType] = useState(track?.type || 'normal');
+  const [type, setType] = useState(track?.type || '');
   const [error, setError] = useState(null);
   const isNewTrack = !track;
 
@@ -19,7 +19,7 @@ function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
         title,
         filename: null,
         status: 'planned',
-        ...(type !== 'normal' && { type })
+        ...(type && { type })
       };
 
       if (parentTrack) {
@@ -73,20 +73,18 @@ function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
           />
         </div>
         
-        {parentTrack && (
-          <div className="form-group">
-            <label>Type</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="type-select"
-            >
-              <option value="normal">Normal</option>
-              <option value="substem">Substem</option>
-              <option value="alternative">Alternative Version</option>
-            </select>
-          </div>
-        )}
+        <div className="form-group">
+          <label>Type</label>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="type-select"
+          >
+            <option value="">Normal</option>
+            <option value="substem">Substem</option>
+            <option value="alternative">Alternative Version</option>
+          </select>
+        </div>
 
         {error && <div className="error-message">{error}</div>}
         
