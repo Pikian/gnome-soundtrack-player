@@ -46,10 +46,11 @@
   gap: 12px;
 }
 
+/* Desktop styles */
 .stem-channel {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   padding: 12px;
   background: #333;
   border-radius: 6px;
@@ -76,7 +77,6 @@
   color: white;
   transition: all 0.2s;
   font-size: 0.9rem;
-  flex-shrink: 0;
 }
 
 .stem-toggle.active {
@@ -92,47 +92,22 @@
 
 .volume-control input[type="range"] {
   flex: 1;
-  height: 24px;
+  height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: transparent;
-  cursor: pointer;
-  position: relative;
-}
-
-.volume-control input[type="range"]::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 4px;
   background: #666;
   border-radius: 2px;
-  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .volume-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 12px;
+  height: 12px;
   background: #fff;
   border-radius: 50%;
   cursor: pointer;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.volume-control input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .stem-type {
@@ -156,20 +131,22 @@
   border: 1px solid #444;
 }
 
-.volume-value {
-  min-width: 40px;
-  text-align: center;
-  font-size: 0.8rem;
-  color: #b3b3b3;
-}
-
+/* Mobile styles */
 @media (max-width: 768px) {
   .stem-mixer {
     padding: 16px;
   }
 
   .stem-channel {
+    flex-direction: column;
+    gap: 8px;
     padding: 16px;
+  }
+
+  .stem-info {
+    width: 100%;
+    justify-content: space-between;
+    min-width: 0;
   }
 
   .stem-toggle {
@@ -178,28 +155,41 @@
   }
 
   .volume-control {
+    width: 100%;
     padding: 8px 0;
   }
 
   .volume-control input[type="range"] {
-    height: 32px;
+    height: 24px;
+    background: transparent;
+    position: relative;
+  }
+
+  .volume-control input[type="range"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #666;
+    border-radius: 2px;
+    transform: translateY(-50%);
   }
 
   .volume-control input[type="range"]::-webkit-slider-thumb {
     width: 24px;
     height: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
   .volume-control input[type="range"]::-moz-range-thumb {
     width: 24px;
     height: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
-  .stem-info {
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-
+  /* Volume display for mobile */
   .volume-display {
     position: absolute;
     top: -24px;
@@ -219,6 +209,7 @@
   }
 }
 
+/* iPhone notch support */
 @supports (padding: max(0px)) {
   .stem-mixer {
     padding-bottom: max(20px, env(safe-area-inset-bottom));
