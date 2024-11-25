@@ -14,8 +14,14 @@ function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
     setError(null);
 
     try {
+      const generateUniqueId = (baseTitle, parentTrack) => {
+        // Create a unique ID by combining parent track ID and title
+        const baseId = baseTitle.toLowerCase().replace(/\s+/g, '-');
+        return parentTrack ? `${parentTrack.id}-${baseId}` : baseId;
+      };
+
       const trackData = {
-        id: track?.id || title.toLowerCase().replace(/\s+/g, '-'),
+        id: track?.id || generateUniqueId(title, parentTrack),
         title,
         filename: null,
         status: 'planned',
