@@ -890,3 +890,76 @@ app.post('/stem-mixes/:trackId', (req, res) => {
     res.status(500).json({ error: 'Failed to save mix' });
   }
 });
+
+// Add this near your other endpoints
+app.post('/migrate-track-ids', async (req, res) => {
+  try {
+    // Check for migration secret key
+    if (req.headers['x-migration-key'] !== process.env.MIGRATION_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const trackListPath = path.join(MEDIA_DIRECTORY, 'trackList.json');
+    
+    // Create backup
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupDir = path.join(MEDIA_DIRECTORY, 'backups');
+    const backupPath = path.join(backupDir, `trackList-pre-migration-${timestamp}.json`);
+    
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+
+    // Read current track list
+    const data = fs.readFileSync(trackListPath, 'utf8');
+    const trackList = JSON.parse(data);
+    
+    // Create backup
+    fs.writeFileSync(backupPath, data);
+    
+    // Migration logic
+    const updateTrackIds = (tracks, parentId = null) => {
+      return tracks.map(track => {
+        if (!track) return null;
+
+        const baseId = track.title.toLowerCase().replace(/\s+/g, '-');
+        const newId = parentId ? `${parentId}-${baseId}` : baseId;
+        const oldId = track.id;
+        
+        const updatedTrack = {
+          ...track,
+          id: newId
+        };
+
+        if (updatedTrack.subtracks) {
+          updatedTrack.subtracks = updateTrackIds(updatedTrack.subtracks, newId);
+        }
+
+        return updatedTrack;
+      });
+    };
+
+    // Update each section
+    ['score', 'gnomeMusic', 'outsideScope', 'bonusUnassigned'].forEach(section => {
+      if (trackList[section]) {
+        trackList[section] = updateTrackIds(trackList[section]);
+      }
+    });
+
+    // Save updated track list
+    fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
+    
+    res.json({ 
+      success: true, 
+      message: 'Migration completed successfully',
+      backupPath
+    });
+
+  } catch (error) {
+    console.error('Migration failed:', error);
+    res.status(500).json({ 
+      error: 'Migration failed', 
+      details: error.message 
+    });
+  }
+});

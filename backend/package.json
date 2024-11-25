@@ -12,7 +12,9 @@
 
     "dev": "nodemon -r dotenv/config server.js",
 
-    "build": "echo 'No build step required'"
+    "build": "echo 'No build step required'",
+
+    "migrate": "node migrate-track-ids.js"
 
   },
 
