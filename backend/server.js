@@ -891,33 +891,44 @@ app.post('/stem-mixes/:trackId', (req, res) => {
   }
 });
 
-// Add this near your other endpoints
+// Update the migration endpoint with more logging
 app.post('/migrate-track-ids', async (req, res) => {
   try {
+    console.log('Migration endpoint hit');
+    console.log('Headers:', req.headers);
+    console.log('Migration key from env:', process.env.MIGRATION_KEY);
+
     // Check for migration secret key
     if (req.headers['x-migration-key'] !== process.env.MIGRATION_KEY) {
+      console.log('Unauthorized attempt - key mismatch');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    console.log('Starting migration...');
     const trackListPath = path.join(MEDIA_DIRECTORY, 'trackList.json');
+    console.log('Track list path:', trackListPath);
     
     // Create backup
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const backupDir = path.join(MEDIA_DIRECTORY, 'backups');
     const backupPath = path.join(backupDir, `trackList-pre-migration-${timestamp}.json`);
     
+    console.log('Creating backup directory:', backupDir);
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
     }
 
     // Read current track list
+    console.log('Reading track list...');
     const data = fs.readFileSync(trackListPath, 'utf8');
     const trackList = JSON.parse(data);
     
     // Create backup
+    console.log('Creating backup at:', backupPath);
     fs.writeFileSync(backupPath, data);
     
     // Migration logic
+    console.log('Starting ID updates...');
     const updateTrackIds = (tracks, parentId = null) => {
       return tracks.map(track => {
         if (!track) return null;
@@ -925,6 +936,8 @@ app.post('/migrate-track-ids', async (req, res) => {
         const baseId = track.title.toLowerCase().replace(/\s+/g, '-');
         const newId = parentId ? `${parentId}-${baseId}` : baseId;
         const oldId = track.id;
+        
+        console.log(`Updating track ID: ${oldId} -> ${newId}`);
         
         const updatedTrack = {
           ...track,
@@ -941,14 +954,17 @@ app.post('/migrate-track-ids', async (req, res) => {
 
     // Update each section
     ['score', 'gnomeMusic', 'outsideScope', 'bonusUnassigned'].forEach(section => {
+      console.log(`Processing section: ${section}`);
       if (trackList[section]) {
         trackList[section] = updateTrackIds(trackList[section]);
       }
     });
 
     // Save updated track list
+    console.log('Saving updated track list...');
     fs.writeFileSync(trackListPath, JSON.stringify(trackList, null, 2));
     
+    console.log('Migration completed successfully');
     res.json({ 
       success: true, 
       message: 'Migration completed successfully',
@@ -959,7 +975,8 @@ app.post('/migrate-track-ids', async (req, res) => {
     console.error('Migration failed:', error);
     res.status(500).json({ 
       error: 'Migration failed', 
-      details: error.message 
+      details: error.message,
+      stack: error.stack
     });
   }
 });
