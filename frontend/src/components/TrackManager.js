@@ -23,7 +23,6 @@ function TrackManager() {
   const [parentTrack, setParentTrack] = useState(null);
 
   useEffect(() => {
-    // Automatically authenticate in development mode
     if (process.env.NODE_ENV === 'development') {
       setIsManagerAuthenticated(true);
     }
@@ -66,9 +65,6 @@ function TrackManager() {
   const handleAssignFile = async (trackId, filename) => {
     try {
       setError(null);
-      console.log('Assigning file:', { trackId, filename });
-      
-      // Show loading state
       const loadingToast = toast.loading('Saving changes...');
       
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/assign-track`, {
@@ -78,11 +74,8 @@ function TrackManager() {
       
       if (response.data.trackList) {
         setTracks(response.data.trackList);
-        
-        // Save to local backup
         localStorage.setItem('trackListBackup', JSON.stringify(response.data.trackList));
         localStorage.setItem('lastSaveTime', new Date().toISOString());
-        
         toast.success('Changes saved successfully', { id: loadingToast });
       } else {
         throw new Error('Invalid server response');
@@ -114,9 +107,7 @@ function TrackManager() {
 
     return (
       <React.Fragment key={track.id}>
-        <div 
-          className={`track-item ${track.status} ${isSubtrack ? 'subtrack' : ''}`}
-        >
+        <div className={`track-item ${track.status} ${isSubtrack ? 'subtrack' : ''}`}>
           <div className="track-info">
             {hasSubtracks && (
               <span 
@@ -248,7 +239,7 @@ function TrackManager() {
         formData.append('files', file);
       });
 
-      const response = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_API_URL}/upload`,
         formData,
         {
@@ -263,10 +254,8 @@ function TrackManager() {
       );
 
       setUploadStatus('Upload successful!');
-      // Refresh available files list
       fetchData();
       
-      // Clear file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -286,7 +275,7 @@ function TrackManager() {
     try {
       await axios.delete(`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`);
       setUploadStatus('File deleted successfully');
-      fetchData(); // Refresh the file list
+      fetchData();
     } catch (error) {
       console.error('Delete error:', error);
       setUploadStatus(error.response?.data?.error || 'Failed to delete file');
@@ -405,7 +394,6 @@ function TrackManager() {
     }
   };
 
-  // Add periodic auto-save
   useEffect(() => {
     let autoSaveInterval;
     
@@ -424,7 +412,7 @@ function TrackManager() {
         } catch (error) {
           console.error('Auto-save failed:', error);
         }
-      }, 30000); // Auto-save every 30 seconds
+      }, 30000);
     }
     
     return () => {
@@ -434,7 +422,6 @@ function TrackManager() {
     };
   }, [editMode, tracks]);
 
-  // Add recovery from local backup
   useEffect(() => {
     const backupData = localStorage.getItem('trackListBackup');
     const lastSaveTime = localStorage.getItem('lastSaveTime');
@@ -443,7 +430,6 @@ function TrackManager() {
       const timeSinceLastSave = new Date() - new Date(lastSaveTime);
       const backupTrackList = JSON.parse(backupData);
       
-      // If there's a recent backup (less than 1 hour old)
       if (timeSinceLastSave < 3600000) {
         setTracks(backupTrackList);
       }
@@ -508,9 +494,7 @@ function TrackManager() {
   if (error) {
     return (
       <div className="track-manager">
-        <div className="error-message">
-          {error}
-        </div>
+        <div className="error-message">{error}</div>
       </div>
     );
   }

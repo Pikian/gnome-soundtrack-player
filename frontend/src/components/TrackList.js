@@ -181,7 +181,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
   const handlePlayAll = () => {
     // Get only main tracks that are playable
     const playableTracks = getAllTracks()
-      .filter(track => track.filename); // Only include tracks with files
+      .filter(track => track.filename);
     
     console.log('Play All - Playable tracks:', playableTracks);
     
