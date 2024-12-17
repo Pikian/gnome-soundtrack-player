@@ -10,12 +10,14 @@ RUN npm run build
 FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy nginx config template
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+# Create media directory
+RUN mkdir -p /app/media
 
-# Set environment variables for nginx template processing
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Set environment variables
 ENV PORT=80
-ENV DOLLAR=$
 
-# Use the official nginx Docker image's entrypoint script
-CMD /bin/sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
