@@ -2,7 +2,6 @@
   "name": "gnome-soundtrack-frontend",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://frontend-production-8b85.up.railway.app",
   "dependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.23.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -18,13 +17,10 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
-  },
   "scripts": {
     "start": "react-scripts start",
     "dev": "react-scripts start",
-    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -32,10 +28,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "no-unused-vars": "warn"
-    }
+    ]
   },
   "browserslist": {
     "production": [
