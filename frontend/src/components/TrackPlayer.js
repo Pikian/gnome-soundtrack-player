@@ -18,7 +18,6 @@ function TrackPlayer({ filename, onPlayStateChange, onEnded, onNext, onPrevious,
 
   // Update refs when props change
   useEffect(() => {
-    const wasPlaying = isPlayingRef.current;
     const isNewTrack = currentFilenameRef.current !== filename;
     
     isPlayingRef.current = isPlaying;

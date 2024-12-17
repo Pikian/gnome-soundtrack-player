@@ -175,7 +175,6 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
       <FaSortDown className="sort-icon active" />;
   };
 
-  const allTracks = getAllTracks();
   const totalDuration = calculateTotalDuration(tracks);
 
   // Update the handlePlayAll function
@@ -286,6 +285,17 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         )}
       </React.Fragment>
     );
+  };
+
+  const handleSectionVisibilityToggle = async (sectionId) => {
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/sections/${sectionId}/visibility`);
+      // Refresh track list
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/track-list`);
+      setTrackList(response.data);
+    } catch (error) {
+      console.error('Error toggling section visibility:', error);
+    }
   };
 
   return (

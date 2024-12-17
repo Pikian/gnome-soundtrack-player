@@ -1,27 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FaPlay, FaCheck, FaClock, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash, FaPlus, FaEdit, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaPlay, FaCheck, FaExclamation, FaChevronDown, FaChevronRight, FaUpload, FaTrash, FaPlus, FaEdit, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import './TrackManager.css';
 import TrackEditor from './TrackEditor';
 import { toast } from 'react-hot-toast';
 
 function TrackManager() {
-  const [trackList, setTrackList] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [availableFiles, setAvailableFiles] = useState([]);
-  const [selectedTrack, setSelectedTrack] = useState(null);
-  const [editMode, setEditMode] = useState(false);
+  const [tracks, setTracks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const fileInputRef = useRef(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadQueue, setUploadQueue] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [currentUpload, setCurrentUpload] = useState(null);
+  const [showTrackEditor, setShowTrackEditor] = useState(false);
+  const [editingTrack, setEditingTrack] = useState(null);
+  const [editingSection, setEditingSection] = useState(null);
   const [isManagerAuthenticated, setIsManagerAuthenticated] = useState(false);
   const [managerPassword, setManagerPassword] = useState('');
   const [expandedTracks, setExpandedTracks] = useState(new Set());
   const [uploadStatus, setUploadStatus] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [availableFiles, setAvailableFiles] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
-  const [editingTrack, setEditingTrack] = useState(null);
-  const [editingSection, setEditingSection] = useState(null);
   const [parentTrack, setParentTrack] = useState(null);
 
   useEffect(() => {
@@ -38,7 +42,7 @@ function TrackManager() {
         axios.get(`${process.env.REACT_APP_API_URL}/track-list`),
         axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
       ]);
-      setTrackList(trackListRes.data);
+      setTracks(trackListRes.data);
       setAvailableFiles(filesRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -79,7 +83,7 @@ function TrackManager() {
       });
       
       if (response.data.trackList) {
-        setTrackList(response.data.trackList);
+        setTracks(response.data.trackList);
         
         // Save to local backup
         localStorage.setItem('trackListBackup', JSON.stringify(response.data.trackList));
@@ -372,7 +376,7 @@ function TrackManager() {
       );
       
       if (response.data.trackList) {
-        setTrackList(response.data.trackList);
+        setTracks(response.data.trackList);
         toast.success('Track deleted successfully', { id: loadingToast });
       } else {
         throw new Error('Invalid server response');
@@ -401,7 +405,7 @@ function TrackManager() {
       });
       
       if (response.data.trackList) {
-        setTrackList(response.data.trackList);
+        setTracks(response.data.trackList);
       } else {
         throw new Error('Invalid server response');
       }
@@ -419,7 +423,7 @@ function TrackManager() {
         
         // Force a final save of the current state
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/save`, {
-          trackList
+          tracks
         });
         
         if (response.data.success) {
@@ -442,12 +446,12 @@ function TrackManager() {
       autoSaveInterval = setInterval(async () => {
         try {
           const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/save`, {
-            trackList
+            tracks
           });
           
           if (response.data.success) {
             console.log('Auto-save successful');
-            localStorage.setItem('trackListBackup', JSON.stringify(trackList));
+            localStorage.setItem('trackListBackup', JSON.stringify(tracks));
             localStorage.setItem('lastSaveTime', new Date().toISOString());
           }
         } catch (error) {
@@ -461,7 +465,7 @@ function TrackManager() {
         clearInterval(autoSaveInterval);
       }
     };
-  }, [editMode, trackList]);
+  }, [editMode, tracks]);
 
   // Add recovery from local backup
   useEffect(() => {
@@ -474,13 +478,13 @@ function TrackManager() {
       
       // If there's a recent backup (less than 1 hour old)
       if (timeSinceLastSave < 3600000) {
-        setTrackList(backupTrackList);
+        setTracks(backupTrackList);
       }
     }
   }, []);
 
   const renderSection = (sectionKey, title) => {
-    if (!trackList || !trackList[sectionKey] || trackList[sectionKey].length === 0) {
+    if (!tracks || !tracks[sectionKey] || tracks[sectionKey].length === 0) {
       return null;
     }
 
@@ -496,7 +500,7 @@ function TrackManager() {
           </button>
         )}
         <div className="track-list">
-          {trackList[sectionKey]?.filter(track => track !== null)
+          {tracks[sectionKey]?.filter(track => track !== null)
             .map((track, index) => 
               renderTrackItem(track, sectionKey, false, index)
             )}
@@ -557,7 +561,7 @@ function TrackManager() {
       </div>
 
       <div className="track-sections">
-        {trackList && (
+        {tracks && (
           <>
             {renderSection('deliveryA', 'Delivery A')}
             {renderSection('leashedBangers', 'Leashed Bangers')}
@@ -577,7 +581,7 @@ function TrackManager() {
             track={editingTrack}
             section={editingSection}
             parentTrack={parentTrack}
-            onUpdate={(newTrackList) => setTrackList(newTrackList)}
+            onUpdate={(newTrackList) => setTracks(newTrackList)}
             onClose={() => {
               setShowEditor(false);
               setParentTrack(null);

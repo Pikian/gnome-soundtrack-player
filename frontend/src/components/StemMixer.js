@@ -47,15 +47,19 @@ function StemMixer({ track, onPlayStateChange }) {
       });
     }
 
+    // Capture refs in variables for cleanup
+    const currentAudioRefs = audioRefs.current;
+    const currentFadeTimeout = fadeTimeout.current;
+
     return () => {
       // Cleanup
-      audioRefs.current.forEach(audio => {
+      currentAudioRefs.forEach(audio => {
         audio.pause();
         audio.src = '';
         audio.load();
       });
-      audioRefs.current.clear();
-      if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+      currentAudioRefs.clear();
+      if (currentFadeTimeout) clearTimeout(currentFadeTimeout);
     };
   }, [track]);
 
