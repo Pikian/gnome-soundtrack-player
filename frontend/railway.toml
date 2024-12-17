@@ -1,14 +1,14 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+builder = "nixpacks"
+buildCommand = "npm install"
 
 [deploy]
-startCommand = ""
+startCommand = "npm run build && npx serve -s build"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 [service]
-internal_port = 80
+internal_port = 3000
 
 [build.env]
 NODE_ENV = "production"
