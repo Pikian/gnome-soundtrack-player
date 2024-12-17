@@ -287,17 +287,6 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
     );
   };
 
-  const handleSectionVisibilityToggle = async (sectionId) => {
-    try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/sections/${sectionId}/visibility`);
-      // Refresh track list
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/track-list`);
-      setTrackList(response.data);
-    } catch (error) {
-      console.error('Error toggling section visibility:', error);
-    }
-  };
-
   return (
     <div className="album-view">
       <div className="album-header">

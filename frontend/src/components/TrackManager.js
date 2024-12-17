@@ -10,13 +10,8 @@ function TrackManager() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
   const fileInputRef = useRef(null);
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadQueue, setUploadQueue] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [currentUpload, setCurrentUpload] = useState(null);
-  const [showTrackEditor, setShowTrackEditor] = useState(false);
   const [editingTrack, setEditingTrack] = useState(null);
   const [editingSection, setEditingSection] = useState(null);
   const [isManagerAuthenticated, setIsManagerAuthenticated] = useState(false);
@@ -24,7 +19,6 @@ function TrackManager() {
   const [expandedTracks, setExpandedTracks] = useState(new Set());
   const [uploadStatus, setUploadStatus] = useState(null);
   const [availableFiles, setAvailableFiles] = useState([]);
-  const [selectedTrack, setSelectedTrack] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
   const [parentTrack, setParentTrack] = useState(null);
 
@@ -92,10 +86,6 @@ function TrackManager() {
         toast.success('Changes saved successfully', { id: loadingToast });
       } else {
         throw new Error('Invalid server response');
-      }
-      
-      if (filename === 'none') {
-        setSelectedTrack(null);
       }
     } catch (error) {
       console.error('Error assigning file:', error);
@@ -413,29 +403,6 @@ function TrackManager() {
       console.error('Move error:', error);
       setError('Failed to move track');
     }
-  };
-
-  // Add auto-save when exiting edit mode
-  const handleEditModeToggle = async (newEditMode) => {
-    if (editMode && !newEditMode) { // If exiting edit mode
-      try {
-        const loadingToast = toast.loading('Saving changes...');
-        
-        // Force a final save of the current state
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/track-list/save`, {
-          tracks
-        });
-        
-        if (response.data.success) {
-          toast.success('All changes saved', { id: loadingToast });
-        }
-      } catch (error) {
-        console.error('Error saving changes:', error);
-        toast.error('Failed to save some changes. Please try again.');
-        return; // Prevent exiting edit mode if save failed
-      }
-    }
-    setEditMode(newEditMode);
   };
 
   // Add periodic auto-save

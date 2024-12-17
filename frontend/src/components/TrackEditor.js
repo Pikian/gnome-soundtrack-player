@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
 import axios from 'axios';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import './TrackEditor.css';
 
 function TrackEditor({ track, section, parentTrack, onUpdate, onClose }) {
