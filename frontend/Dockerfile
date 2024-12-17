@@ -13,9 +13,9 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Copy nginx config template
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
-# Set environment variable for nginx template processing
+# Set environment variables for nginx template processing
 ENV PORT=80
+ENV DOLLAR=$
 
 # Use the official nginx Docker image's entrypoint script
-EXPOSE ${PORT}
-CMD ["nginx", "-g", "daemon off;"]
+CMD /bin/sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
