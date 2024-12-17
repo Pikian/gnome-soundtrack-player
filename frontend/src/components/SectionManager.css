@@ -1,0 +1,169 @@
+.section-manager {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.section-manager h3 {
+  margin: 0 0 20px 0;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.add-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.section-input:focus {
+  outline: none;
+  border-color: #1db954;
+}
+
+.add-button {
+  padding: 8px 16px;
+  background: #1db954;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background: #1ed760;
+}
+
+.section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-item {
+  background: #282828;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.section-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.section-name {
+  color: white;
+  font-size: 0.9rem;
+}
+
+.section-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.section-buttons button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.section-buttons button:hover {
+  background: #404040;
+}
+
+.section-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.section-buttons .move-button {
+  background: #404040;
+}
+
+.section-buttons .move-button:hover {
+  background: #505050;
+}
+
+.section-buttons .edit-button {
+  background: #1db954;
+}
+
+.section-buttons .edit-button:hover {
+  background: #1ed760;
+}
+
+.section-buttons .visibility-button {
+  background: #666;
+}
+
+.section-buttons .visibility-button:hover {
+  background: #777;
+}
+
+.section-buttons .delete-button {
+  background: #dc3545;
+}
+
+.section-buttons .delete-button:hover {
+  background: #e04553;
+}
+
+.section-edit {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.section-edit .section-input {
+  flex: 1;
+}
+
+.section-edit button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.section-edit .save-button {
+  background: #1db954;
+}
+
+.section-edit .save-button:hover {
+  background: #1ed760;
+}
+
+.section-edit .cancel-button {
+  background: #666;
+}
+
+.section-edit .cancel-button:hover {
+  background: #777;
+} 

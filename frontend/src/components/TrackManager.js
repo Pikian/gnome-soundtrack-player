@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 
 function TrackManager() {
   const [trackList, setTrackList] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [availableFiles, setAvailableFiles] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -23,8 +24,16 @@ function TrackManager() {
   const [editingSection, setEditingSection] = useState(null);
   const [parentTrack, setParentTrack] = useState(null);
 
+  useEffect(() => {
+    // Automatically authenticate in development mode
+    if (process.env.NODE_ENV === 'development') {
+      setIsManagerAuthenticated(true);
+    }
+  }, []);
+
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const [trackListRes, filesRes] = await Promise.all([
         axios.get(`${process.env.REACT_APP_API_URL}/track-list`),
         axios.get(`${process.env.REACT_APP_API_URL}/tracks`)
@@ -34,6 +43,8 @@ function TrackManager() {
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Failed to load data');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -468,7 +479,33 @@ function TrackManager() {
     }
   }, []);
 
-  if (!isManagerAuthenticated) {
+  const renderSection = (sectionKey, title) => {
+    if (!trackList || !trackList[sectionKey] || trackList[sectionKey].length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="track-section separator">
+        <h3>{title}</h3>
+        {editMode && (
+          <button
+            className="add-track-button"
+            onClick={() => handleAddTrack(sectionKey)}
+          >
+            <FaPlus /> Add Track
+          </button>
+        )}
+        <div className="track-list">
+          {trackList[sectionKey]?.filter(track => track !== null)
+            .map((track, index) => 
+              renderTrackItem(track, sectionKey, false, index)
+            )}
+        </div>
+      </div>
+    );
+  };
+
+  if (!isManagerAuthenticated && process.env.NODE_ENV !== 'development') {
     return (
       <div className="track-manager-login">
         <div className="login-box">
@@ -489,6 +526,24 @@ function TrackManager() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="track-manager">
+        <div className="loading">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="track-manager">
+        <div className="error-message">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="track-manager">
       <div className="track-manager-header">
@@ -501,90 +556,15 @@ function TrackManager() {
         </button>
       </div>
 
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
-
       <div className="track-sections">
         {trackList && (
           <>
-            <div className="track-section">
-              <h3>Score</h3>
-              {editMode && (
-                <button
-                  className="add-track-button"
-                  onClick={() => handleAddTrack('score')}
-                >
-                  <FaPlus /> Add Track
-                </button>
-              )}
-              <div className="track-list">
-                {trackList.score
-                  .filter(track => track !== null)
-                  .map((track, index) => 
-                    renderTrackItem(track, 'score', false, index)
-                  )}
-              </div>
-            </div>
-
-            <div className="track-section separator">
-              <h3>Gnome Music</h3>
-              {editMode && (
-                <button
-                  className="add-track-button"
-                  onClick={() => handleAddTrack('gnomeMusic')}
-                >
-                  <FaPlus /> Add Track
-                </button>
-              )}
-              <div className="track-list">
-                {trackList.gnomeMusic
-                  .filter(track => track !== null)
-                  .map((track, index) => 
-                    renderTrackItem(track, 'gnomeMusic', false, index)
-                  )}
-              </div>
-            </div>
-
-            <div className="track-section separator">
-              <h3>Outside Current Scope</h3>
-              {editMode && (
-                <button
-                  className="add-track-button"
-                  onClick={() => handleAddTrack('outsideScope')}
-                >
-                  <FaPlus /> Add Track
-                </button>
-              )}
-              <div className="track-list">
-                {trackList.outsideScope
-                  .filter(track => track !== null)
-                  .map((track, index) => 
-                    renderTrackItem(track, 'outsideScope', false, index)
-                  )}
-              </div>
-            </div>
-
-            <div className="track-section separator">
-              <h3>Bonus & Unassigned</h3>
-              {editMode && (
-                <button
-                  className="add-track-button"
-                  onClick={() => handleAddTrack('bonusUnassigned')}
-                >
-                  <FaPlus /> Add Track
-                </button>
-              )}
-              <div className="track-list">
-                {trackList.bonusUnassigned
-                  .filter(track => track !== null)
-                  .map((track, index) => 
-                    renderTrackItem(track, 'bonusUnassigned', false, index)
-                  )}
-              </div>
-            </div>
+            {renderSection('deliveryA', 'Delivery A')}
+            {renderSection('leashedBangers', 'Leashed Bangers')}
+            {renderSection('deliveryB', 'Delivery B')}
+            {renderSection('score', 'Score')}
+            {renderSection('gnomeMusic', 'Gnome Music (demos)')}
+            {renderSection('bonusUnassigned', 'Bonus & Unassigned (Delivery B)')}
           </>
         )}
       </div>

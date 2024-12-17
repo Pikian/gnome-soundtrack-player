@@ -1,0 +1,85 @@
+[
+  {
+    "name": "Sebastian Example Mix",
+    "stems": {
+      "the-dark-forest": 0.16,
+      "biome---lakes": 0,
+      "comforting": 0,
+      "in-awe": 0,
+      "excitement": 0.06,
+      "productive/creative": 0.25,
+      "urgency": 0,
+      "fear": 0,
+      "tense": 0,
+      "heroic": 0,
+      "relaxing": 0.34,
+      "intrigue": 0,
+      "combat-i": 0,
+      "combat-ii": 0,
+      "the-dark-forest-maxad": 0
+    }
+  },
+  {
+    "name": "Example Building Mix",
+    "stems": {
+      "the-dark-forest": 0.08,
+      "biome---lakes": 0,
+      "comforting": 0.04,
+      "in-awe": 0,
+      "excitement": 0,
+      "productive/creative": 0.12,
+      "urgency": 0,
+      "fear": 0,
+      "tense": 0,
+      "heroic": 0,
+      "relaxing": 0.29,
+      "intrigue": 0,
+      "combat-ii": 0,
+      "combat-i": 0,
+      "inviting": 0.14,
+      "the-dark-forest-maxad": 0
+    }
+  },
+  {
+    "name": "Exploration Mix Example",
+    "stems": {
+      "the-dark-forest": 0.53,
+      "biome---lakes": 0,
+      "in-awe": 0,
+      "comforting": 0.17,
+      "excitement": 0,
+      "productive/creative": 0,
+      "urgency": 0,
+      "tense": 0.07,
+      "heroic": 0,
+      "fear": 0,
+      "relaxing": 0.99,
+      "intrigue": 0.63,
+      "combat-ii": 0,
+      "combat-i": 0,
+      "inviting": 0.18,
+      "the-dark-forest-maxad": 0
+    }
+  },
+  {
+    "name": "\"Moody Forest Score ref 1 v1.mp3\" mix",
+    "stems": {
+      "the-dark-forest": 0.24,
+      "biome---lakes": 0,
+      "in-awe": 0,
+      "comforting": 0,
+      "excitement": 0,
+      "productive/creative": 0,
+      "urgency": 0,
+      "tense": 0.46,
+      "heroic": 0,
+      "fear": 0,
+      "relaxing": 0,
+      "intrigue": 0,
+      "combat-ii": 0,
+      "combat-i": 0,
+      "inviting": 0,
+      "the-dark-forest-maxad": 0
+    }
+  }
+]

@@ -1,0 +1,315 @@
+{
+  "score": [
+    {
+      "id": "the-dark-forest",
+      "title": "The Dark Forest",
+      "filename": "2024_11_18_v2_Main Layer_MERGED-.mp3",
+      "status": "ready",
+      "subtracks": [
+        {
+          "id": "the-dark-forest-the-dark-forest-piano",
+          "title": "The Dark Forest Piano",
+          "filename": null,
+          "status": "planned",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-biome---lakes",
+          "title": "Biome - Lakes",
+          "filename": "2024_11_12_Biome Lake.mp3",
+          "status": "ready"
+        },
+        {
+          "id": "the-dark-forest-biome---mire",
+          "title": "Biome - Mire",
+          "filename": "Mire.mp3",
+          "status": "ready"
+        },
+        {
+          "id": "the-dark-forest-biome---hällmark",
+          "title": "Biome - Hällmark",
+          "filename": null,
+          "status": "planned"
+        },
+        {
+          "id": "the-dark-forest-biome---burnt-forest",
+          "title": "Biome - Burnt Forest",
+          "filename": null,
+          "status": "planned",
+          "type": ""
+        },
+        {
+          "id": "the-dark-forest-in-awe",
+          "title": "In Awe",
+          "filename": "2024_11_13_Relaxing 1 (funkar bra sjaÌlv eller m duduk+arctic swells).mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-comforting",
+          "title": "Comforting",
+          "filename": "2024_11_12_Guitar.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-excitement",
+          "title": "Excitement",
+          "filename": "2024_11_12_Spiccato runs (vln1+vcl1).mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-productive/creative",
+          "title": "Productive/Creative",
+          "filename": "2024_11_12_Pizzicato.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-urgency",
+          "title": "Urgency",
+          "filename": "2024_11_12_Violin spiccato 1_62.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-tense",
+          "title": "Tense",
+          "filename": "2024_11_18_v2_tense.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-heroic",
+          "title": "Heroic",
+          "filename": "2024_11_12_EPIC bass.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-fear",
+          "title": "Fear",
+          "filename": "2024_11_26_Fear 2 utan tempo.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-fear-",
+          "title": "Fear ",
+          "filename": "2024_11_26_Fear 3 med tempo.mp3",
+          "status": "ready",
+          "type": "alternative"
+        },
+        {
+          "id": "the-dark-forest-relaxing",
+          "title": "Relaxing",
+          "filename": "2024_11_13_(blanda m relaxing 1).mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-intrigue",
+          "title": "Intrigue",
+          "filename": "2024_11_12_Cello Ornament 2.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-confrontation-(percussive)",
+          "title": "Confrontation (percussive)",
+          "filename": "2024_11_12_Taikodrum.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-defiance-(percussive)",
+          "title": "Defiance (percussive)",
+          "filename": "2024_11_12_Epic Bassdrum.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-inviting",
+          "title": "Inviting",
+          "filename": "2024_11_13_Glockenspiel (funkar med alla relaxing piano).mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "the-dark-forest-the-dark-forest-maxad",
+          "title": "The Dark Forest Maxad",
+          "filename": "2024_11_12_Moody Forest Score Ref 1 MAXAD.mp3",
+          "status": "ready",
+          "type": "alternative"
+        }
+      ]
+    },
+    {
+      "id": "home-theme",
+      "title": "Home Theme",
+      "filename": "2024_11_25_Arctic Swells Warm.mp3",
+      "status": "ready",
+      "subtracks": [
+        {
+          "id": "home-theme-strings",
+          "title": "Strings",
+          "filename": "2024_11_25_Strings Warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "home-theme-upright-bass",
+          "title": "Upright Bass",
+          "filename": "2024_11_25_Upright Bass Warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "home-theme-intrigue",
+          "title": "Intrigue",
+          "filename": "2024_11_25_Cello Warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "home-theme-productive/creative",
+          "title": "Productive/Creative",
+          "filename": "2024_11_25_Pizzicato Strings Warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "home-theme-inviting",
+          "title": "Inviting",
+          "filename": "2024_11_25_Piano Warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        },
+        {
+          "id": "home-theme-comforting",
+          "title": "Comforting",
+          "filename": "2024_11_25_guitar warm.mp3",
+          "status": "ready",
+          "type": "substem"
+        }
+      ],
+      "type": ""
+    },
+    {
+      "id": "love-theme",
+      "title": "Love Theme",
+      "filename": "Love Theme draft  (1).mp3",
+      "status": "ready",
+      "subtracks": [],
+      "type": ""
+    },
+    {
+      "id": "crescent-moon",
+      "title": "Crescent Moon",
+      "filename": "Hisaishi 1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "magic-hour",
+      "title": "Magic Hour",
+      "filename": "magic hour.mp3",
+      "status": "ready"
+    }
+  ],
+  "_metadata": [],
+  "bonusunassigned": [
+    {
+      "id": "bonus-track-(romance)",
+      "title": "Bonus Track (Romance)",
+      "filename": "Love Theme (1950s vibe).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "bonus-track-ii",
+      "title": "Bonus Track II",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "bonus-track-i",
+      "title": "Bonus Track I",
+      "filename": "Main Theme V4 (w subbass).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "bonus-track-iii",
+      "title": "Bonus Track III",
+      "filename": "Ocarina of the north (backgrounds) (2).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "bonus-track-iv",
+      "title": "Bonus Track IV",
+      "filename": "DFT NY241015 draft mixpaket + burnt forest-straÌk.mp3",
+      "status": "ready"
+    }
+  ],
+  "outsidescope": [
+    {
+      "id": "main-menu",
+      "title": "Main Menu",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "florin's-theme",
+      "title": "Florin's Theme",
+      "filename": "Kohorn Sample Florins Theme (1).mp3",
+      "status": "ready"
+    },
+    {
+      "id": "narrative-i",
+      "title": "Narrative I",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "narrative-ii",
+      "title": "Narrative II",
+      "filename": "Tomtarnas Tema V1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "narrative-iii",
+      "title": "Narrative III",
+      "filename": null,
+      "status": "planned"
+    },
+    {
+      "id": "the-game-trailer",
+      "title": "The Game Trailer",
+      "filename": null,
+      "status": "planned"
+    }
+  ],
+  "gnomemusic": [
+    {
+      "id": "gnome-diegetic-i",
+      "title": "Gnome Diegetic I",
+      "filename": "Tomtejam (Git + bas) .mp3",
+      "status": "ready",
+      "type": "",
+      "subtracks": [
+        {
+          "id": "gnome-diegetic-i-more-instruments",
+          "title": "More instruments",
+          "filename": "Tomtejam (Git + 2bas + pizz + glasflaska) .mp3",
+          "status": "ready",
+          "type": "alternative"
+        }
+      ]
+    },
+    {
+      "id": "gnome-diegetic-ii",
+      "title": "Gnome Diegetic II",
+      "filename": "skogskoÌr och kontrabas 20240830 (1).mp3",
+      "status": "ready"
+    }
+  ]
+}

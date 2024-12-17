@@ -1,0 +1,23 @@
+[
+  {
+    "key": "score",
+    "name": "Score",
+    "order": 0
+  },
+  {
+    "key": "gnomeMusic",
+    "name": "Gnome Music",
+    "order": 1
+  },
+  {
+    "key": "outsideScope",
+    "name": "Outside Current Scope",
+    "order": 2
+  },
+  {
+    "key": "bonusUnassigned",
+    "name": "Bonus & Unassigned",
+    "order": 3,
+    "isUnassigned": true
+  }
+]

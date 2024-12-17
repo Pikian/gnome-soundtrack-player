@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 
 function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Automatically log in in development mode
+    if (process.env.NODE_ENV === 'development') {
+      localStorage.setItem('isAuthenticated', 'true');
+      onLogin();
+    }
+  }, [onLogin]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,6 +22,11 @@ function Login({ onLogin }) {
       setError('Incorrect password');
     }
   };
+
+  // Don't render login form in development mode
+  if (process.env.NODE_ENV === 'development') {
+    return null;
+  }
 
   return (
     <div className="login-container">

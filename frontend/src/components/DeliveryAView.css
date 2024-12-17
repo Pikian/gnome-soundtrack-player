@@ -1,0 +1,509 @@
+.delivery-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+.delivery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 48px;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delivery-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #fff;
+}
+
+.header-subtitle {
+  font-size: 1.1rem;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.listen-online-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1db954;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding-top: 8px;
+}
+
+.listen-online-link:hover {
+  color: #1ed760;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.package-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.package-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.package-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(29, 185, 84, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1db954;
+  font-size: 24px;
+}
+
+.package-info {
+  flex: 1;
+}
+
+.package-info h2 {
+  font-size: 1.4rem;
+  margin: 0 0 16px 0;
+  color: #fff;
+}
+
+.package-info p {
+  color: #b3b3b3;
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.package-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b3b3b3;
+  font-size: 0.85rem;
+}
+
+.dot {
+  color: #404040;
+}
+
+.download-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1db954;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.download-button:hover {
+  background: #1ed760;
+  transform: scale(1.02);
+}
+
+.future-delivery {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 0;
+}
+
+.future-delivery h3 {
+  font-size: 1.6rem;
+  margin: 0 0 20px 0;
+  color: #fff;
+}
+
+.future-delivery p {
+  color: #b3b3b3;
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.future-delivery p:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .delivery-view {
+    padding: 20px;
+  }
+
+  .delivery-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .delivery-header h1 {
+    font-size: 2rem;
+  }
+
+  .header-subtitle {
+    font-size: 1rem;
+  }
+
+  .packages-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .package-card {
+    padding: 24px;
+  }
+
+  .package-info h2 {
+    font-size: 1.25rem;
+  }
+
+  .future-delivery {
+    padding: 24px;
+  }
+
+  .future-delivery h3 {
+    font-size: 1.4rem;
+  }
+}
+
+.delivery-progress {
+  margin: 0 0 40px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.progress-headline {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0;
+}
+
+.progress-line {
+  position: relative;
+  height: 2px;
+  background: #404040;
+  margin: 80px 100px;
+  overflow: visible;
+  padding: 0;
+}
+
+/* Progress line fill */
+.progress-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 80%;
+  background: #1db954;
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+}
+
+.milestone {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.milestone-a {
+  left: 80%;
+}
+
+.milestone-b {
+  left: 100%;
+}
+
+.milestone-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #404040;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.milestone.active .milestone-dot {
+  background: #1db954;
+  width: 16px;
+  height: 16px;
+}
+
+.milestone-label {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+  background: rgba(24, 24, 24, 0.95);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.milestone-title {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.milestone.active .milestone-title {
+  color: #fff;
+}
+
+.milestone-icon {
+  color: #1db954;
+  font-size: 1rem;
+}
+
+.milestone-status {
+  color: #1db954;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .delivery-progress {
+    padding: 24px;
+  }
+
+  .progress-line {
+    margin: 60px 40px;
+    padding: 0;
+  }
+
+  .progress-headline {
+    margin: 0 0 24px 0;
+  }
+
+  .milestone-label {
+    top: -50px;
+    padding: 4px 10px;
+  }
+
+  .milestone-title {
+    font-size: 0.85rem;
+  }
+
+  .milestone-status {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+}
+
+.future-delivery-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.future-delivery-header h3 {
+  margin: 0;
+}
+
+.in-progress-badge {
+  background: rgba(29, 185, 84, 0.1);
+  color: #1db954;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+/* Update existing styles */
+.future-delivery h3 {
+  font-size: 1.6rem;
+  color: #fff;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .future-delivery-header {
+    gap: 12px;
+  }
+
+  .in-progress-badge {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+  }
+
+  .bottom-nav {
+    margin-top: 20px;
+  }
+}
+
+.progress-update {
+  color: #b3b3b3;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  max-width: 800px;
+}
+
+.progress-update strong {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .progress-update {
+    font-size: 0.9rem;
+    margin: 0 0 24px 0;
+  }
+
+  .delivery-progress {
+    padding: 24px;
+  }
+
+  .progress-line {
+    padding: 0 24px;
+  }
+}
+
+.update-badge {
+  background: rgba(255, 171, 0, 0.1);
+  color: #ffab00;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .progress-header {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .update-badge {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Update mobile styles for progress bar */
+@media (max-width: 768px) {
+  .delivery-progress {
+    padding: 20px;
+    margin: 0 0 32px;
+  }
+
+  .progress-line {
+    margin: 60px 20px;
+  }
+
+  .milestone-label {
+    top: -50px;
+    min-width: 80px;
+    padding: 8px;
+    font-size: 0.85rem;
+    transform: translateX(-50%) scale(0.9);
+    white-space: normal;
+    text-align: center;
+    width: 120px;
+  }
+
+  .milestone-title {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .milestone-status {
+    font-size: 0.75rem;
+  }
+
+  .milestone-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .milestone.active .milestone-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .progress-update {
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+  }
+
+  .progress-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .progress-headline {
+    font-size: 1rem;
+  }
+
+  .update-badge {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Add landscape orientation styles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .progress-line {
+    margin: 40px 20px;
+  }
+
+  .milestone-label {
+    top: -40px;
+  }
+} 

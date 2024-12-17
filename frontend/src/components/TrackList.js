@@ -101,7 +101,6 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
     const allTracks = [
       ...trackList.score.filter(track => track && !track.type),
       ...trackList.gnomeMusic.filter(track => track && !track.type),
-      ...trackList.outsideScope.filter(track => track && !track.type),
       ...trackList.bonusUnassigned.filter(track => track && !track.type)
     ];
 
@@ -337,6 +336,11 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
           </div>
         </div>
         
+        {/* Divider for Delivery A */}
+        <div className="section-divider">
+          <h3>Delivery A</h3>
+        </div>
+        
         {/* Score section */}
         {sortTracks(trackList?.score.filter(track => track) || [], sortConfig).map((track, index) => 
           renderTrackRow(track, index)
@@ -344,7 +348,7 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
         
         {/* Divider for Gnome Music */}
         <div className="section-divider">
-          <h3>Gnome Music</h3>
+          <h3>Gnome Music (demos)</h3>
         </div>
         
         {/* Gnome Music section */}
@@ -352,19 +356,9 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
           renderTrackRow(track, index)
         )}
         
-        {/* Divider for Outside Scope */}
-        <div className="section-divider">
-          <h3>Outside Current Scope</h3>
-        </div>
-        
-        {/* Outside Scope section */}
-        {sortTracks(trackList?.outsideScope.filter(track => track) || [], sortConfig).map((track, index) => 
-          renderTrackRow(track, index)
-        )}
-        
         {/* Divider for Bonus & Unassigned */}
         <div className="section-divider">
-          <h3>Bonus & Unassigned</h3>
+          <h3>Bonus & Unassigned (Delivery B)</h3>
         </div>
         
         {/* Bonus & Unassigned section */}

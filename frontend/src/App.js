@@ -6,6 +6,7 @@ import TrackPlayer from './components/TrackPlayer';
 import Login from './components/Login';
 import Error404 from './components/Error404';
 import TrackManager from './components/TrackManager';
+import DeliveryAView from './components/DeliveryAView';
 import './App.css';
 import Navigation from './components/Navigation';
 import StemMixerView from './components/StemMixerView';
@@ -67,7 +68,6 @@ function App() {
     const allTracks = [
       ...getAllTracks(trackList.score || []),
       ...getAllTracks(trackList.gnomeMusic || []),
-      ...getAllTracks(trackList.outsideScope || []),
       ...getAllTracks(trackList.bonusUnassigned || [])
     ];
 
@@ -210,6 +210,7 @@ function App() {
                   />
                 } 
               />
+              <Route path="/delivery-a" element={<DeliveryAView />} />
               <Route path="/stems" element={<StemMixerView />} />
               <Route path="/manage" element={<TrackManager />} />
               <Route path="*" element={<Error404 />} />

@@ -9,10 +9,12 @@
 
 .content {
   flex: 1;
-  padding-top: 64px;
+  padding-top: 104px;
   padding-bottom: calc(90px + env(safe-area-inset-bottom));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* Update the fixed player styles */
