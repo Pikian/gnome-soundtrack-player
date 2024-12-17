@@ -2,6 +2,7 @@
   "name": "gnome-soundtrack-frontend",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://frontend-production-8b85.up.railway.app",
   "dependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.23.4",
     "@testing-library/jest-dom": "^5.17.0",
