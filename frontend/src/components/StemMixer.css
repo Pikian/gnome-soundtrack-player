@@ -296,4 +296,78 @@
 .save-mix-dialog button:last-of-type {
   background: #404040;
   color: white;
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.restart-button {
+  padding: 12px;
+  border-radius: 50%;
+  border: none;
+  background: #404040;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.restart-button:hover {
+  transform: scale(1.05);
+  background: #505050;
+}
+
+.restart-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Update existing play button styles for consistency */
+.play-button {
+  padding: 12px;
+  border-radius: 50%;
+  border: none;
+  background: #1db954;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-button:hover {
+  transform: scale(1.05);
+  background: #1ed760;
+}
+
+.play-button.playing {
+  background: #ff4444;
+}
+
+.play-button.playing:hover {
+  background: #ff5555;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .playback-controls {
+    gap: 8px;
+  }
+
+  .play-button,
+  .restart-button {
+    padding: 10px;
+  }
+
+  .play-button svg,
+  .restart-button svg {
+    width: 12px;
+    height: 12px;
+  }
 } 

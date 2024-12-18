@@ -318,49 +318,33 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
       </div>
 
       <div className="tracks-table">
-        <div className="tracks-header">
-          <div className="track-number">#</div>
-          <div 
-            className="track-title sortable"
-            onClick={() => requestSort('title')}
-          >
-            Title {getSortIcon('title')}
-          </div>
-          <div 
-            className="track-duration sortable"
-            onClick={() => requestSort('duration')}
-          >
-            Duration {getSortIcon('duration')}
-          </div>
-        </div>
-        
-        {/* Divider for Delivery A */}
+        {/* Divider for Score */}
         <div className="section-divider">
-          <h3>Delivery A</h3>
+          <h3>Score</h3>
         </div>
         
         {/* Score section */}
-        {sortTracks(trackList?.score.filter(track => track) || [], sortConfig).map((track, index) => 
+        {(trackList?.score.filter(track => track) || []).map((track, index) => 
           renderTrackRow(track, index)
         )}
         
         {/* Divider for Gnome Music */}
         <div className="section-divider">
-          <h3>Gnome Music (demos)</h3>
+          <h3>Gnome Music</h3>
         </div>
         
         {/* Gnome Music section */}
-        {sortTracks(trackList?.gnomeMusic.filter(track => track) || [], sortConfig).map((track, index) => 
+        {(trackList?.gnomeMusic.filter(track => track) || []).map((track, index) => 
           renderTrackRow(track, index)
         )}
         
         {/* Divider for Bonus & Unassigned */}
         <div className="section-divider">
-          <h3>Bonus & Unassigned (Delivery B)</h3>
+          <h3>Bonus & Unassigned</h3>
         </div>
         
         {/* Bonus & Unassigned section */}
-        {sortTracks(trackList?.bonusUnassigned.filter(track => track) || [], sortConfig).map((track, index) => 
+        {(trackList?.bonusUnassigned.filter(track => track) || []).map((track, index) => 
           renderTrackRow(track, index)
         )}
       </div>

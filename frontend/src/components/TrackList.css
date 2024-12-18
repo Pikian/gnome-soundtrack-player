@@ -71,19 +71,6 @@
   margin-top: 30px;
 }
 
-.tracks-header {
-  display: grid;
-  grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
-  padding: 0 16px;
-  border-bottom: 1px solid #282828;
-  color: #b3b3b3;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  height: 36px;
-  align-items: center;
-}
-
 .track-row {
   display: grid;
   grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
@@ -111,66 +98,24 @@
   color: #1db954;
 }
 
-.track-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-}
-
-.number {
-  color: #b3b3b3;
-  font-size: 0.9rem;
-}
-
-.track-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-}
-
-.title-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.track-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.badge-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.track-duration,
-.track-status {
-  text-align: center;
-  color: inherit;
-  text-transform: capitalize;
-  font-size: 0.8rem;
-}
-
 /* Section Dividers */
 .section-divider {
-  margin: 32px 0 16px;
+  margin: 40px 0 16px;
   padding: 0 16px;
-  border-bottom: 1px solid #282828;
+  position: relative;
 }
 
 .section-divider h3 {
-  color: #b3b3b3;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #282828;
+}
+
+.section-divider:first-of-type {
+  margin-top: 0;
 }
 
 /* Track States */
@@ -268,72 +213,20 @@
   }
 
   /* Adjust grid layout for mobile */
-  .tracks-header,
   .track-row {
-    grid-template-columns: 32px 24px 1fr 60px;
-    padding: 0 8px;
-    font-size: 0.8rem;
-  }
-
-  .track-row {
+    grid-template-columns: 32px 32px minmax(0, 1fr) 80px;
+    padding: 0 12px;
     height: 48px;
-    padding: 4px 8px;
   }
 
-  /* Hide status column on mobile */
-  .track-status {
-    display: none;
-  }
-
-  /* Adjust spacing for play button and track number */
-  .play-button-cell,
-  .track-number {
-    width: 24px;
-  }
-
-  .play-icon-wrapper {
-    width: 14px;
-    height: 14px;
-  }
-
-  .number {
-    font-size: 0.8rem;
-  }
-
-  /* Adjust subtrack indentation */
-  .track-row.subtrack {
-    padding-left: 24px;
-    grid-template-columns: 32px 24px 1fr 60px;
-  }
-
-  /* Make labels smaller */
-  .substem-label,
-  .stems-label {
-    font-size: 0.65rem;
-    padding: 1px 4px;
-    margin-left: 4px;
-  }
-
-  /* Adjust section dividers */
   .section-divider {
-    margin: 20px 0 12px;
-    padding: 0 8px;
+    margin: 32px 0 12px;
+    padding: 0 12px;
   }
 
   .section-divider h3 {
-    font-size: 0.8rem;
-  }
-
-  /* Adjust duration display */
-  .track-duration {
-    font-size: 0.75rem;
-    width: 60px;
-  }
-
-  /* Make expand icon smaller */
-  .expand-icon {
-    width: 16px;
-    height: 16px;
+    font-size: 1.2rem;
+    padding-bottom: 12px;
   }
 }
 
@@ -353,17 +246,13 @@
     font-size: 0.75rem;
   }
 
-  .tracks-header,
   .track-row {
-    grid-template-columns: 28px 20px 1fr 50px;
+    grid-template-columns: 28px 28px minmax(0, 1fr) 70px;
+    padding: 0 8px;
   }
 
-  .track-row.subtrack {
-    padding-left: 16px;
-  }
-
-  .track-duration {
-    width: 50px;
+  .section-divider {
+    padding: 0 8px;
   }
 }
 
@@ -653,13 +542,13 @@
   display: grid;
   grid-template-columns: 40px 40px minmax(0, 1fr) 100px;
   padding: 0 16px;
-  border-bottom: 1px solid #282828;
   color: #b3b3b3;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   height: 36px;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .track-row {
