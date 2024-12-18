@@ -273,12 +273,19 @@ function TrackManager() {
     }
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(filename)}`);
       setUploadStatus('File deleted successfully');
+      toast.success('File deleted successfully');
       fetchData();
     } catch (error) {
       console.error('Delete error:', error);
-      setUploadStatus(error.response?.data?.error || 'Failed to delete file');
+      const errorMessage = error.response?.data?.error || 'Failed to delete file';
+      setUploadStatus(errorMessage);
+      toast.error(errorMessage);
+      
+      if (error.response?.status === 400) {
+        fetchData();
+      }
     }
   };
 

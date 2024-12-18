@@ -499,18 +499,19 @@ app.delete('/tracks/:filename', (req, res) => {
   console.log('Delete request:', {
     filename,
     filepath,
-    exists: fs.existsSync(filepath)
+    exists: fs.existsSync(filepath),
+    mediaDirectory: MEDIA_DIRECTORY
   });
 
   try {
     // Check if file exists
     if (!fs.existsSync(filepath)) {
+      console.log('File not found:', filepath);
       return res.status(404).json({ error: 'File not found' });
     }
 
     // Check if file is in use by any track
-    const trackListPath = path.join(__dirname, 'trackList.json');
-    const trackList = JSON.parse(fs.readFileSync(trackListPath, 'utf8'));
+    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
     
     const isFileInUse = Object.values(trackList).some(section =>
       section.some(track => {
@@ -523,19 +524,32 @@ app.delete('/tracks/:filename', (req, res) => {
     );
 
     if (isFileInUse) {
+      console.log('File is in use:', filename);
       return res.status(400).json({ 
         error: 'File is currently assigned to a track. Unassign it first.' 
       });
     }
 
     // Delete the file
-    fs.unlinkSync(filepath);
-    console.log('File deleted successfully:', filename);
-    
-    res.json({ message: 'File deleted successfully' });
+    try {
+      fs.unlinkSync(filepath);
+      console.log('File deleted successfully:', filename);
+      res.json({ message: 'File deleted successfully' });
+    } catch (unlinkError) {
+      console.error('Error deleting file:', unlinkError);
+      res.status(500).json({ 
+        error: 'Failed to delete file',
+        details: unlinkError.message,
+        code: unlinkError.code
+      });
+    }
   } catch (error) {
-    console.error('Error deleting file:', error);
-    res.status(500).json({ error: 'Failed to delete file: ' + error.message });
+    console.error('Error in delete endpoint:', error);
+    res.status(500).json({ 
+      error: 'Failed to process delete request',
+      details: error.message,
+      code: error.code
+    });
   }
 });
 
