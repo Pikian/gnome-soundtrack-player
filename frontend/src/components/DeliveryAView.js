@@ -232,9 +232,9 @@ function DeliveryAView() {
           moves forward. Let's work together to bring your game's world to life through sound.
         </p>
 
-        {/* Bonus & Unassigned Package */}
+        {/* Bonus & Unassigned Package - Info Only */}
         {deliveryB?.bonusUnassigned?.trackCount > 0 && (
-          <div className="package-card bonus-package">
+          <div className="package-card bonus-package info-only">
             <div className="package-icon">
               <FaMusic />
             </div>
@@ -242,16 +242,9 @@ function DeliveryAView() {
               <h2>Bonus & Unassigned</h2>
               <p>Additional tracks and work in progress material.</p>
               <div className="package-meta">
-                <span>{deliveryB.bonusUnassigned.trackCount} tracks</span>
+                <span>{deliveryB.bonusUnassigned.trackCount} tracks in progress</span>
               </div>
             </div>
-            <button 
-              className="download-button"
-              onClick={() => handleDownload('bonusUnassigned')}
-              title="Download Bonus Package"
-            >
-              <FaDownload /> Download ZIP
-            </button>
           </div>
         )}
       </div>
