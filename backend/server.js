@@ -23,10 +23,11 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
       'http://localhost:3000',
-      'http://localhost:3006',  // Add this line
+      'http://localhost:3006',
       'http://192.168.1.37:3000',
       'https://frontend-production-8b85.up.railway.app',
-      'https://frontend-production-b5db.up.railway.app'
+      'https://frontend-production-b5db.up.railway.app',
+      'https://frontend-dev-9817.up.railway.app'
     ];
     
     console.log('Request origin:', origin);
@@ -979,4 +980,9 @@ app.post('/migrate-track-ids', async (req, res) => {
       stack: error.stack
     });
   }
+});
+
+// Add health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
