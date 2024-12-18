@@ -56,6 +56,28 @@ const TEMPLATE_TRACK_LIST_PATH = path.join(__dirname, 'trackList.template.json')
 // Add logging to help debug paths
 console.log('Media directory:', MEDIA_DIRECTORY);
 
+// Ensure media directory exists
+if (!fs.existsSync(MEDIA_DIRECTORY)) {
+  console.log('Creating media directory:', MEDIA_DIRECTORY);
+  fs.mkdirSync(MEDIA_DIRECTORY, { recursive: true });
+}
+
+// Initialize trackList.json if it doesn't exist
+if (!fs.existsSync(TRACK_LIST_PATH)) {
+  console.log('Initializing track list at:', TRACK_LIST_PATH);
+  if (fs.existsSync(TEMPLATE_TRACK_LIST_PATH)) {
+    fs.copyFileSync(TEMPLATE_TRACK_LIST_PATH, TRACK_LIST_PATH);
+  } else {
+    const emptyTrackList = {
+      score: [],
+      gnomeMusic: [],
+      outsideScope: [],
+      bonusUnassigned: []
+    };
+    fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(emptyTrackList, null, 2));
+  }
+}
+
 // Serve static files from media directory
 app.use('/media', express.static(MEDIA_DIRECTORY));
 
@@ -109,22 +131,6 @@ const backupTrackList = (trackList) => {
     fs.unlinkSync(path.join(backupDir, backup));
   });
 };
-
-// Initialize trackList.json if it doesn't exist
-if (!fs.existsSync(TRACK_LIST_PATH)) {
-  // Copy template if it exists, otherwise create empty structure
-  if (fs.existsSync(TEMPLATE_TRACK_LIST_PATH)) {
-    fs.copyFileSync(TEMPLATE_TRACK_LIST_PATH, TRACK_LIST_PATH);
-  } else {
-    const emptyTrackList = {
-      score: [],
-      gnomeMusic: [],
-      outsideScope: [],
-      bonusUnassigned: []
-    };
-    fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(emptyTrackList, null, 2));
-  }
-}
 
 // Update all references to trackList.json to use TRACK_LIST_PATH
 // For example, in your /track-list endpoint:
