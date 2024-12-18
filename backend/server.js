@@ -33,21 +33,23 @@ app.use(cors({
   exposedHeaders: ['Access-Control-Allow-Origin']
 }));
 
-// Add request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  console.log('Request headers:', req.headers);
-  
-  // Add CORS headers explicitly
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  next();
+// Add root route handler
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Gnome Soundtrack Player API',
+    version: '1.0.0',
+    endpoints: [
+      '/health',
+      '/debug',
+      '/track-list',
+      '/tracks',
+      '/album-info'
+    ]
+  });
 });
 
-// Add health check endpoint first
+// Add health check endpoint
 app.get('/health', (req, res) => {
   console.log('GET /health - Checking server status');
   res.json({ 
