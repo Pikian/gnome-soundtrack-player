@@ -18,6 +18,9 @@ console.log('Port:', process.env.PORT);
 
 const app = express();
 
+// Parse JSON bodies
+app.use(express.json());
+
 // Add CORS pre-flight handling
 app.options('*', cors());
 
@@ -42,6 +45,43 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   
   next();
+});
+
+// Add health check endpoint first
+app.get('/health', (req, res) => {
+  console.log('GET /health - Checking server status');
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    mediaDirectory: MEDIA_DIRECTORY,
+    trackListExists: fs.existsSync(TRACK_LIST_PATH),
+    mediaDirectoryExists: fs.existsSync(MEDIA_DIRECTORY)
+  });
+});
+
+// Add debug endpoint second
+app.get('/debug', (req, res) => {
+  console.log('GET /debug - Gathering debug information');
+  try {
+    const debug = {
+      environment: process.env.NODE_ENV,
+      mediaDirectory: MEDIA_DIRECTORY,
+      mediaExists: fs.existsSync(MEDIA_DIRECTORY),
+      mediaContents: fs.existsSync(MEDIA_DIRECTORY) ? fs.readdirSync(MEDIA_DIRECTORY) : [],
+      trackListPath: TRACK_LIST_PATH,
+      trackListExists: fs.existsSync(TRACK_LIST_PATH),
+      trackListContents: fs.existsSync(TRACK_LIST_PATH) ? JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8')) : null,
+      currentWorkingDir: process.cwd(),
+      dirname: __dirname
+    };
+    res.json(debug);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack
+    });
+  }
 });
 
 // Update the directory constants
@@ -394,58 +434,6 @@ app.get('/debug-media', (req, res) => {
       stack: error.stack,
       mediaDirectory: MEDIA_DIRECTORY
     });
-  }
-});
-
-// Add this debug endpoint
-app.get('/debug', (req, res) => {
-  try {
-    const debug = {
-      environment: process.env.NODE_ENV,
-      mediaDirectory: MEDIA_DIRECTORY,
-      mediaExists: fs.existsSync(MEDIA_DIRECTORY),
-      mediaContents: fs.existsSync(MEDIA_DIRECTORY) ? fs.readdirSync(MEDIA_DIRECTORY) : [],
-      trackListPath: TRACK_LIST_PATH,
-      trackListExists: fs.existsSync(TRACK_LIST_PATH),
-      trackListContents: fs.existsSync(TRACK_LIST_PATH) ? JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8')) : null,
-      currentWorkingDir: process.cwd(),
-      dirname: __dirname
-    };
-    res.json(debug);
-  } catch (error) {
-    res.status(500).json({
-      error: error.message,
-      stack: error.stack
-    });
-  }
-});
-
-// Add these endpoints after your existing ones
-
-// Get track list
-app.get('/track-list', (req, res) => {
-  console.log('GET /track-list - Checking path:', TRACK_LIST_PATH);
-  try {
-    if (!fs.existsSync(TRACK_LIST_PATH)) {
-      console.log('Track list file not found at:', TRACK_LIST_PATH);
-      // Initialize empty track list if it doesn't exist
-      const emptyTrackList = {
-        score: [],
-        gnomeMusic: [],
-        outsideScope: [],
-        bonusUnassigned: []
-      };
-      fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(emptyTrackList, null, 2));
-      console.log('Created new track list file');
-      return res.json(emptyTrackList);
-    }
-    
-    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
-    console.log('Successfully read track list');
-    res.json(trackList);
-  } catch (error) {
-    console.error('Error reading track list:', error);
-    res.status(500).json({ error: 'Failed to read track list: ' + error.message });
   }
 });
 
@@ -992,16 +980,4 @@ app.post('/migrate-track-ids', async (req, res) => {
       stack: error.stack
     });
   }
-});
-
-// Add health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-    mediaDirectory: MEDIA_DIRECTORY,
-    trackListExists: fs.existsSync(TRACK_LIST_PATH),
-    mediaDirectoryExists: fs.existsSync(MEDIA_DIRECTORY)
-  });
 });
