@@ -955,16 +955,32 @@ app.post('/migrate-track-ids', async (req, res) => {
     console.log('Creating backup at:', backupPath);
     fs.writeFileSync(backupPath, data);
     
+    // Keep track of used IDs to ensure uniqueness
+    const usedIds = new Set();
+    
+    // Helper function to generate a unique ID
+    const generateUniqueId = (baseId, counter = 0) => {
+      const newId = counter === 0 ? baseId : `${baseId}-${counter}`;
+      if (usedIds.has(newId)) {
+        return generateUniqueId(baseId, counter + 1);
+      }
+      usedIds.add(newId);
+      return newId;
+    };
+
     // Migration logic
     console.log('Starting ID updates...');
-    const updateTrackIds = (tracks, parentId = null) => {
+    const updateTrackIds = (tracks, parentId = null, section = '') => {
       return tracks.map(track => {
         if (!track) return null;
 
-        const baseId = track.title.toLowerCase().replace(/\s+/g, '-');
-        const newId = parentId ? `${parentId}-${baseId}` : baseId;
-        const oldId = track.id;
+        // Create base ID from title and section
+        const baseId = `${section}-${track.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        const newId = parentId 
+          ? generateUniqueId(`${parentId}-${track.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
+          : generateUniqueId(baseId);
         
+        const oldId = track.id;
         console.log(`Updating track ID: ${oldId} -> ${newId}`);
         
         const updatedTrack = {
@@ -973,7 +989,7 @@ app.post('/migrate-track-ids', async (req, res) => {
         };
 
         if (updatedTrack.subtracks) {
-          updatedTrack.subtracks = updateTrackIds(updatedTrack.subtracks, newId);
+          updatedTrack.subtracks = updateTrackIds(updatedTrack.subtracks, newId, section);
         }
 
         return updatedTrack;
@@ -981,10 +997,10 @@ app.post('/migrate-track-ids', async (req, res) => {
     };
 
     // Update each section
-    ['score', 'gnomeMusic', 'outsideScope', 'bonusUnassigned'].forEach(section => {
+    Object.entries(trackList).forEach(([section, tracks]) => {
       console.log(`Processing section: ${section}`);
-      if (trackList[section]) {
-        trackList[section] = updateTrackIds(trackList[section]);
+      if (tracks) {
+        trackList[section] = updateTrackIds(tracks, null, section);
       }
     });
 
