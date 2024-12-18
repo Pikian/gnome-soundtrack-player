@@ -206,6 +206,7 @@ app.get('/track-list', (req, res) => {
 app.post('/assign-track', async (req, res) => {
   try {
     const { trackId, filename } = req.body;
+    console.log('Assigning file:', { trackId, filename });
     
     // Create backup before modification
     const currentTrackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
@@ -215,36 +216,46 @@ app.post('/assign-track', async (req, res) => {
     let updated = false;
     
     const updateTrack = (tracks) => {
-      tracks.forEach(track => {
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+        // Ensure exact match with track ID
         if (track.id === trackId) {
+          console.log('Found matching track:', track.id);
           track.filename = filename;
           track.status = filename ? 'ready' : 'planned';
           updated = true;
+          return true; // Stop searching after finding the match
         }
         if (track.subtracks) {
-          updateTrack(track.subtracks);
+          const foundInSubtracks = updateTrack(track.subtracks);
+          if (foundInSubtracks) return true; // Stop searching if found in subtracks
         }
-      });
+      }
+      return false;
     };
 
-    Object.values(currentTrackList).forEach(section => {
-      updateTrack(section);
+    Object.entries(currentTrackList).forEach(([section, tracks]) => {
+      if (!updated) { // Only search in other sections if not found yet
+        console.log('Searching in section:', section);
+        updateTrack(tracks);
+      }
     });
 
     if (!updated) {
+      console.log('Track not found:', trackId);
       return res.status(404).json({ error: 'Track not found' });
     }
 
     // Save with error handling
     try {
       fs.writeFileSync(TRACK_LIST_PATH, JSON.stringify(currentTrackList, null, 2));
+      console.log('Track list updated successfully');
       res.json({ 
         message: 'Track updated successfully', 
         trackList: currentTrackList,
         timestamp: new Date().toISOString()
       });
     } catch (writeError) {
-      // Try to restore from backup if save fails
       console.error('Error saving track list:', writeError);
       const backup = fs.readFileSync(path.join(MEDIA_DIRECTORY, 'backups', fs.readdirSync(path.join(MEDIA_DIRECTORY, 'backups')).pop()));
       fs.writeFileSync(TRACK_LIST_PATH, backup);

@@ -67,6 +67,8 @@ function TrackManager() {
       setError(null);
       const loadingToast = toast.loading('Saving changes...');
       
+      console.log('Assigning file:', { trackId, filename });
+      
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/assign-track`, {
         trackId,
         filename: filename === 'none' ? null : filename
@@ -77,13 +79,32 @@ function TrackManager() {
         localStorage.setItem('trackListBackup', JSON.stringify(response.data.trackList));
         localStorage.setItem('lastSaveTime', new Date().toISOString());
         toast.success('Changes saved successfully', { id: loadingToast });
+        
+        // Log the updated track for verification
+        const findTrack = (tracks, targetId) => {
+          for (const track of tracks) {
+            if (track.id === targetId) return track;
+            if (track.subtracks) {
+              const found = findTrack(track.subtracks, targetId);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        
+        const updatedTrack = Object.values(response.data.trackList).reduce((found, sectionTracks) => {
+          return found || findTrack(sectionTracks, trackId);
+        }, null);
+        
+        console.log('Updated track:', updatedTrack);
       } else {
         throw new Error('Invalid server response');
       }
     } catch (error) {
       console.error('Error assigning file:', error);
-      toast.error('Failed to save changes. Please try again.', { duration: 5000 });
-      setError(error.response?.data?.error || 'Failed to assign file');
+      const errorMessage = error.response?.data?.error || 'Failed to assign file';
+      toast.error(errorMessage, { duration: 5000 });
+      setError(errorMessage);
     }
   };
 
