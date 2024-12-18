@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './StemMixer.css';
-import { FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaRedo } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -14,52 +14,97 @@ function StemMixer({ track, onPlayStateChange }) {
   const [mixes, setMixes] = useState([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [mixName, setMixName] = useState('');
+  const [loadedStems, setLoadedStems] = useState(new Map());
 
   // Initialize all stems with volume 0 except main track
   useEffect(() => {
     if (track?.filename) {
+      console.log('Initializing stems for track:', track);
       const initialStems = new Map();
       const initialVolumes = new Map();
+      const newLoadedStems = new Map();
       
-      // Set up main track with 50% volume
-      initialStems.set(track.id, track);
-      initialVolumes.set(track.id, 0.5);
-      
-      // Set up all substems (but muted)
-      track.subtracks?.forEach(subtrack => {
-        if (subtrack?.filename) {
-          initialStems.set(subtrack.id, subtrack);
-          initialVolumes.set(subtrack.id, 0); // Start muted
+      // Helper function to verify and load audio
+      const loadAudioForStem = async (stem) => {
+        // Skip if stem doesn't have a filename
+        if (!stem?.filename) {
+          console.log(`Skipping empty stem: ${stem?.title || 'Untitled'}`);
+          return false;
         }
-      });
 
-      setActiveStems(initialStems);
-      setStemVolumes(initialVolumes);
+        try {
+          const audioUrl = `${process.env.REACT_APP_API_URL}/tracks/${encodeURIComponent(stem.filename)}`;
+          console.log(`Loading audio for ${stem.title}:`, audioUrl);
+          
+          // First verify the file exists
+          const response = await fetch(audioUrl, { method: 'HEAD' });
+          if (!response.ok) {
+            console.log(`Audio file not available for ${stem.title}`);
+            return false;
+          }
 
-      // Create and start all audio elements
-      initialStems.forEach((stem) => {
-        const audio = new Audio();
-        audio.src = `${process.env.REACT_APP_API_URL}/tracks/${stem.filename}`;
-        audio.loop = true;
-        audio.volume = stem.id === track.id ? 0.5 : 0;
-        audio.preload = 'auto';
-        audioRefs.current.set(stem.id, audio);
+          const audio = new Audio();
+          audio.src = audioUrl;
+          audio.loop = true;
+          audio.volume = stem.id === track.id ? 0.5 : 0;
+          audio.preload = 'auto';
+
+          // Wait for the audio to be loaded
+          await new Promise((resolve, reject) => {
+            audio.onloadeddata = () => {
+              console.log(`Successfully loaded audio for ${stem.title}`);
+              resolve();
+            };
+            audio.onerror = (e) => {
+              console.error(`Error loading audio for ${stem.title}:`, e.target.error);
+              reject(e);
+            };
+          });
+
+          // If we get here, the audio loaded successfully
+          audioRefs.current.set(stem.id, audio);
+          initialStems.set(stem.id, stem);
+          initialVolumes.set(stem.id, stem.id === track.id ? 0.5 : 0);
+          newLoadedStems.set(stem.id, true);
+          return true;
+        } catch (error) {
+          console.error(`Failed to load audio for ${stem.title}:`, error);
+          return false;
+        }
+      };
+
+      // Load main track first
+      loadAudioForStem(track).then(success => {
+        if (!success) {
+          toast.error('Failed to load main track');
+          return;
+        }
+
+        // Then load substems
+        if (track.subtracks) {
+          Promise.all(
+            track.subtracks
+              .filter(subtrack => subtrack?.filename) // Only attempt to load stems with filenames
+              .map(subtrack => loadAudioForStem(subtrack))
+          ).then(() => {
+            // Update state with successfully loaded stems
+            setActiveStems(new Map(initialStems));
+            setStemVolumes(new Map(initialVolumes));
+            setLoadedStems(new Map(newLoadedStems));
+          });
+        }
       });
     }
 
-    // Capture refs in variables for cleanup
-    const currentAudioRefs = audioRefs.current;
-    const currentFadeTimeout = fadeTimeout.current;
-
+    // Cleanup
     return () => {
-      // Cleanup
-      currentAudioRefs.forEach(audio => {
+      audioRefs.current.forEach(audio => {
         audio.pause();
         audio.src = '';
         audio.load();
       });
-      currentAudioRefs.clear();
-      if (currentFadeTimeout) clearTimeout(currentFadeTimeout);
+      audioRefs.current.clear();
+      if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
     };
   }, [track]);
 
@@ -73,6 +118,11 @@ function StemMixer({ track, onPlayStateChange }) {
   }, [track]);
 
   const fadeVolume = (audio, start, end, duration = 200) => {
+    if (!audio) {
+      console.log('Cannot fade volume: audio element not found');
+      return Promise.resolve();
+    }
+
     const startTime = performance.now();
     
     return new Promise(resolve => {
@@ -80,7 +130,11 @@ function StemMixer({ track, onPlayStateChange }) {
         const elapsed = performance.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        audio.volume = start + (end - start) * progress;
+        try {
+          audio.volume = start + (end - start) * progress;
+        } catch (error) {
+          console.error('Error updating volume:', error);
+        }
         
         if (progress < 1) {
           requestAnimationFrame(updateVolume);
@@ -94,44 +148,77 @@ function StemMixer({ track, onPlayStateChange }) {
   };
 
   const toggleStem = async (stemTrack) => {
-    const newActiveStems = new Map(activeStems);
-    const audio = audioRefs.current.get(stemTrack.id);
-    const currentVolume = stemVolumes.get(stemTrack.id) || 0;
-    
-    if (currentVolume > 0) {
-      // Fade out
-      await fadeVolume(audio, currentVolume, 0);
-      setStemVolumes(prev => new Map(prev).set(stemTrack.id, 0));
-    } else {
-      // Fade in
-      const targetVolume = stemTrack.id === track.id ? 1 : 0.7;
-      await fadeVolume(audio, 0, targetVolume);
-      setStemVolumes(prev => new Map(prev).set(stemTrack.id, targetVolume));
+    // Skip if stem is not loaded
+    if (!loadedStems.get(stemTrack.id)) {
+      console.log(`Cannot toggle stem ${stemTrack.title}: not loaded`);
+      return;
     }
 
-    setActiveStems(newActiveStems);
+    const newActiveStems = new Map(activeStems);
+    const audio = audioRefs.current.get(stemTrack.id);
+    
+    if (!audio) {
+      console.log(`Cannot toggle stem ${stemTrack.title}: audio not found`);
+      return;
+    }
+
+    const currentVolume = stemVolumes.get(stemTrack.id) || 0;
+    
+    try {
+      if (currentVolume > 0) {
+        // Fade out
+        await fadeVolume(audio, currentVolume, 0);
+        setStemVolumes(prev => new Map(prev).set(stemTrack.id, 0));
+      } else {
+        // Fade in
+        const targetVolume = stemTrack.id === track.id ? 1 : 0.7;
+        await fadeVolume(audio, 0, targetVolume);
+        setStemVolumes(prev => new Map(prev).set(stemTrack.id, targetVolume));
+      }
+
+      setActiveStems(newActiveStems);
+    } catch (error) {
+      console.error(`Error toggling stem ${stemTrack.title}:`, error);
+    }
   };
 
   const adjustVolume = async (trackId, volume) => {
     const audio = audioRefs.current.get(trackId);
-    if (audio) {
-      await fadeVolume(audio, audio.volume, volume, 100);
-      setStemVolumes(prev => new Map(prev).set(trackId, volume));
+    if (audio && loadedStems.get(trackId)) {
+      try {
+        await fadeVolume(audio, audio.volume, volume, 100);
+        setStemVolumes(prev => new Map(prev).set(trackId, volume));
+      } catch (error) {
+        console.error(`Error adjusting volume for track ${trackId}:`, error);
+      }
     }
   };
 
   const togglePlayback = async () => {
     try {
+      if (!audioRefs.current.size) {
+        throw new Error('No audio elements available');
+      }
+
+      // Only attempt to play successfully loaded stems
+      const playableAudio = Array.from(audioRefs.current.entries())
+        .filter(([id]) => loadedStems.get(id));
+
+      if (playableAudio.length === 0) {
+        toast.error('No playable audio tracks available');
+        return;
+      }
+
       if (isPlaying) {
         // Pause all
-        audioRefs.current.forEach(audio => {
+        playableAudio.forEach(([, audio]) => {
           audio.pause();
         });
         setIsPlaying(false);
         onPlayStateChange(false);
       } else {
         // Start all at current volumes
-        const playPromises = Array.from(audioRefs.current.values()).map(audio => {
+        const playPromises = playableAudio.map(([, audio]) => {
           audio.currentTime = currentTimeRef.current;
           return audio.play();
         });
@@ -141,6 +228,35 @@ function StemMixer({ track, onPlayStateChange }) {
       }
     } catch (error) {
       console.error('Playback error:', error);
+      toast.error(`Failed to control playback: ${error.message}`);
+    }
+  };
+
+  const handleRestart = async () => {
+    try {
+      const playableAudio = Array.from(audioRefs.current.entries())
+        .filter(([id]) => loadedStems.get(id));
+
+      if (playableAudio.length === 0) {
+        toast.error('No playable audio tracks available');
+        return;
+      }
+
+      // Set current time to 0 for all audio elements
+      playableAudio.forEach(([, audio]) => {
+        audio.currentTime = 0;
+      });
+      currentTimeRef.current = 0;
+
+      // If currently playing, restart playback
+      if (isPlaying) {
+        const playPromises = playableAudio.map(([, audio]) => audio.play());
+        await Promise.all(playPromises);
+      }
+      toast.success('Restarted from beginning');
+    } catch (error) {
+      console.error('Restart error:', error);
+      toast.error('Failed to restart playback');
     }
   };
 
@@ -215,12 +331,21 @@ function StemMixer({ track, onPlayStateChange }) {
     <div className="stem-mixer">
       <div className="stem-header">
         <h3>{track.title} - Stem Mixer</h3>
-        <button 
-          className={`play-button ${isPlaying ? 'playing' : ''}`}
-          onClick={togglePlayback}
-        >
-          {isPlaying ? <FaPause /> : <FaPlay />}
-        </button>
+        <div className="playback-controls">
+          <button 
+            className={`play-button ${isPlaying ? 'playing' : ''}`}
+            onClick={togglePlayback}
+          >
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+          <button 
+            className="restart-button"
+            onClick={handleRestart}
+            title="Restart from beginning"
+          >
+            <FaRedo />
+          </button>
+        </div>
       </div>
 
       <div className="stem-controls">
