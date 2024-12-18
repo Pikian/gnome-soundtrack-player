@@ -1,37 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaDownload, FaMusic, FaArrowRight, FaCheckCircle } from 'react-icons/fa';
+import { FaDownload, FaMusic, FaArrowRight, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import { Tooltip } from 'react-tooltip';
+import axios from 'axios';
 import './DeliveryAView.css';
 
 function DeliveryAView() {
-  const packages = [
-    {
-      id: 'dark-forest-main',
-      title: 'Dark Forest (Main)',
-      description: 'An adaptable, dynamic stem package inspired by the mysterious depths of the Dark Forest. Crafted to be both subtly responsive and never repetitive, these stems will shift according to in-game player actions, ensuring the emotional tone always matches the unfolding journey.',
-      tracks: 12,
-      duration: '24:35'
-    },
-    {
-      id: 'dark-forest-warm',
-      title: 'Dark Forest (Warm)',
-      description: 'A gentler variation on the core Dark Forest theme, designed for moments of comfort and safety - like home bases or rest areas - bringing a soothing warmth that contrasts with the biome\'s more ominous undertones.',
-      tracks: 8,
-      duration: '16:40'
-    },
-    {
-      id: 'ballads-brave',
-      title: 'Ballads of the Brave (Demos)',
-      description: 'Concept demos of in-game character performances. These ballads, rooted in gnome traditions, carry a gentle sadness that reminds everyone of what has been lost and what is still worth fighting for. They bring quiet strength and hope, encouraging players to keep going. At the same time, we look forward to working with you to make this feature fun—ensuring that playing these tunes in-game isn’t just a reflective moment, but also an uplifting, enjoyable part of the gameplay experience.',
-      tracks: 6,
-      duration: '14:20'
-    }
-  ];
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleDownload = (packageId) => {
-    const downloadUrl = `${process.env.REACT_APP_API_URL}/download/${packageId}`;
-    window.open(downloadUrl, '_blank');
+  useEffect(() => {
+    const fetchDeliveryInfo = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/delivery-info`);
+        setDeliveryInfo(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching delivery info:', error);
+        setError('Failed to load delivery information');
+        setLoading(false);
+      }
+    };
+
+    fetchDeliveryInfo();
+  }, []);
+
+  const handleDownload = async (packagePath) => {
+    try {
+      const [section, type] = packagePath.split('/');
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/download-package/${section}/${type}`,
+        { responseType: 'blob' }
+      );
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${section}-${type}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+      setError('Failed to download package');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="delivery-view">
+        <div className="loading">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="delivery-view">
+        <div className="error-message">{error}</div>
+      </div>
+    );
+  }
+
+  const { deliveryA, deliveryB, sections } = deliveryInfo || {};
 
   return (
     <div className="delivery-view">
@@ -46,29 +79,109 @@ function DeliveryAView() {
       </div>
 
       <div className="packages-grid">
-        {packages.map(pkg => (
-          <div key={pkg.id} className="package-card">
-            <div className="package-icon">
-              <FaMusic />
-            </div>
-            <div className="package-info">
-              <h2>{pkg.title}</h2>
-              <p>{pkg.description}</p>
-              <div className="package-meta">
-                <span>{pkg.tracks} tracks</span>
-                <span className="dot">•</span>
-                <span>{pkg.duration}</span>
+        {/* Score Package */}
+        <div className="package-card">
+          <div className="package-icon">
+            <FaMusic />
+          </div>
+          <div className="package-info">
+            <h2>Score</h2>
+            <p>Original score from the game, including all stems and variations.</p>
+            <div className="package-descriptions">
+              <div className="description-item">
+                <h4>Dark Forest (Main)</h4>
+                <p>An adaptable, dynamic stem package inspired by the mysterious depths of the Dark Forest. Crafted to be both subtly responsive and never repetitive, these stems will shift according to in-game player actions, ensuring the emotional tone always matches the unfolding journey.</p>
+              </div>
+              <div className="description-item">
+                <h4>Dark Forest (Warm)</h4>
+                <p>A gentler variation on the core Dark Forest theme, designed for moments of comfort and safety - like home bases or rest areas - bringing a soothing warmth that contrasts with the biome's more ominous undertones.</p>
               </div>
             </div>
-            <button 
-              className="download-button"
-              onClick={() => handleDownload(pkg.id)}
-              title={`Download ${pkg.title}`}
-            >
-              <FaDownload /> Download ZIP
-            </button>
+            <div className="package-meta">
+              <span>{deliveryA?.score?.trackCount || 0} tracks</span>
+            </div>
+            <div className="track-list-preview">
+              <div className="track-item">
+                <span className="track-title">The Dark Forest</span>
+                <div className="track-actions">
+                  <span className="track-stems">20 stems</span>
+                </div>
+              </div>
+              <div className="track-item">
+                <span className="track-title">Home Theme</span>
+                <div className="track-actions">
+                  <span className="track-stems">6 stems</span>
+                </div>
+              </div>
+              <div className="track-item">
+                <span className="track-title">Love Theme</span>
+              </div>
+              <div className="track-item">
+                <span className="track-title">Crescent Moon</span>
+              </div>
+              <div className="track-item">
+                <span className="track-title">Magic Hour</span>
+              </div>
+            </div>
+            <div className="download-options">
+              <button 
+                className="download-button with-stems"
+                onClick={() => handleDownload('score/main')}
+                title="Download complete score package with all stems"
+              >
+                <FaDownload /> Download Complete Package
+              </button>
+            </div>
+            <div className="package-note">
+              <FaInfoCircle className="info-icon" />
+              <p>This package includes all main themes organized in folders, each with their respective stem variations for implementation.</p>
+            </div>
           </div>
-        ))}
+        </div>
+
+        {/* Gnome Music Package */}
+        <div className="package-card">
+          <div className="package-icon">
+            <FaMusic />
+          </div>
+          <div className="package-info">
+            <h2>Gnome Music</h2>
+            <p>Diegetic music and demos, including all variations.</p>
+            <div className="package-descriptions">
+              <div className="description-item">
+                <h4>Ballads of the Brave (Demos)</h4>
+                <p>Concept demos of in-game character performances. These ballads, rooted in gnome traditions, carry a gentle sadness that reminds everyone of what has been lost and what is still worth fighting for. They bring quiet strength and hope, encouraging players to keep going. At the same time, we look forward to working with you to make this feature fun—ensuring that playing these tunes in-game isn't just a reflective moment, but also an uplifting, enjoyable part of the gameplay experience.</p>
+              </div>
+            </div>
+            <div className="package-meta">
+              <span>{deliveryA?.gnomeMusic?.trackCount || 0} tracks</span>
+            </div>
+            <div className="track-list-preview">
+              <div className="track-item">
+                <span className="track-title">Gnome Diegetic I</span>
+                <div className="track-actions">
+                  <span className="track-stems">1 variation</span>
+                </div>
+              </div>
+              <div className="track-item">
+                <span className="track-title">Gnome Diegetic II</span>
+              </div>
+            </div>
+            <div className="download-options">
+              <button 
+                className="download-button with-stems"
+                onClick={() => handleDownload('gnomeMusic/main')}
+                title="Download complete gnome music package"
+              >
+                <FaDownload /> Download Complete Package
+              </button>
+            </div>
+            <div className="package-note">
+              <FaInfoCircle className="info-icon" />
+              <p>This package includes all diegetic music and demos with their variations for implementation.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="delivery-progress">
@@ -116,6 +229,29 @@ function DeliveryAView() {
           Expect additional Ballads of the Brave, trailer music, and extra material as our collaboration 
           moves forward. Let's work together to bring your game's world to life through sound.
         </p>
+
+        {/* Bonus & Unassigned Package */}
+        {deliveryB?.bonusUnassigned?.trackCount > 0 && (
+          <div className="package-card bonus-package">
+            <div className="package-icon">
+              <FaMusic />
+            </div>
+            <div className="package-info">
+              <h2>Bonus & Unassigned</h2>
+              <p>Additional tracks and work in progress material.</p>
+              <div className="package-meta">
+                <span>{deliveryB.bonusUnassigned.trackCount} tracks</span>
+              </div>
+            </div>
+            <button 
+              className="download-button"
+              onClick={() => handleDownload('bonusUnassigned')}
+              title="Download Bonus Package"
+            >
+              <FaDownload /> Download ZIP
+            </button>
+          </div>
+        )}
       </div>
       
       <div className="bottom-nav">

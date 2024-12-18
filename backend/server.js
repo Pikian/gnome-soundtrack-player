@@ -7,6 +7,9 @@ const { getAudioDurationInSeconds } = require('get-audio-duration');
 const util = require('util');
 const multer = require('multer');
 const mm = require('music-metadata');
+const archiver = require('archiver');
+const { v4: uuidv4 } = require('uuid');
+const os = require('os');
 
 // Load environment variables
 dotenv.config();
@@ -1039,5 +1042,163 @@ app.post('/migrate-track-ids', async (req, res) => {
       details: error.message,
       stack: error.stack
     });
+  }
+});
+
+// Add new endpoints for delivery packages
+app.get('/delivery-info', async (req, res) => {
+  try {
+    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    
+    // Helper function to count tracks and calculate total duration
+    const getPackageStats = (tracks) => {
+      let totalDuration = 0;
+      let trackCount = 0;
+      
+      const processTrack = (track) => {
+        if (track.filename) {
+          const filepath = path.join(MEDIA_DIRECTORY, track.filename);
+          if (fs.existsSync(filepath)) {
+            const stat = fs.statSync(filepath);
+            if (stat.isFile()) {
+              trackCount++;
+            }
+          }
+        }
+        if (track.subtracks) {
+          track.subtracks.forEach(processTrack);
+        }
+      };
+      
+      tracks.forEach(processTrack);
+      return { trackCount };
+    };
+    
+    // Get stats for each section
+    const deliveryA = {
+      score: getPackageStats(trackList.score || []),
+      gnomeMusic: getPackageStats(trackList.gnomeMusic || [])
+    };
+    
+    const deliveryB = {
+      bonusUnassigned: getPackageStats(trackList.bonusUnassigned || [])
+    };
+    
+    res.json({
+      deliveryA,
+      deliveryB,
+      sections: {
+        score: trackList.score || [],
+        gnomeMusic: trackList.gnomeMusic || [],
+        bonusUnassigned: trackList.bonusUnassigned || []
+      }
+    });
+  } catch (error) {
+    console.error('Error getting delivery info:', error);
+    res.status(500).json({ error: 'Failed to get delivery info' });
+  }
+});
+
+// Update endpoint to download package
+app.get('/download-package/:section/:type', async (req, res) => {
+  try {
+    const { section, type } = req.params;
+    const trackList = JSON.parse(fs.readFileSync(TRACK_LIST_PATH, 'utf8'));
+    
+    if (!trackList[section]) {
+      return res.status(404).json({ error: 'Section not found' });
+    }
+
+    // Create a temporary directory for the zip
+    const tempDir = path.join(os.tmpdir(), uuidv4());
+    fs.mkdirSync(tempDir, { recursive: true });
+    
+    // Create a write stream for the zip file
+    const zipPath = path.join(tempDir, `${section}-${type}.zip`);
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    
+    // Pipe the archive to the file
+    archive.pipe(output);
+
+    // Helper function to add tracks to archive
+    const addTrackToArchive = async (track, prefix = '') => {
+      if (track.filename) {
+        const filepath = path.join(MEDIA_DIRECTORY, track.filename);
+        if (fs.existsSync(filepath)) {
+          // Add file to zip with a folder structure
+          const zipPath = path.join(prefix, track.filename);
+          archive.file(filepath, { name: zipPath });
+        }
+      }
+      
+      if (track.subtracks) {
+        // Create a subfolder for stems if this track has subtracks
+        const stemPrefix = path.join(prefix, `${track.title} - Stems`);
+        for (const subtrack of track.subtracks) {
+          await addTrackToArchive(subtrack, stemPrefix);
+        }
+      }
+    };
+
+    // Handle different package types
+    if (type === 'main') {
+      // Add only main themes (with their stems in subfolders)
+      for (const track of trackList[section]) {
+        if (track.filename) {  // Only include tracks that have a main file
+          await addTrackToArchive(track, track.title);
+        }
+      }
+    } else if (type === 'main-only') {
+      // Add only main theme files without stems
+      for (const track of trackList[section]) {
+        if (track.filename) {  // Only include the main file
+          const filepath = path.join(MEDIA_DIRECTORY, track.filename);
+          if (fs.existsSync(filepath)) {
+            archive.file(filepath, { name: track.filename });
+          }
+        }
+      }
+    } else {
+      // Find the specific track for stem package
+      const findTrack = (tracks, id) => {
+        for (const track of tracks) {
+          if (track.id === id) return track;
+        }
+        return null;
+      };
+
+      const trackId = type; // e.g., 'the-dark-forest' or 'home-theme'
+      const track = findTrack(trackList[section], trackId);
+      
+      if (track) {
+        await addTrackToArchive(track, track.title);
+      } else {
+        return res.status(404).json({ error: 'Track not found' });
+      }
+    }
+    
+    // Finalize the archive
+    await archive.finalize();
+    
+    // Wait for the output file to be ready
+    await new Promise((resolve) => output.on('close', resolve));
+    
+    // Set headers for download
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${section}-${type}.zip"`);
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(zipPath);
+    fileStream.pipe(res);
+    
+    // Clean up temp file after sending
+    fileStream.on('end', () => {
+      fs.unlinkSync(zipPath);
+      fs.rmdirSync(tempDir);
+    });
+  } catch (error) {
+    console.error('Error creating package:', error);
+    res.status(500).json({ error: 'Failed to create package' });
   }
 });

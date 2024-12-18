@@ -506,4 +506,286 @@
   .milestone-label {
     top: -40px;
   }
+}
+
+.bonus-package {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #b3b3b3;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #ff4444;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 20px;
+}
+
+.track-list-preview {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.track-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.track-item:last-child {
+  border-bottom: none;
+}
+
+.track-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.track-title {
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.track-stems {
+  font-size: 0.8rem;
+  color: #1db954;
+  background: rgba(29, 185, 84, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .track-list-preview {
+    margin-top: 12px;
+  }
+
+  .track-item {
+    padding: 10px 12px;
+  }
+
+  .track-title {
+    font-size: 0.85rem;
+  }
+
+  .track-stems {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+}
+
+.track-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.track-download-button {
+  background: none;
+  border: none;
+  color: #b3b3b3;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.track-download-button:hover {
+  color: #1db954;
+  background: rgba(29, 185, 84, 0.1);
+}
+
+/* Update the main download button text */
+.download-button {
+  font-size: 0.9rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .track-actions {
+    gap: 8px;
+  }
+
+  .track-download-button {
+    padding: 4px;
+  }
+
+  .track-item {
+    padding: 10px 12px;
+  }
+
+  .track-title {
+    font-size: 0.85rem;
+  }
+
+  .track-stems {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 380px) {
+  .track-actions {
+    gap: 6px;
+  }
+
+  .track-download-button {
+    padding: 3px;
+  }
+}
+
+.package-descriptions {
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.description-item {
+  margin-bottom: 24px;
+}
+
+.description-item:last-child {
+  margin-bottom: 0;
+}
+
+.description-item h4 {
+  color: #1db954;
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.description-item p {
+  color: #b3b3b3;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .package-descriptions {
+    margin: 12px 0;
+    padding: 12px;
+  }
+
+  .description-item {
+    margin-bottom: 20px;
+  }
+
+  .description-item h4 {
+    font-size: 0.9rem;
+  }
+
+  .description-item p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Remove old tooltip styles */
+.section-header,
+.info-icon,
+.package-tooltip,
+.tooltip-content {
+  display: none;
+}
+
+.download-options {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.download-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+  width: 100%;
+  justify-content: center;
+}
+
+.download-button.with-stems {
+  background: #1db954;
+  color: #fff;
+}
+
+.download-button.with-stems:hover {
+  background: #1ed760;
+  transform: scale(1.02);
+}
+
+.package-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.package-note .info-icon {
+  display: block;
+  color: #1db954;
+  margin-top: 3px;
+}
+
+.package-note p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b3b3b3;
+  line-height: 1.5;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .download-options {
+    margin-top: 20px;
+  }
+
+  .download-button {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+
+  .package-note {
+    margin-top: 12px;
+    padding: 10px;
+  }
+
+  .package-note p {
+    font-size: 0.8rem;
+  }
 } 
