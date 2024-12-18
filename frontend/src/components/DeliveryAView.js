@@ -101,33 +101,28 @@ function DeliveryAView() {
               <span>{deliveryA?.score?.trackCount || 0} tracks</span>
             </div>
             <div className="track-list-preview">
-              <div className="track-item">
-                <span className="track-title">The Dark Forest</span>
-                <div className="track-actions">
-                  <span className="track-stems">20 stems</span>
+              {sections?.score?.map((track) => (
+                <div key={track.id} className="track-item">
+                  <span className="track-title">{track.title}</span>
+                  {track.subtracks && track.subtracks.length > 0 && (
+                    <div className="track-actions">
+                      <span className="track-stems">{track.subtracks.length} stems</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="track-item">
-                <span className="track-title">Home Theme</span>
-                <div className="track-actions">
-                  <span className="track-stems">6 stems</span>
+              ))}
+              {(!sections?.score || sections.score.length === 0) && (
+                <div className="track-item">
+                  <span className="track-title" style={{ color: '#666' }}>No tracks available yet</span>
                 </div>
-              </div>
-              <div className="track-item">
-                <span className="track-title">Love Theme</span>
-              </div>
-              <div className="track-item">
-                <span className="track-title">Crescent Moon</span>
-              </div>
-              <div className="track-item">
-                <span className="track-title">Magic Hour</span>
-              </div>
+              )}
             </div>
             <div className="download-options">
               <button 
                 className="download-button with-stems"
                 onClick={() => handleDownload('score/main')}
                 title="Download complete score package with all stems"
+                disabled={!sections?.score || sections.score.length === 0}
               >
                 <FaDownload /> Download Complete Package
               </button>
@@ -157,21 +152,28 @@ function DeliveryAView() {
               <span>{deliveryA?.gnomeMusic?.trackCount || 0} tracks</span>
             </div>
             <div className="track-list-preview">
-              <div className="track-item">
-                <span className="track-title">Gnome Diegetic I</span>
-                <div className="track-actions">
-                  <span className="track-stems">1 variation</span>
+              {sections?.gnomeMusic?.map((track) => (
+                <div key={track.id} className="track-item">
+                  <span className="track-title">{track.title}</span>
+                  {track.subtracks && track.subtracks.length > 0 && (
+                    <div className="track-actions">
+                      <span className="track-stems">{track.subtracks.length} variations</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="track-item">
-                <span className="track-title">Gnome Diegetic II</span>
-              </div>
+              ))}
+              {(!sections?.gnomeMusic || sections.gnomeMusic.length === 0) && (
+                <div className="track-item">
+                  <span className="track-title" style={{ color: '#666' }}>No tracks available yet</span>
+                </div>
+              )}
             </div>
             <div className="download-options">
               <button 
                 className="download-button with-stems"
                 onClick={() => handleDownload('gnomeMusic/main')}
                 title="Download complete gnome music package"
+                disabled={!sections?.gnomeMusic || sections.gnomeMusic.length === 0}
               >
                 <FaDownload /> Download Complete Package
               </button>

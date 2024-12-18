@@ -110,23 +110,39 @@
 .download-button {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  background: #1db954;
-  color: white;
+  padding: 12px 20px;
   border: none;
-  border-radius: 20px;
-  padding: 12px 24px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #fff;
   width: 100%;
+  justify-content: center;
 }
 
-.download-button:hover {
+.download-button:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.download-button.with-stems {
+  background: #1db954;
+  color: #fff;
+}
+
+.download-button.with-stems:hover:not(:disabled) {
   background: #1ed760;
   transform: scale(1.02);
+}
+
+.download-button.with-stems:disabled {
+  background: rgba(29, 185, 84, 0.2);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .future-delivery {
@@ -267,6 +283,7 @@
   background: #1db954;
   width: 16px;
   height: 16px;
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
 }
 
 .milestone-label {
@@ -280,10 +297,11 @@
   gap: 4px;
   min-width: 100px;
   background: rgba(24, 24, 24, 0.95);
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
+  backdrop-filter: blur(10px);
 }
 
 .milestone-title {
@@ -310,30 +328,108 @@
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .delivery-progress {
-    padding: 24px;
+    padding: 20px;
+    margin: 0 0 32px;
   }
 
   .progress-line {
-    margin: 60px 40px;
-    padding: 0;
-  }
-
-  .progress-headline {
-    margin: 0 0 24px 0;
+    margin: 40px 20px;
+    height: 3px;
   }
 
   .milestone-label {
-    top: -50px;
-    padding: 4px 10px;
+    top: -45px;
+    min-width: auto;
+    padding: 6px 12px;
+    transform: translateX(-50%) scale(0.95);
+    background: rgba(24, 24, 24, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .milestone-title {
     font-size: 0.85rem;
+    font-weight: 600;
   }
 
   .milestone-status {
     font-size: 0.75rem;
+    padding: 2px 8px;
+    background: rgba(29, 185, 84, 0.1);
+    border-radius: 12px;
+  }
+
+  .milestone-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .milestone.active .milestone-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .progress-update {
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+  }
+
+  .progress-header {
+    margin-bottom: 16px;
+  }
+
+  .progress-headline {
+    font-size: 1rem;
+  }
+
+  .update-badge {
     padding: 3px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 380px) {
+  .progress-line {
+    margin: 35px 15px;
+  }
+
+  .milestone-label {
+    padding: 4px 10px;
+    transform: translateX(-50%) scale(0.9);
+  }
+
+  .milestone-title {
+    font-size: 0.8rem;
+  }
+
+  .milestone-status {
+    font-size: 0.7rem;
+  }
+
+  .milestone-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .milestone.active .milestone-dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .progress-line {
+    margin: 30px 40px;
+  }
+
+  .milestone-label {
+    top: -35px;
+  }
+
+  .delivery-progress {
+    padding: 16px;
   }
 }
 
