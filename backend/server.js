@@ -268,7 +268,7 @@ app.post('/assign-track', async (req, res) => {
 });
 
 // Endpoint to get the list of tracks
-app.get('/tracks', (req, res) => {
+app.get('/tracks', async (req, res) => {
   console.log('GET /tracks - Checking directory:', MEDIA_DIRECTORY);
   try {
     if (!fs.existsSync(MEDIA_DIRECTORY)) {
@@ -280,14 +280,31 @@ app.get('/tracks', (req, res) => {
     const mp3Files = files.filter(file => file.toLowerCase().endsWith('.mp3'));
     console.log('Found MP3 files:', mp3Files);
 
-    const tracks = mp3Files.map(filename => ({
-      id: filename,
-      filename,
-      name: filename.replace('.mp3', ''),
-      duration: '0:00' // We'll add actual duration later
+    // Get durations for all files
+    const tracks = await Promise.all(mp3Files.map(async filename => {
+      try {
+        const filepath = path.join(MEDIA_DIRECTORY, filename);
+        const duration = await getDuration(filepath);
+        return {
+          id: filename,
+          filename,
+          name: filename.replace('.mp3', ''),
+          duration: formatDuration(duration),
+          rawDuration: duration
+        };
+      } catch (error) {
+        console.error(`Error getting duration for ${filename}:`, error);
+        return {
+          id: filename,
+          filename,
+          name: filename.replace('.mp3', ''),
+          duration: '0:00',
+          rawDuration: 0
+        };
+      }
     }));
 
-    console.log('Returning tracks:', tracks);
+    console.log('Returning tracks with durations:', tracks);
     res.json(tracks);
   } catch (error) {
     console.error('Error in /tracks:', error);

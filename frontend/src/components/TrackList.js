@@ -47,10 +47,9 @@ function TrackList({ onPlayTrack, currentTrack, isPlaying: playerIsPlaying, trac
 
     // Process all tracks in each section
     if (trackList) {
-      trackList.score.filter(track => track).forEach(processTrack);
-      trackList.gnomeMusic.filter(track => track).forEach(processTrack);
-      trackList.outsideScope.filter(track => track).forEach(processTrack);
-      trackList.bonusUnassigned.filter(track => track).forEach(processTrack);
+      Object.values(trackList).forEach(section => {
+        section.filter(track => track).forEach(processTrack);
+      });
     }
     
     // Format the total duration
