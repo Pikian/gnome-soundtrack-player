@@ -1,149 +1,223 @@
 # Gnome Soundtrack Player
 
-A web application for visualizing and managing game soundtrack and stem mixing. Features include:
-- Track library management
-- Stem mixing interface
-- Delivery package tracking
-- Mobile-responsive design
+A web-based audio player and stem mixer application for managing and playing game soundtracks. The application supports stem-based mixing, playlist management, and delivery package creation.
 
-## Development Setup
+## Project Structure
+
+```
+gnome-soundtrack-player/
+├── frontend/                 # React frontend application
+│   ├── src/                 # Source code
+│   ├── public/             # Static files
+│   ├── Dockerfile         # Frontend Docker configuration
+│   ├── nginx.conf        # Nginx configuration for production
+│   └── .env*            # Environment configurations
+├── backend/            # Node.js backend server
+│   ├── server.js      # Main server file
+│   ├── scripts/      # Utility scripts
+│   ├── media/       # Media storage directory
+│   ├── persistent/ # Persistent data storage
+│   └── railway.toml # Railway deployment configuration
+├── package.json    # Root package configuration
+└── README.md     # Project documentation
+```
+
+## Local Development Setup
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- Docker Desktop
+- Git
+
+### Environment Variables
+
+#### Frontend (.env)
+```
+REACT_APP_API_URL=http://localhost:3001
+PORT=3000
+```
+
+#### Backend (.env)
+```
+PORT=3001
+CORS_ORIGIN=http://localhost:3000
+STORAGE_PATH=./media
+```
+
+### Starting the Development Environment
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/gnome-soundtrack-player.git
+git clone https://github.com/Pikian/gnome-soundtrack-player.git
 cd gnome-soundtrack-player
 ```
 
-2. Install dependencies for both frontend and backend:
+2. Install dependencies:
 ```bash
-# Backend setup
-cd backend
+# Frontend
+cd frontend
 npm install
 
-# Frontend setup
-cd ../frontend
+# Backend
+cd ../backend
 npm install
 ```
 
-3. Set up environment variables:
-   - Copy `.env.development` to `.env` in both frontend and backend directories
-   - Update the variables as needed
-
-4. Start the development servers:
+3. Start the development servers:
 ```bash
-# Start backend (from backend directory)
+# Backend
+cd backend
 npm run dev
 
-# Start frontend (from frontend directory)
-npm start
+# Frontend (in a new terminal)
+cd frontend
+npm run dev
 ```
 
-## Deployment (Railway)
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
 
-The application is configured for automatic deployment through Railway's GitHub integration. When changes are pushed to the repository, Railway automatically:
-1. Detects the changes
-2. Triggers a new build
-3. Deploys the updated version
+## Build and Deployment
 
-### Backend Service
+### Docker Build Process
 
-1. Create new service in Railway
-   - Connect your GitHub repository
-   - Select the backend service
-
-2. Set root directory to `/backend`
-
-3. Set environment variables:
-```env
-NODE_ENV=production
-PORT=3001
-MEDIA_DIR=/app/media
+1. Frontend Build:
+```bash
+cd frontend
+docker build -t gnome-player-frontend .
 ```
 
-4. Ensure your media files are in the correct directories:
-   - `/backend/media/music/` - MP3 files
-   - `/backend/media/images/` - Album artwork
-
-### Frontend Service
-
-1. Create new service in Railway
-   - Connect your GitHub repository
-   - Select the frontend service
-
-2. Set root directory to `/frontend`
-
-3. Set environment variables:
-```env
-REACT_APP_API_URL=https://your-backend-service-url.railway.app
-NODE_ENV=production
+2. Backend Build:
+```bash
+cd backend
+docker build -t gnome-player-backend .
 ```
 
-### Config Files
+### Deployment Configuration
 
-Both services use Railway config files for build and deploy settings:
+The project uses Railway for deployment. Each branch has its own deployment:
+- `main`: Production environment
+- `dev`: Development/staging environment
 
-#### Backend (backend/railway.toml)
+#### Railway Configuration
+
+The project uses `railway.toml` for deployment configuration:
+
 ```toml
 [build]
-builder = "NIXPACKS"
-buildCommand = "npm install"
+builder = "nixpacks"
+buildCommand = "npm run build"
 
 [deploy]
 startCommand = "npm start"
-healthcheckPath = "/health"
+healthcheckPath = "/"
 healthcheckTimeout = 100
-restartPolicyType = "ON_FAILURE"
+restartPolicyType = "on-failure"
 ```
 
-#### Frontend (frontend/railway.toml)
-```toml
-[build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+### Media Storage
 
-[deploy]
-startCommand = "nginx -g 'daemon off;'"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
-```
-
-## File Structure
-
-```
-.
-├── backend/
-│   ├── media/
-│   │   ├── music/
-│   │   └── images/
-│   ├── server.js
-│   ├── package.json
-│   └── railway.toml
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   └── styles/
-│   ├── public/
-│   ├── package.json
-│   ├── Dockerfile
-│   └── railway.toml
-└── README.md
-```
+The application uses a mounted storage volume for media files:
+- Local: `./backend/media/`
+- Production: Mounted volume on Railway
 
 ## Features
 
-- **Track Library**: Browse and manage soundtrack tracks
-- **Stem Mixer**: Mix different audio stems
-- **Delivery Tracking**: Monitor delivery packages and progress
-- **Mobile Support**: Responsive design with hamburger menu
-- **Progress Updates**: Visual progress tracking for deliveries
+### Stem Mixer
 
-## Tech Stack
+The stem mixer component (`frontend/src/components/StemMixer.js`) provides:
+- Individual stem control
+- Volume adjustment
+- Mix saving/loading
+- Playback controls
 
-- Frontend: React, CSS3
-- Backend: Node.js, Express
-- Deployment: Railway
-- Container: Docker (Frontend)
-- Server: Nginx (Frontend)
+Key considerations:
+- Handles empty/placeholder tracks gracefully
+- Supports asynchronous audio loading
+- Provides error handling for missing files
+
+### Track Management
+
+- Upload new tracks
+- Create and manage playlists
+- Assign stems to tracks
+- Delete tracks and stems
+
+### Delivery System
+
+- Create delivery packages
+- Download stem bundles
+- Dynamic delivery page content
+- Custom package descriptions
+
+## Development Workflow
+
+1. Create a new feature branch from `dev`:
+```bash
+git checkout dev
+git pull
+git checkout -b feature/your-feature-name
+```
+
+2. Make changes and test locally
+
+3. Push changes to the feature branch:
+```bash
+git add .
+git commit -m "feat: your feature description"
+git push origin feature/your-feature-name
+```
+
+4. Create a pull request to merge into `dev`
+
+5. After testing on `dev`, merge to `main` for production deployment
+
+## Troubleshooting
+
+### Common Issues
+
+1. 502 Bad Gateway
+- Check CORS configuration
+- Verify backend health endpoint
+- Check Railway logs
+
+2. Audio Loading Issues
+- Verify file exists in storage
+- Check file permissions
+- Check browser console for errors
+
+3. Build Failures
+- Verify Node.js version
+- Check dependency versions
+- Review Railway build logs
+
+### Debugging
+
+1. Backend Logs:
+```bash
+# Local
+npm run dev
+
+# Production
+railway logs
+```
+
+2. Frontend Development:
+- Use React DevTools
+- Check browser console
+- Enable debug logging
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+## License
+
+[Add your license information here]
 
 
 
